@@ -2,6 +2,10 @@
 Thumbs.db
 ehthumbs.db
 
+# Folders holding Windows compiled objects
+src-i386
+src-x64
+
 # Folder config file
 Desktop.ini
 
