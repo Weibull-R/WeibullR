@@ -27,9 +27,12 @@ legendConf <- function(fit,conftype,opadata,...){
 							ssCL<- signif((1-(1-blicon$cl)/2)*100,4)
 							li[[3]] <- bsll(legend=paste0("B-lives ssCL = ",
 								ifelse(is.null(blicon$cl),"NA",
-								paste0(ssCL," [%]"))))							
-                            params <- unlist(list(beta=fit$beta,eta=fit$eta,t0=fit$t0,
-                                meanlog=fit$meanlog,sdlog=fit$sdlog,rate=fit$rate))
+								paste0(ssCL," [%]"))))
+## keep the params in a list object to pass in as args to Blifestring								
+##                            params <- unlist(list(beta=fit$beta,eta=fit$eta,t0=fit$t0,
+##                                meanlog=fit$meanlog,sdlog=fit$sdlog,rate=fit$rate))
+                            params <- list(beta=fit$beta,eta=fit$eta,t0=fit$t0,
+                                meanlog=fit$meanlog,sdlog=fit$sdlog,rate=fit$rate)
                             if(is.null(bl <- blicon$unrel))bl <- opaconf$unrel
                             fu <- function(bl){
                                 bsll(legend=Blifestring(bl,blicon,opafit$signif,params))
@@ -216,7 +219,9 @@ bsll <- function(...){
 #        col= <- ifelse(is.null(arg$col),NA,arg$col)
 }
 
-Blifestring <- function(B,blicon,signif,...){
+## It is believed that the original use of ... here caused warnings upon check --as-cran
+##Blifestring <- function(B,blicon,signif,...){
+Blifestring <- function(B,blicon,signif,args){
     # This functions creates a string for displaying the B-lives in the plot's
     # legend. missing input data result in an "NA". For example, the output
     # string could look like:
@@ -227,8 +232,10 @@ Blifestring <- function(B,blicon,signif,...){
         if(!is.null(number))signif(number,signif)
         else NA
       # shorthand writing of the signif() function
-    qfun <- function(B,...){
-        args <- as.list(unlist(...))
+##    qfun <- function(B,...){
+    qfun <- function(B){
+## fit params are now passed in as a list object, args	
+##        args <- as.list(unlist(...))
 
         ret <- NULL
         if(!is.null(args$beta) && !is.null(args$eta)){
@@ -260,7 +267,8 @@ Blifestring <- function(B,blicon,signif,...){
     ret <- paste(sep = "","    B",signif(100*B)," = ",
         ifelse(c1,
            "NA",lo),
-        " | ",si(qfun(B,...)),
+##        " | ",si(qfun(B,...)),
+        " | ",si(qfun(B)),
         " | ",ifelse(c2,
            "NA",up))
     ret
