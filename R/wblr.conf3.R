@@ -117,7 +117,7 @@ wblr.conf <- function(x,...){
 ## This is why data was redundantly added to the fit, but we have exposed the x$data list
 ##  as an xdata argument providing access to xdata$lrq_frame, xdata$dpoints and xdata$dlines
 
-## Need to combine adjusted ranks for points and lines.
+## Need to combine ppp and adjusted ranks for points and lines.
 		sx<-NULL
 		if(!is.null(xdata$dpoints)) {
 		sx<-xdata$dpoints[,2:3]
