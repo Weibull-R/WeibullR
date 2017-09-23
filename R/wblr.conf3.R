@@ -99,7 +99,7 @@ wblr.conf <- function(x,...){
                             
                             
 
-	if("bbb" %in% tolower(opaconf$method.conf.blives)){
+	if("bbb" %in% tolower(opaconf$method.conf)){
 		#  ____  ____  ____
 		# | __ )| __ )| __ )
 		# |  _ \|  _ \|  _ \
@@ -110,7 +110,7 @@ wblr.conf <- function(x,...){
 ## it warrants an independent, generalized function returning consistent output
 		fit$conf[[i]]        <- list()
 		fit$conf[[i]]$type <- "bbb"
-		fit$conf[[i]]$cl <- opaconf$cl
+		fit$conf[[i]]$ci <- opaconf$ci
 ## all interval bounds are double sided having a Confidence Interval CI
 ## B-lives are reported with single side Confidence Level	
 ##		fit$conf[[i]]$sides <- opaconf$conf.blives.sides
@@ -128,8 +128,8 @@ wblr.conf <- function(x,...){
 		}
 
 ##		Beta Binomial "Z" factors are non-parametric
-		Zlo<-qbeta((1-opaconf$cl)/2,sx$adj_rank,fit$n-sx$adj_rank+1)
-		Zhi<-qbeta(1-(1-opaconf$cl)/2,sx$adj_rank,fit$n-sx$adj_rank+1)
+		Zlo<-qbeta((1-opaconf$ci)/2,sx$adj_rank,fit$n-sx$adj_rank+1)
+		Zhi<-qbeta(1-(1-opaconf$ci)/2,sx$adj_rank,fit$n-sx$adj_rank+1)
 		
 		if(tolower(fit$options$dist) %in% c("weibull","weibull2p")){
 			Lower<- qweibull(Zlo,fit$beta,fit$eta)
@@ -171,13 +171,13 @@ wblr.conf <- function(x,...){
 	}
 								
 								
-	if("lrb" %in% tolower(opaconf$method.conf.blives)){
+	if("lrb" %in% tolower(opaconf$method.conf)){
 		#  Likelihood Ratio Bounds to be added back in when appropriate
 
 	}
 								
 								
-	if(any(c("mcpivotals","mcpivotal") %in% tolower(opaconf$method.conf.blives))){
+	if(any(c("mcpivotals","mcpivotal") %in% tolower(opaconf$method.conf))){
 		#                       _            _        _
 		#  _ __ ___   ___ _ __ (_)_   _____ | |_ __ _| |___
 		# | '_ ` _ \ / __| '_ \| \ \ / / _ \| __/ _` | / __|
@@ -197,7 +197,7 @@ wblr.conf <- function(x,...){
 		fit$conf[[i]]$S      <- 10^4
 		fit$conf[[i]]$seed   <- opaconf$seed
 		fit$conf[[i]]$rgen   <- opaconf$rgen
-		fit$conf[[i]]$cl     <- opaconf$cl
+		fit$conf[[i]]$ci     <- opaconf$ci
 ##		fit$conf[[i]]$sides  <- opaconf$conf.blives.sides
 		fit$conf[[i]]$unrel <- opaconf$unrel
 		ret <- NULL
@@ -268,7 +268,7 @@ wblr.conf <- function(x,...){
 			dist=fit_dist, 
 			reg_method=regression_order,
 			R2=0,
-			CI=opaconf$cl,
+			CI=opaconf$ci,
 			unrel=unrel,
 			S=10^4,
 			P1=P1,
@@ -328,10 +328,10 @@ wblr.conf <- function(x,...){
 	}  ## end mcpivotals
 
 
-	if("fmbounds" %in% tolower(opaconf$method.conf.blives)){
+	if("fmbounds" %in% tolower(opaconf$method.conf)){
 		fit$conf[[i]]        <- list()
 		fit$conf[[i]]$type   <- "fmbounds"
-		fit$conf[[i]]$cl     <- opaconf$cl
+		fit$conf[[i]]$ci     <- opaconf$ci
 ##		fit$conf[[i]]$sides  <- opaconf$conf.blives.sides
 		fit$conf[[i]]$unrel <- opaconf$unrel
 		ret <- NULL
@@ -361,7 +361,7 @@ wblr.conf <- function(x,...){
 if(!is.null(debias)) fit$conf[[i]]$debias <- debias	
 
 ## usage FMbounds(x, dist="weibull", CI=.95, unrel=NULL, debias=NULL, show=FALSE)		
-		ret<-FMbounds(xdata$lrq_frame, dist=fit$options$dist, CI=opaconf$cl, unrel=unrel, debias=debias)
+		ret<-FMbounds(xdata$lrq_frame, dist=fit$options$dist, CI=opaconf$ci, unrel=unrel, debias=debias)
 
 		if(!is.null(ret)){
 			atLeastOneBLifeConf <- TRUE
