@@ -24,6 +24,10 @@ legendConf <- function(fit,conftype,opadata,...){
                             ifelse(is.null(blicon$S),"",
                                 paste0(", S = ",blicon$S))))
                         if(opaconf$in.legend.blives){
+							ssCL<- signif((1-(1-blicon$cl)/2)*100,4)
+							li[[3]] <- bsll(legend=paste0("B-lives ssCL = ",
+								ifelse(is.null(blicon$cl),"NA",
+								paste0(ssCL," [%]"))))							
                             params <- unlist(list(beta=fit$beta,eta=fit$eta,t0=fit$t0,
                                 meanlog=fit$meanlog,sdlog=fit$sdlog,rate=fit$rate))
                             if(is.null(bl <- blicon$unrel))bl <- opaconf$unrel
