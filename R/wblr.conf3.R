@@ -1,4 +1,4 @@
-## calculateSingleConf.R
+## wblr.conf.R
 ## inspired by code originally authored by Jurgen Symynck, April 2014
 # Extensive re-write by David J. Silkworth simplifying calls to independent, generalized
 # functions to generate confidence interval bounds from which Blife estimates can also be determined.
@@ -21,8 +21,31 @@
 #
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#
+wblr.conf <- function(x,...){
+    # x is a single wblr object
+	if(!(class(x)=="wblr")){
+		stop('Argument \"x\" is not of class \"wblr\" ')
+	}
+## using findMaxDataRange from plot.wblr, which takes a list of wblr objects
+## so simply convert this x to a single item list
+	#dr <- findMaxDataRange(list(x))
+	datarange<- findMaxDataRange(list(x))
 
-calculateSingleConf <- function(fit,xdata,opadata,datarange,...){
+	if(!is.null(x$fit)){	
+## usage: calculateSingleConf(fit,xdata,opadata,datarange,...)	
+## only acting on the last fit added to the object
+	fit<-x$fit[[length(x$fit)]]
+	xdata<-x$data
+	opadata<-x$options
+	
+	#	x$fit[[length(x$fit)]]<- calculateSingleConf(
+	#		x$fit[[length(x$fit)]],
+	#		x$data, opadata=x$options,datarange=dr,...
+	#	)
+
+
+## calculateSingleConf is now inserted here
     # fit is a single fit
     arg <- list(...)
 
@@ -49,22 +72,27 @@ calculateSingleConf <- function(fit,xdata,opadata,datarange,...){
 		
 ## prepare the list objects
 	if(is.null(fit$conf)){
+		i <- 1
 		fit$conf <- list()
+	}else{
+## Appending a new confidence calculation to the fit	
+		i<-length(fit$conf)+1
+		fit$conf[[i]]<- list()
 	}
 							
 ## I am not convinced that the second layer list fit$conf$blives is needed
 ## certainly for now, plot.wblr is looking for this though.							
 							
-
-	if(is.null(fit$conf$blives)){
+## removing fit$conf$blives
+#	if(is.null(fit$conf$blives)){
 ##Creating the first B-life confidence calculation in the fit
-		i <- 1
-		fit$conf$blives <- list()
-	}else{
+#		i <- 1
+#		fit$conf$blives <- list()
+#	}else{
 ## Appending a new B-life confidence calculation to the fit
-		i <- length(fit$conf$blives)+1
-	}
-	fit$conf$blives[[i]] <- list()
+#		i <- length(fit$conf$blives)+1
+#	}
+#	fit$conf$blives[[i]] <- list()
 	
 	atLeastOneBLifeConf <- FALSE
                             
@@ -80,10 +108,10 @@ calculateSingleConf <- function(fit,xdata,opadata,datarange,...){
 		
 ## This is a modified version of the BBB confidence interval calculation from abrem.
 ## it warrants an independent, generalized function returning consistent output
-
-		fit$conf$blives[[i]]$type <- "bbb"
-		fit$conf$blives[[i]]$cl <- opaconf$cl
-		fit$conf$blives[[i]]$sides <- opaconf$conf.blives.sides
+		fit$conf[[i]]        <- list()
+		fit$conf[[i]]$type <- "bbb"
+		fit$conf[[i]]$cl <- opaconf$cl
+		fit$conf[[i]]$sides <- opaconf$conf.blives.sides
 ## This is why data was redundantly added to the fit, but we have exposed the x$data list
 ##  as an xdata argument providing access to xdata$lrq_frame, xdata$dpoints and xdata$dlines
 
@@ -123,7 +151,7 @@ calculateSingleConf <- function(fit,xdata,opadata,datarange,...){
 		da <- rbind(da,data.frame(unrel=max(sx$ppp), Lower=max(Lower), Upper=max(Upper)))
 		da <- da[order(da$unrel),] 
 		da <- da[!duplicated(da$unrel),]
-		fit$conf$blives[[i]]$bounds <- da
+		fit$conf[[i]]$bounds <- da
 		
 		op <- unique(c(names(opafit),names(opaconf)))
 			# this is needed to add options from opafit into li that
@@ -131,7 +159,7 @@ calculateSingleConf <- function(fit,xdata,opadata,datarange,...){
 			# TODO:tolower() not needed?
 		if(length(li <- opaconf[sapply(op,function(y){
 			!identical(opafit[[y]], opaconf[[y]])})]) > 0){
-			fit$conf$blives[[i]]$options <- li
+			fit$conf[[i]]$options <- li
 		}
 		
   		atLeastOneBLifeConf <- TRUE									
@@ -159,14 +187,14 @@ calculateSingleConf <- function(fit,xdata,opadata,datarange,...){
 			opaconf$seed<-1234
 		}
 		
-		fit$conf$blives[[i]]        <- list()
-		fit$conf$blives[[i]]$type   <- "mcpivotals"
-		fit$conf$blives[[i]]$S      <- 10^4
-		fit$conf$blives[[i]]$seed   <- opaconf$seed
-		fit$conf$blives[[i]]$rgen   <- opaconf$rgen
-		fit$conf$blives[[i]]$cl     <- opaconf$cl
-		fit$conf$blives[[i]]$sides  <- opaconf$conf.blives.sides
-		fit$conf$blives[[i]]$unrel <- opaconf$unrel
+		fit$conf[[i]]        <- list()
+		fit$conf[[i]]$type   <- "mcpivotals"
+		fit$conf[[i]]$S      <- 10^4
+		fit$conf[[i]]$seed   <- opaconf$seed
+		fit$conf[[i]]$rgen   <- opaconf$rgen
+		fit$conf[[i]]$cl     <- opaconf$cl
+		fit$conf[[i]]$sides  <- opaconf$conf.blives.sides
+		fit$conf[[i]]$unrel <- opaconf$unrel
 		ret <- NULL
 
 ## now using pivotalMC from abremPivotals . . .									
@@ -256,7 +284,7 @@ calculateSingleConf <- function(fit,xdata,opadata,datarange,...){
 		median_intercept<-ret[med_pos,2]-log(log(1/(1-unrel[med_pos])))/median_slope
 		ret<-(ret-median_intercept)*median_slope					
 										
-						fit$conf$blives[[i]]$bounds <- cbind(unrel,
+						fit$conf[[i]]$bounds <- cbind(unrel,
 							exp(log(fit$eta)+ ret/fit$beta))
 					}
 					if(fit_dist=="lnorm") {
@@ -273,22 +301,22 @@ calculateSingleConf <- function(fit,xdata,opadata,datarange,...){
 ## some confusion as to which way to rotate
 #                                    exp(fit$meanlog + ret/fit$sdlog) ## just wrong
 ##                                    exp(fit$meanlog - ret/fit$sdlog)) ## appears to be flipped on y-axis at 50% intercept
-						fit$conf$blives[[i]]$bounds <- cbind(unrel,
+						fit$conf[[i]]$bounds <- cbind(unrel,
 							exp(ret*fit$sdlog + fit$meanlog))
 					}
 					
-					names(fit$conf$blives[[i]]$bounds) <- c("unrel","Lower","Datum", "Upper")
+					names(fit$conf[[i]]$bounds) <- c("unrel","Lower","Datum", "Upper")
 					op <- unique(c(names(opafit),names(opaconf)))
 						# this is needed to add options from opafit into li that
 						# are NULL in opafit
 						# TODO:tolower() not needed?
 					if(length(li <- opaconf[sapply(op,function(y){
 						!identical(opafit[[y]], opaconf[[y]])})]) > 0){
-						fit$conf$blives[[i]]$options <- li
+						fit$conf[[i]]$options <- li
 					}
 				}else{
 					message("calculateSingleConf: Confidence calculation failed.")
-					fit$conf$blives[[i]] <- NULL
+					fit$conf[[i]] <- NULL
 				}
 										
 										
@@ -296,11 +324,11 @@ calculateSingleConf <- function(fit,xdata,opadata,datarange,...){
 
 
 	if("fmbounds" %in% tolower(opaconf$method.conf.blives)){
-		fit$conf$blives[[i]]        <- list()
-		fit$conf$blives[[i]]$type   <- "fmbounds"
-		fit$conf$blives[[i]]$cl     <- opaconf$cl
-		fit$conf$blives[[i]]$sides  <- opaconf$conf.blives.sides
-		fit$conf$blives[[i]]$unrel <- opaconf$unrel
+		fit$conf[[i]]        <- list()
+		fit$conf[[i]]$type   <- "fmbounds"
+		fit$conf[[i]]$cl     <- opaconf$cl
+		fit$conf[[i]]$sides  <- opaconf$conf.blives.sides
+		fit$conf[[i]]$unrel <- opaconf$unrel
 		ret <- NULL
 	
 	if(any(c("weibull3p", "lognormal3p") %in% tolower(fit$options$dist))) {
@@ -325,7 +353,7 @@ calculateSingleConf <- function(fit,xdata,opadata,datarange,...){
 				debias <- "rba"
 			}
 		}
-if(!is.null(debias)) fit$conf$blives[[i]]$debias <- debias	
+if(!is.null(debias)) fit$conf[[i]]$debias <- debias	
 
 ## usage FMbounds(x, dist="weibull", CI=.95, unrel=NULL, debias=NULL, show=FALSE)		
 		ret<-FMbounds(xdata$lrq_frame, dist=fit$options$dist, CI=opaconf$cl, unrel=unrel, debias=debias)
@@ -335,8 +363,8 @@ if(!is.null(debias)) fit$conf$blives[[i]]$debias <- debias
 
 			ret$percentile<-ret$percentile/100
 			
-			fit$conf$blives[[i]]$bounds <- ret
-			names(fit$conf$blives[[i]]$bounds) <- c("unrel","Lower","Datum", "Upper")	
+			fit$conf[[i]]$bounds <- ret
+			names(fit$conf[[i]]$bounds) <- c("unrel","Lower","Datum", "Upper")	
 								
 			op <- unique(c(names(opafit),names(opaconf)))
 				# this is needed to add options from opafit into li that
@@ -344,11 +372,11 @@ if(!is.null(debias)) fit$conf$blives[[i]]$debias <- debias
 				# TODO:tolower() not needed?
 			if(length(li <- opaconf[sapply(op,function(y){
 				!identical(opafit[[y]], opaconf[[y]])})]) > 0){
-				fit$conf$blives[[i]]$options <- li
+				fit$conf[[i]]$options <- li
 			}
 		}else{
 			message("calculateSingleConf: Confidence calculation failed.")
-			fit$conf$blives[[i]] <- NULL
+			fit$conf[[i]] <- NULL
 		}
 	
 	}  # end FM bounds
@@ -360,34 +388,12 @@ if(!is.null(debias)) fit$conf$blives[[i]]$debias <- debias
 				warning("calculateSingleConf: The fit argument is empty or contains no fits.")
 		}
 	
-	fit
-}
+	x$fit[[length(x$fit)]]<-fit
+	}	
+	x	
+		
+	
 
-
-## These functions from abrem are no longer used, they remain for historical purposes only.
-params.to.ob <- function(dist, ... ){
-	stop("params.to.ob has been laid to rest")
-    # function to generate test data that result in a perfect fit
-    # (when using RR; X-on-Y, median plot positions)
-    # beta,eta:  slope and shape parameters of 2 parameter Weibull
-    # event: either an integer with the number of complete observations, or
-    # a vector with censoring information (e.g.: c(1,1,1,0,0,0,1)
-}
-
-bbb <- function(j,f,CL,beta,eta){
-   # function to calculate Beta Binomial Confidence Bounds for B-lives.
-   # j    : rank of failure
-   # f    : number of failures (is NOT the same as sample size!) see
-   #        'suspended items' fotr more info
-   # CB   : Confidence Bound, Confidence Limit
-   # beta : Weibull slope or scale parameter
-   # eta  : Weibull shape paramater
-   # see "The new Weibull handbook, fifth edition" p. 7-3
-   # see "The new Weibull handbook, fifth edition" Appendix I
-   # see also MS. Excel's and GNUmeric's BETAINV() function
-   eta*(log(1/(1-qbeta(CL,j,f-j+1))))^(1/beta)
-}
-
-
+}	
 
 

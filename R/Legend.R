@@ -6,7 +6,7 @@ legendConf <- function(fit,conftype,opadata,...){
             opafit <- modifyList(opadata,fit$options)
         opafit <- modifyList(opafit,list(...))
         if(identical(tolower(conftype),"blives")){
-            if(!is.null(fit$conf$blives)){
+            if(!is.null(fit$conf)){
                 for.each.blicon <- function(blicon){
                     if(!is.null(blicon$options)){
                         opaconf <- modifyList(opafit,blicon$options)
@@ -35,7 +35,7 @@ legendConf <- function(fit,conftype,opadata,...){
                     }else NULL
                 }
                 #mtrace(for.each.blicon)
-                unlist(lapply(fit$conf$blives,for.each.blicon),FALSE)
+                unlist(lapply(fit$conf,for.each.blicon),FALSE)
                     # TODO: replace by do.call ?
             }else{NULL}
         }
