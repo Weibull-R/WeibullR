@@ -115,8 +115,18 @@ wblr.conf <- function(x,...){
 ## This is why data was redundantly added to the fit, but we have exposed the x$data list
 ##  as an xdata argument providing access to xdata$lrq_frame, xdata$dpoints and xdata$dlines
 
-## soon it will be necessary to combine the xdata$dlines (modified to conform)
-		sx<-xdata$dpoints
+## Need to combine adjusted ranks for points and lines.
+		sx<-NULL
+		if(!is.null(xdata$dpoints)) {
+			sx<-xdata$dpoints
+		}
+		if(!is.null(xdata$dlines)) {
+			mod_dlines<-xdata$dlines[,-1]
+			names(mod_dlines)<-c("time","ppp","adj_rank")
+			sx<-rbind(sx,mod_dlines)
+			NDX<-order(sx$adj_rank)
+			sx<-sx[NDX,]
+		}
 		
 ##		Beta Binomial "Z" factors are non-parametric
 		Zlo<-qbeta((1-opaconf$cl)/2,sx$adj_rank,fit$n-sx$adj_rank+1)
