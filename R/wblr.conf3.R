@@ -111,36 +111,31 @@ wblr.conf <- function(x,...){
 		fit$conf[[i]]        <- list()
 		fit$conf[[i]]$type <- "bbb"
 		fit$conf[[i]]$cl <- opaconf$cl
-		fit$conf[[i]]$sides <- opaconf$conf.blives.sides
+## all interval bounds are double sided having a Confidence Interval CI
+## B-lives are reported with single side Confidence Level	
+##		fit$conf[[i]]$sides <- opaconf$conf.blives.sides
 ## This is why data was redundantly added to the fit, but we have exposed the x$data list
 ##  as an xdata argument providing access to xdata$lrq_frame, xdata$dpoints and xdata$dlines
 
 ## Need to combine adjusted ranks for points and lines.
 		sx<-NULL
 		if(!is.null(xdata$dpoints)) {
-			sx<-xdata$dpoints
+		sx<-xdata$dpoints[,2:3]
 		}
 		if(!is.null(xdata$dlines)) {
-			mod_dlines<-xdata$dlines[,-1]
-			names(mod_dlines)<-c("time","ppp","adj_rank")
-			sx<-rbind(sx,mod_dlines)
-			NDX<-order(sx$adj_rank)
-			sx<-sx[NDX,]
+		sx<-rbind(sx,xdata$dlines[,3:4])
+		sx<-sx[order(sx$adj_rank),]
 		}
-		
+
 ##		Beta Binomial "Z" factors are non-parametric
 		Zlo<-qbeta((1-opaconf$cl)/2,sx$adj_rank,fit$n-sx$adj_rank+1)
 		Zhi<-qbeta(1-(1-opaconf$cl)/2,sx$adj_rank,fit$n-sx$adj_rank+1)
 		
 		if(tolower(fit$options$dist) %in% c("weibull","weibull2p")){
-			#Lower= bbb(sx$adj_rank,fit$n,(1-opaconf$cl)/2,fit$beta,fit$eta)
-			#Upper= bbb(sx$adj_rank,fit$n,1-(1-opaconf$cl)/2,fit$beta,fit$eta)
 			Lower<- qweibull(Zlo,fit$beta,fit$eta)
 			Upper<- qweibull(Zhi,fit$beta,fit$eta)
 		}else{
 			if(tolower(fit$options$dist) %in% c("lnorm","lognormal","lognormal2p")){
-				##stop("lognormal bbb not implemented yet")
-				## build da for lognormal
 			Lower<- qlnorm(Zlo,fit$meanlog,fit$sdlog)
 			Upper<- qlnorm(Zhi,fit$meanlog,fit$sdlog)
 			}else{
@@ -203,7 +198,7 @@ wblr.conf <- function(x,...){
 		fit$conf[[i]]$seed   <- opaconf$seed
 		fit$conf[[i]]$rgen   <- opaconf$rgen
 		fit$conf[[i]]$cl     <- opaconf$cl
-		fit$conf[[i]]$sides  <- opaconf$conf.blives.sides
+##		fit$conf[[i]]$sides  <- opaconf$conf.blives.sides
 		fit$conf[[i]]$unrel <- opaconf$unrel
 		ret <- NULL
 
@@ -337,7 +332,7 @@ wblr.conf <- function(x,...){
 		fit$conf[[i]]        <- list()
 		fit$conf[[i]]$type   <- "fmbounds"
 		fit$conf[[i]]$cl     <- opaconf$cl
-		fit$conf[[i]]$sides  <- opaconf$conf.blives.sides
+##		fit$conf[[i]]$sides  <- opaconf$conf.blives.sides
 		fit$conf[[i]]$unrel <- opaconf$unrel
 		ret <- NULL
 	

@@ -34,8 +34,8 @@ options.wblr<- function(...){
         options_wblr <<- list(
             dist="weibull",
             method.fit=c("rr","xony"),
-            conf.what="blives",
-            conf.blives.sides="double",
+##            conf.what="blives",
+##            conf.blives.sides="double",
             unrel.n=25,
             method.conf.blives="mcpivotals",
             pp="median",#,"benard","hazen","mean", "kaplan.meier", "blom"),
