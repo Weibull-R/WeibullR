@@ -360,11 +360,11 @@ plotSingleConfBound <- function(blc,opafit,...){
 
 plotConfsInFit <- function(fit,opadata,...){
     arg <- list(...)
-    if(!is.null(fit$conf$blives)){
+    if(!is.null(fit$conf)){
         if(!is.null(fit$options)){
             opafit <- modifyList(opadata,fit$options)
         }else{opafit <- opadata}
-        lapply(fit$conf$blives,plotSingleConfBound,opafit=opafit,...)
+        lapply(fit$conf,plotSingleConfBound,opafit=opafit,...)
     }
 #    else{if(arg$v >= 1)message(match.call()[[1]],
 #        ": This fit contains no confidence calculations for B-lives.")}
