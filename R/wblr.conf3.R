@@ -48,6 +48,12 @@ wblr.conf <- function(x,...){
 ## calculateSingleConf is now inserted here
     # fit is a single fit
     arg <- list(...)
+	if(!is.null(arg$method.conf.blives)) {
+		warning("method.conf.blives has been depreciated in favor of method.conf")
+		arg$method.conf<-arg$method.conf.blives
+		arg<-modifyList(arg, list(method.conf.blives=NULL))
+	}
+
 
 	if(is.null(fit$options$dist)) {
 		stop("missing a fit distribution")
