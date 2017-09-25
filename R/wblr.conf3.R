@@ -68,13 +68,14 @@ wblr.conf <- function(x,...){
 
 ## prepare the descriptive quantiles  -  0.5 and F0(0) are pivot points for pivotal corrections			
 #	unrel <- c(F0(seq(F0inv(1e-3), F0inv(0.999),length.out=25)),
-#				opaconf$qblives, 0.5, F0(0))
-	unrel <- c(DQ(opaconf$dq),opaconf$qblives, 0.5, 1-exp(exp(0)))
+#				opaconf$unrel, 0.5, F0(0))
+
+	unrel <- c(DQ(opaconf$dq),opaconf$blife.pts, 0.5, 1-exp(-exp(0)))
 
 	unrel <- unique(signif(unrel[order(unrel)]))
 		# signif() has been used to eliminate
-		# any identical looking unreliability
-		# levels that differ only at place far
+		# any identical looking descriptive
+		# quantiles that differ only at place far
 		# from the decimal point
 		
 ## prepare the list objects
@@ -161,8 +162,8 @@ wblr.conf <- function(x,...){
 ## Add in only the two extreame data points for graphing		
 		da <- rbind(da,data.frame(unrel=min(sx$ppp), Lower=min(Lower), Upper=min(Upper)))
 		da <- rbind(da,data.frame(unrel=max(sx$ppp), Lower=max(Lower), Upper=max(Upper)))
-		da <- da[order(da$qblives),] 
-		da <- da[!duplicated(da$qblives),]
+		da <- da[order(da$unrel),] 
+		da <- da[!duplicated(da$unrel),]
 		fit$conf[[i]]$bounds <- da
 		
 		op <- unique(c(names(opafit),names(opaconf)))
@@ -206,7 +207,7 @@ wblr.conf <- function(x,...){
 		fit$conf[[i]]$rgen   <- opaconf$rgen
 		fit$conf[[i]]$ci     <- opaconf$ci
 ##		fit$conf[[i]]$sides  <- opaconf$conf.blives.sides
-		fit$conf[[i]]$qblives <- opaconf$qblives
+		fit$conf[[i]]$blife.pts <- opaconf$blife.pts
 		ret <- NULL
 
 ## now using pivotalMC from abremPivotals . . .									
@@ -341,7 +342,7 @@ wblr.conf <- function(x,...){
 		fit$conf[[i]]$type   <- "fmbounds"
 		fit$conf[[i]]$ci     <- opaconf$ci
 ##		fit$conf[[i]]$sides  <- opaconf$conf.blives.sides
-		fit$conf[[i]]$qblives <- opaconf$qblives
+		fit$conf[[i]]$blife.pts <- opaconf$blife.pts
 		ret <- NULL
 	
 	if(any(c("weibull3p", "lognormal3p") %in% tolower(fit$options$dist))) {

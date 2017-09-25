@@ -344,15 +344,15 @@ plotSingleConfBound <- function(blc,opafit,...){
         
 
         if(!is.null(blc$bounds$Datum))
-            lines(y=F0inv(blc$bounds$qblives,opaconf$log),
+            lines(y=F0inv(blc$bounds$unrel,opaconf$log),
                 x=blc$bounds$Datum-t0,
                 col=opaconf$col,lwd=1,lty=2)
         if(!is.null(blc$bounds$Lower))
-            lines(y=F0inv(blc$bounds$qblives,opaconf$log),
+            lines(y=F0inv(blc$bounds$unrel,opaconf$log),
                 x=blc$bounds$Lower-t0,col=opaconf$col,
                 lwd=opaconf$lwd,lty=opaconf$lty)
         if(!is.null(blc$bounds$Upper))
-            lines(y=F0inv(blc$bounds$qblives,opaconf$log),
+            lines(y=F0inv(blc$bounds$unrel,opaconf$log),
                 x=blc$bounds$Upper-t0,col=opaconf$col,
                 lwd=opaconf$lwd,lty=opaconf$lty)
     }

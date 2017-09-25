@@ -33,7 +33,7 @@ legendConf <- function(fit,conftype,opadata,...){
 ##                                meanlog=fit$meanlog,sdlog=fit$sdlog,rate=fit$rate))
                             params <- list(beta=fit$beta,eta=fit$eta,t0=fit$t0,
                                 meanlog=fit$meanlog,sdlog=fit$sdlog,rate=fit$rate)
-                            if(is.null(bl <- blicon$qblives))bl <- opaconf$qblives
+                            if(is.null(bl <- blicon$blife.pts))bl <- opaconf$blife.pts
                             fu <- function(bl){
                                 bsll(legend=Blifestring(bl,blicon,opafit$signif,params))
                             }
@@ -260,10 +260,10 @@ Blifestring <- function(B,blicon,signif,args){
     id <- function(x,y)isTRUE(all.equal(x,y))
     c1 <- is.null(blicon$bounds) || is.null(blicon$bounds$Lower)
     if(!c1) lo <- si(subset(blicon$bounds,
-        sapply(blicon$bounds$qblives,id,B),Lower))
+        sapply(blicon$bounds$unrel,id,B),Lower))
     c2 <- is.null(blicon$bounds) || is.null(blicon$bounds$Upper)
     if(!c2) up <- si(subset(blicon$bounds,
-        sapply(blicon$bounds$qblives,id,B),Upper))
+        sapply(blicon$bounds$unrel,id,B),Upper))
     ret <- paste(sep = "","    B",signif(100*B)," = ",
         ifelse(c1,
            "NA",lo),

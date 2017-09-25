@@ -45,7 +45,7 @@ options.wblr<- function(...){
 			ci=0.9,
 ##            unrel=c(0.1,0.05,0.01),
 			dq="abrem",
-            qblives=c(0.1,0.05,0.01),
+            blife.pts=c(0.1,0.05,0.01),
             mar=c(5.1,4.1,5.1,2.1),
             main="Probability Plot",
             main.contour="Contour Plot",
