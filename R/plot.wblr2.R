@@ -63,7 +63,7 @@ plot.wblr <- function(x,...){
     plotargs <- c(list(x=NA,axes=FALSE),
         opa[opanames %in% plot_default_args()])
     if(!is.null(plotargs$ylim)){
-        plotargs$ylim <- F0inv(plotargs$ylim,opa$log)
+        plotargs$ylim <- p2y(plotargs$ylim,opa$log)
     }
     plotargs$main <- NULL
         # do not plot "main" just yet...
@@ -72,7 +72,7 @@ plot.wblr <- function(x,...){
     do.call(plot.default,plotargs)
     if(opa$is.plot.grid){
         abline(
-            h=F0inv(seq.wb(opa$ylim[1]/10,1-(1-opa$ylim[2])/10),opa$log),
+            h=p2y(seq.wb(opa$ylim[1]/10,1-(1-opa$ylim[2])/10),opa$log),
             v=seq.log(opa$xlim[1]/10,opa$xlim[2]*10,seq(0,10,1)),
             col = opa$col.grid)
     }
@@ -88,10 +88,10 @@ plot.wblr <- function(x,...){
     r <- c(seq.wb(opa$ylim[1]/10,1-(1-opa$ylim[2])/10,c(1,2,5)),0.9)
     for(t in c(2,4)){
         # TODO: rewrite as do.call() or apply()
-        axis(t,at=F0inv(seq.wb(opa$ylim[1]/10,1-(1-opa$ylim[2])/10),
+        axis(t,at=p2y(seq.wb(opa$ylim[1]/10,1-(1-opa$ylim[2])/10),
             opa$log),labels=NA,tcl=-0.25)#,line=0.0
             # plot left and right axis tickmarks
-        axis(t,at=F0inv(r,opa$log),
+        axis(t,at=p2y(r,opa$log),
             labels=r*100,tcl=-0.75)#,line=0.0
             # plot left and right axis labels
     }
@@ -144,10 +144,10 @@ plot.wblr <- function(x,...){
 				pos <- x$data$dpoints$ppp
 ## ra was earlier used as the output of findMaxDataRange this is very poor/dangerous coding practice
 
-## note how the log option is used to control F0inv here, defining lognormal versus weibull canvas
-                #points(ti-t0,F0inv(pos,opadata$log),pch = opadata$pch,
+## note how the log option is used to control p2y here, defining lognormal versus weibull canvas
+                #points(ti-t0,p2y(pos,opadata$log),pch = opadata$pch,
 ## Note: x$data objects hava already been modified by t0 as may have been called for
-                points(ti,F0inv(pos,opadata$log),pch = opadata$pch,
+                points(ti,p2y(pos,opadata$log),pch = opadata$pch,
                     col = opadata$col,lwd = opadata$lwd.points,cex=opadata$cex.points)
                     # option "log" should only be set and read from either
                     # the arguments of plot.wblr
@@ -167,7 +167,7 @@ plot.wblr <- function(x,...){
 					}
 ## this was specific for weibull canvas only				
 					 	##y0=log(log(1/(1-dlines$ppp[intline])))
-						y0=F0inv(dlines$ppp[intline],opadata$log)
+						y0=p2y(dlines$ppp[intline],opadata$log)
 						# log on x axis is specified in plotargs where log="xy" or log="x"
 						#x1=log(dlines$t2[intline])
 						x1=dlines$t2[intline]
@@ -252,20 +252,22 @@ plot.wblr <- function(x,...){
         # TODO: check if this makes sense when supplying a list
 }
 
-F0 <- function(q)
-   1-exp(-exp(q))
+## could consider a y2p function, but not used
+#F0 <- function(q)
+#   1-exp(-exp(q))
 
-F0inv <- function(p,log="x"){
-    # transformation function to plot its argument
-    # on the y-axis of the Weibull plot. This transformation function
-    # lets the Weibull curve appear as a straight line on the weibull paper
-    #
-    # This is also the inverse Cumulative Distribution function of the
-    # standardized Weibull plot with beta=eta=1
-    # comparing  both implementationss of F0inv() with
-    # system.time() does not show any significant difference
-    #   log(log(1/(1-p)))}
-    if(log %in% c("x",""))ret <- log(qweibull(p,1,1)) else ret <- qlnorm(p,0,1)
+
+## since the log option only has meaning upon plot.wblr
+## p2y should only be used within plot.wblr() or functions it calls
+p2y <- function(p,log="x"){
+#F0inv <- function(p,log="x"){
+    # This is the inverse Cumulative Distribution function
+	# used to transform a probability value to the
+    # y-axis of the plot canvas. 
+	# Use of this transformation permits distributions
+	# to appear as curves on unrelated canvas
+    if(log =="x")ret <- log(qweibull(p,1,1))
+	if(log =="xy") ret <- qlnorm(p,0,1)
     ret
 }
 
@@ -344,15 +346,15 @@ plotSingleConfBound <- function(blc,opafit,...){
         
 
         if(!is.null(blc$bounds$Datum))
-            lines(y=F0inv(blc$bounds$unrel,opaconf$log),
+            lines(y=p2y(blc$bounds$unrel,opaconf$log),
                 x=blc$bounds$Datum-t0,
                 col=opaconf$col,lwd=1,lty=2)
         if(!is.null(blc$bounds$Lower))
-            lines(y=F0inv(blc$bounds$unrel,opaconf$log),
+            lines(y=p2y(blc$bounds$unrel,opaconf$log),
                 x=blc$bounds$Lower-t0,col=opaconf$col,
                 lwd=opaconf$lwd,lty=opaconf$lty)
         if(!is.null(blc$bounds$Upper))
-            lines(y=F0inv(blc$bounds$unrel,opaconf$log),
+            lines(y=p2y(blc$bounds$unrel,opaconf$log),
                 x=blc$bounds$Upper-t0,col=opaconf$col,
                 lwd=opaconf$lwd,lty=opaconf$lty)
     }
@@ -387,7 +389,7 @@ plotSingleFit <- function(fit,opadata,...){
         if(!is.null(fit$beta) && !is.null(fit$eta)){
 # One routine suits all . . .
 
-                cret <- curve(F0inv(pweibull(x-tz,
+                cret <- curve(p2y(pweibull(x-tz,
                     fit$beta,fit$eta),opafit$log),
                     add=TRUE,n=1001,
                         # n=1001 is needed for displaying the extreme
@@ -412,7 +414,7 @@ plotSingleFit <- function(fit,opadata,...){
             ### lognormal ###
 ##            if(opafit$verbosity >= 1)message(
 ##                "plotSingleFit: Adding Lognormal fit ...")
-            curve(F0inv(plnorm(x-tz,fit$meanlog,fit$sdlog),opafit$log),
+            curve(p2y(plnorm(x-tz,fit$meanlog,fit$sdlog),opafit$log),
                 add=TRUE,
                 col=opafit$col,lwd=opafit$lwd,lty=opafit$lty,
                 xlim=getPlotRangeX(opafit$log),
@@ -423,7 +425,7 @@ plotSingleFit <- function(fit,opadata,...){
             ### exponential ###
 ##            if(opafit$verbosity >= 1)message(
 ##                "plotSingleFit: Adding Exponential fit ...")
-            curve(F0inv(pexp(x+t0,fit$rate),opafit$log),add=TRUE,
+            curve(p2y(pexp(x+t0,fit$rate),opafit$log),add=TRUE,
                 col=opafit$col,lwd=opafit$lwd,lty=opafit$lty,
                 xlim=getPlotRangeX(opafit$log),
                 log=opafit$log)

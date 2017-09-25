@@ -65,18 +65,43 @@ wblr.conf <- function(x,...){
 		opafit <- modifyList(opadata,fit$options)
 	}
 	opaconf <- modifyList(opafit,arg)
+	
+## Descriptive quantiles are the percentile positions at which points on the curved bounds are 
+## calculated, so that a smoothed curve can be plotted by linear interpolation.
+## This function will return a vector of quantiles based on a named set that can be stored 
+##  in the options.wblr list. This is helpful for comparison with other software.
+## It is expected that this function will most often be called by its aleas, DQ.
 
-## prepare the descriptive quantiles  -  0.5 and F0(0) are pivot points for pivotal corrections			
-#	unrel <- c(F0(seq(F0inv(1e-3), F0inv(0.999),length.out=25)),
-#				opaconf$unrel, 0.5, F0(0))
+DescriptiveQuantiles<-function(dqlabel)  {
 
+	if(tolower(dqlabel)=="minitab") {
+	## these descriptive quantiles match Minitab unchangeable defaults (27 values)
+		dq<-c(seq(.01,.09,by=.01),seq(.10,.90,by=.10),seq(.91,.99, by=.01))
+	}
+	
+	if(tolower(dqlabel)=="supersmith") {
+		## descriptive quantiles for comparison with SuperSMITH (limit of 15 values)	
+		dq<-c(.01, .02, .05, .10, .15, .20, .30, .40, .50,  .60, .70, .80, .90, .95, .99)
+	}
+	
+	if(tolower(dqlabel)=="abrem")  {
+	## this is the original default by Jurgen Symynck for package abrem
+	## it produces 25 evenly spaced points across the y limits of a weibull canvas, including ends
+	#F0(seq(F0inv(1e-3), F0inv(0.999),length.out=25))
+	dq<-1-exp(-exp(seq(log(qweibull((1e-3),1,1)), log(qweibull((0.999),1,1)),length.out=25)))	
+	}
+	
+	dq
+}
+
+DQ<-DescriptiveQuantiles	
+
+## prepare the descriptive quantiles  -  0.5 and F0(0) are pivot points for pivotal corrections	
 	unrel <- c(DQ(opaconf$dq),opaconf$blife.pts, 0.5, 1-exp(-exp(0)))
 
 	unrel <- unique(signif(unrel[order(unrel)]))
-		# signif() has been used to eliminate
-		# any identical looking descriptive
-		# quantiles that differ only at place far
-		# from the decimal point
+		# signif() has been used to eliminate any identical looking descriptive
+		# quantiles that differ only at place far from the decimal point
 		
 ## prepare the list objects
 	if(is.null(fit$conf)){
