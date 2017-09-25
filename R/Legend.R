@@ -33,7 +33,7 @@ legendConf <- function(fit,conftype,opadata,...){
 ##                                meanlog=fit$meanlog,sdlog=fit$sdlog,rate=fit$rate))
                             params <- list(beta=fit$beta,eta=fit$eta,t0=fit$t0,
                                 meanlog=fit$meanlog,sdlog=fit$sdlog,rate=fit$rate)
-                            if(is.null(bl <- blicon$unrel))bl <- opaconf$unrel
+                            if(is.null(bl <- blicon$blife.pts))bl <- opaconf$blife.pts
                             fu <- function(bl){
                                 bsll(legend=Blifestring(bl,blicon,opafit$signif,params))
                             }

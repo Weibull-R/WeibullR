@@ -67,13 +67,15 @@ wblr.conf <- function(x,...){
 	opaconf <- modifyList(opafit,arg)
 
 ## prepare the descriptive quantiles  -  0.5 and F0(0) are pivot points for pivotal corrections			
-	unrel <- c(F0(seq(F0inv(1e-3), F0inv(0.999),length.out=25)),
-				opaconf$unrel, 0.5, F0(0))
+#	unrel <- c(F0(seq(F0inv(1e-3), F0inv(0.999),length.out=25)),
+#				opaconf$unrel, 0.5, F0(0))
+
+	unrel <- c(DQ(opaconf$dq),opaconf$blife.pts, 0.5, 1-exp(-exp(0)))
 
 	unrel <- unique(signif(unrel[order(unrel)]))
 		# signif() has been used to eliminate
-		# any identical looking unreliability
-		# levels that differ only at place far
+		# any identical looking descriptive
+		# quantiles that differ only at place far
 		# from the decimal point
 		
 ## prepare the list objects
@@ -205,7 +207,7 @@ wblr.conf <- function(x,...){
 		fit$conf[[i]]$rgen   <- opaconf$rgen
 		fit$conf[[i]]$ci     <- opaconf$ci
 ##		fit$conf[[i]]$sides  <- opaconf$conf.blives.sides
-		fit$conf[[i]]$unrel <- opaconf$unrel
+		fit$conf[[i]]$blife.pts <- opaconf$blife.pts
 		ret <- NULL
 
 ## now using pivotalMC from abremPivotals . . .									
@@ -290,22 +292,23 @@ wblr.conf <- function(x,...){
 					atLeastOneBLifeConf <- TRUE
 					if(fit_dist=="weibull") {
 ## David Silkworth's final adaptation to nail the bounds around the fitted line
-		median_slope<-(log(log(1/(1-unrel[length(unrel)])))-log(log(1/(1-unrel[1]))))/(ret[length(unrel),2]-ret[1,2])	
-		med_pos<-which(unrel > F0(0)-10^-5)[1]
-		median_intercept<-ret[med_pos,2]-log(log(1/(1-unrel[med_pos])))/median_slope
-		ret<-(ret-median_intercept)*median_slope					
+		rotation_slope<-(log(log(1/(1-unrel[length(unrel)])))-log(log(1/(1-unrel[1]))))/(ret[length(unrel),2]-ret[1,2])	
+# F0(0) is coded as (1-exp(-exp(0)))
+		rotation_pos<-which(unrel > (1-exp(-exp(0)))-10^-5)[1]
+		rotation_intercept<-ret[rotation_pos,2]-log(log(1/(1-unrel[rotation_pos])))/rotation_slope
+		ret<-(ret-rotation_intercept)*rotation_slope					
 										
 						fit$conf[[i]]$bounds <- cbind(unrel,
 							exp(log(fit$eta)+ ret/fit$beta))
 					}
 					if(fit_dist=="lnorm") {
 ## David Silkworth's final adaptation to nail the bounds around the fitted line
-		## check the slope of the median pivotals to get correction to 1.0	
-		median_slope<-(qnorm(unrel[length(unrel)], 0, 1)  - qnorm(unrel[1], 0, 1))/(ret[length(unrel),2]-ret[1,2])
+		## check the slope of the rotation pivotals to get correction to 1.0	
+		rotation_slope<-(qnorm(unrel[length(unrel)], 0, 1)  - qnorm(unrel[1], 0, 1))/(ret[length(unrel),2]-ret[1,2])
 		## don't know why I originally used 60% quantile in MRRln2p (same as MRRw2p)
-		med_pos<-which(unrel > .5-10^-5)[1]		
-		median_intercept<-ret[med_pos,2]-qnorm(unrel[med_pos], 0, 1)/median_slope	
-		ret<-(ret-median_intercept)*median_slope
+		rotation_pos<-which(unrel > .5-10^-5)[1]		
+		rotation_intercept<-ret[rotation_pos,2]-qnorm(unrel[rotation_pos], 0, 1)/rotation_slope	
+		ret<-(ret-rotation_intercept)*rotation_slope
 
 		## interpret the pivotals for the log plot	
 		#plot_piv<-(adj_piv)*fit[2]+fit[1]		
@@ -339,7 +342,7 @@ wblr.conf <- function(x,...){
 		fit$conf[[i]]$type   <- "fmbounds"
 		fit$conf[[i]]$ci     <- opaconf$ci
 ##		fit$conf[[i]]$sides  <- opaconf$conf.blives.sides
-		fit$conf[[i]]$unrel <- opaconf$unrel
+		fit$conf[[i]]$blife.pts <- opaconf$blife.pts
 		ret <- NULL
 	
 	if(any(c("weibull3p", "lognormal3p") %in% tolower(fit$options$dist))) {
