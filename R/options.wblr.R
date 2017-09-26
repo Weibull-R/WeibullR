@@ -56,8 +56,8 @@ options.wblr<- function(...){
             ylim=NULL,
             xlab="Time To Failure",
             ylab="Unreliability [%]",
-            log="x", # maybe this should be removed in favor of "canvas"
-            #canvas="weibull",
+            log="x", # this is indeed a graphic option, must remain, but discouraged from use
+            canvas="weibull",
             coordinate.text.size=0.7,
             signif=4,
             pch=1,

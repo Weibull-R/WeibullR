@@ -47,32 +47,33 @@ wblr.conf <- function(x,...){
 
 ## calculateSingleConf is now inserted here
     # fit is a single fit
+	
+## validation of the ... arguments
     arg <- list(...)
 	if(!is.null(arg$method.conf.blives)) {
 		warning("method.conf.blives has been depreciated in favor of method.conf")
 		arg$method.conf<-arg$method.conf.blives
 		arg<-modifyList(arg, list(method.conf.blives=NULL))
 	}
-
-
-	if(is.null(fit$options$dist)) {
-		stop("missing a fit distribution")
-	}else{ 
-	##perhaps test for valid fit distribution?? (How could this be wrong at this point?) 
-	}
+	if(!is.null(c(arg$log,arg$canvas))) stop("cannot set log or canvas option in wblr.conf")
+	if(!is.null(arg$dist)) stop("cannot set the fit distribution in wblr.conf")
+	
+## tests for valid confidence calculations in args should be made here	
+	
 		
-	if(!is.null(fit$options))  {
+#	if(!is.null(fit$options))  {
+## it should be okay if fit$options is null anyway
 		opafit <- modifyList(opadata,fit$options)
-	}
+#	}
 	opaconf <- modifyList(opafit,arg)
 	
+
+DescriptiveQuantiles<-function(dqlabel)  {
 ## Descriptive quantiles are the percentile positions at which points on the curved bounds are 
 ## calculated, so that a smoothed curve can be plotted by linear interpolation.
 ## This function will return a vector of quantiles based on a named set that can be stored 
 ##  in the options.wblr list. This is helpful for comparison with other software.
 ## It is expected that this function will most often be called by its aleas, DQ.
-
-DescriptiveQuantiles<-function(dqlabel)  {
 
 	if(tolower(dqlabel)=="minitab") {
 	## these descriptive quantiles match Minitab unchangeable defaults (27 values)

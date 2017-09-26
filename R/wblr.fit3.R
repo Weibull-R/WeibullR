@@ -28,48 +28,25 @@ wblr.fit <- function(x, modify.by.t0=FALSE,...){
 	if(!class(x)=="wblr"){
 		stop("\"x\" argument is not of class \"wblr\".")
 	}
-	
-
-## all of the validation code here has little significance as nothing is done with opa anyway
-    supported_dist <- c(
-        "weibull","weibull2p","weibull3p",
-        "lognormal","lognormal2p","lognormal3p")
-    supported_fit <-  c("rr","mle","mle-rba","mle-unbias")
 
 
-
-	if(!is.null(x$options)){
-		opa <- x$options
-	}else stop("wblr object has no options set.")
-	opa <- modifyList(opa, list(...))
-	if(is.null(opa$dist)){
-			opa$dist <- "weibull2p"
-	}
-	if(!any(tolower(opa$dist) %in% supported_dist)){
-		stop(paste0(opa$dist," is not a supported fit distribution."))
-	}
-	if(!any(tolower(opa$method.fit) %in% supported_fit)){
-		stop(paste0(opa$dist," is not a supported fit method."))
-	}
-
-	
-## this seems to be a nonsense validation
-	if("rr" %in% tolower(opa$method.fit)){
-## it is possible to enter method.fit="rr" and accept this default
-## although the current default for method.fit is already c("rr","xony")
-		if(!any(c("xony","yonx") %in% tolower(opa$method.fit))){
-				opa$method.fit <- c(opa$method.fit,"xony")
-		}
-	}
-## all above tests and modifications on opa have no meaning because opa has never been propagated
-
-
-
+## okay lets do some realistic validation 
+## It will probably be better to splitfitargs(...) for more comprehensive validations
+	arg <- list(...)
+	if(!is.null(c(arg$log,arg$canvas))) stop("cannot set log or canvas option in wblr.fit")
 	
 	if(!is.null(x$data$dlines)) {
-		if("rr" %in% tolower(opa$method.fit)){
-			stop("rank regression is not performed on interval data, use mle")
+	if(!is.null(arg$method.fit)) {
+		if("rr" %in% tolower(arg$method.fit)){
+## The user tried to set the method fit to rank regression with intervals in data
+## so hard stop here, should be a very rare occurence
+			stop("rank regression is not performed on interval data, use an mle fit")
 		}
+	}
+	}
+## silently correct a possible R user error	
+	if(!is.null(arg$dist)) {
+	if(arg$dist=="lnorm") arg$dist<-"lognormal"
 	}
 
 ## actually it is not necessary to have a call to such an enclosed function now
@@ -82,8 +59,32 @@ wblr.fit <- function(x, modify.by.t0=FALSE,...){
 ##calculateSingleFit <- function(){
     # x is still the original single wblr object
 	opadata <- x$options
-	opafit <- modifyList(opadata,list(...))
+	opafit <- modifyList(opadata,arg)
 	
+	if(!is.null(x$data$dlines)) {
+		if("rr" %in% tolower(opafit$method.fit)){
+## change from the default should have been called for in the (...), just warn and move on
+			warning("rank regression is not performed on interval data method.fit has been set to mle")
+			opafit$method.fit<-"mle"
+		}
+	}
+		
+## here are Jurgen's original validations, corrected for opafit
+    supported_dist <- c(
+        "weibull","weibull2p","weibull3p",
+        "lognormal","lognormal2p","lognormal3p")
+    supported_fit <-  c("rr","mle","mle-rba","mle-unbias")
+	if(is.null(opafit$dist)){
+			opafit$dist <- "weibull2p"
+	}
+	if(!any(tolower(opafit$dist) %in% supported_dist)){
+		stop(paste0(opafit$dist," is not a supported fit distribution."))
+	}
+	if(!any(tolower(opafit$method.fit) %in% supported_fit)){
+		stop(paste0(opafit$dist," is not a supported fit method."))
+	}	
+	
+		
 	if(modify.by.t0==TRUE) {
 		if(tolower(opafit$dist) %in% c("weibull3p", "lognormal3p")){
 # wipe the fit slate clean for this new wblr object

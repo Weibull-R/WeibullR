@@ -36,9 +36,39 @@ plot.wblr <- function(x,...){
     # +------------------------------------+
     # |  create default options arguments  |
     # +------------------------------------+
-    opa <- x[[1]]$options
-    opa <- modifyList(opa, list(...))
 
+## depreciate use of log option and validate log or canvas entry	
+	arg <- list(...)
+	if(!is.null(arg$log)) {
+		warning("log option is to be depreciated in favor of canvas")
+		#stop("log option is not to be set directly, use canvas") #future validation
+		if(arg$log=="xy" || arg$log=="yx") {
+			arg$canvas<-"lognormal"
+			arg$log<-"xy"  #just in dase "yx" was entered
+		}else{
+			if(arg$log=="x") {
+				arg$canvas<-"weibull"
+			}else{
+				stop("if used, log argument must be \"x\", \"xy\", or \"yx\" ")
+			}
+		}
+	}else{
+		if(!is.null(arg$canvas)) {
+			if(tolower(arg$canvas)=="lognormal") {
+				arg$log<-"xy"
+			}else{
+				arg$log<-"x"
+				if(tolower(arg$canvas)!="weibull") {
+					warning("canvas option not recognized, default \"weibull\" is assumed")
+					arg$canvas<-"weibull"
+				}
+			}
+		}
+	}	
+    opa <- x[[1]]$options
+    opa <- modifyList(opa, arg)
+## use this label to replace ... where it appears below, remembering that this is a list now
+	dotargs<-arg
 
     
     # +--------------------------+
@@ -105,7 +135,8 @@ plot.wblr <- function(x,...){
     plotConfs <- function(wblr){
         #opadata <- modifyList(x$options, arg)
         if(!is.null(wblr$fit)){
-            ret <- lapply(wblr$fit,plotConfsInFit,opadata=wblr$options,...)
+##            ret <- lapply(wblr$fit,plotConfsInFit,opadata=wblr$options,...)
+            ret <- lapply(wblr$fit,plotConfsInFit,opadata=wblr$options,dotargs)
         }else{
             message("plotConfs: This wblr object contains no fits" )
         }
@@ -118,8 +149,8 @@ plot.wblr <- function(x,...){
     plotFits <- function(wblr){
         opadata <- modifyList(wblr$options,list(opa$xlim,opa$ylim))
         if(!is.null(wblr$fit)){
-            ret <- lapply(wblr$fit,plotSingleFit,
-                opadata=opadata,...)
+##            ret <- lapply(wblr$fit,plotSingleFit,opadata=opadata,...)
+            ret <- lapply(wblr$fit,plotSingleFit,opadata=opadata,dotargs)
         }else{
             warning("plotFits: This wblr object contains no fits.")
         }
@@ -133,8 +164,9 @@ plot.wblr <- function(x,...){
         if(opa$is.plot.pp){
 		if(!is.null(x$data)) {
             # TODO: possibly, this does not allow much flexibility in plotting.
-            opadata <- modifyList(x$options,list(...))
-
+##            opadata <- modifyList(x$options,list(...))
+            opadata <- modifyList(x$options,dotargs)
+			
 ##	Removal of threshold option effects, t0 was not used here anyway		
 	
 ## it is poor coding practice to place object assignments inside meaningless conditional test.			 
@@ -332,11 +364,12 @@ seq.log <- function(from,to,base=c(1,2,5)){
    for(i in floor(log10(from)):floor(log10(to)))r <- c(r,base*10^i)
    r[r >= from & r<=to]}
    
-plotSingleConfBound <- function(blc,opafit,...){
+plotSingleConfBound <- function(blc,opafit,dotargs){
     if(!is.null(blc$options)){
         opaconf <- modifyList(opafit,blc$options)
     }else{opaconf <- opafit}
-    opaconf <- modifyList(opaconf,list(...))
+#    opaconf <- modifyList(opaconf,list(...))
+    opaconf <- modifyList(opaconf,dotargs)
     if(opaconf$is.plot.cb){
 	
 ## Entry of t0 here is mearly an artifact from abrem code	
@@ -360,23 +393,24 @@ plotSingleConfBound <- function(blc,opafit,...){
     }
 }
 
-plotConfsInFit <- function(fit,opadata,...){
-    arg <- list(...)
+plotConfsInFit <- function(fit,opadata,dotargs){
+##    arg <- list(...)
     if(!is.null(fit$conf)){
         if(!is.null(fit$options)){
             opafit <- modifyList(opadata,fit$options)
         }else{opafit <- opadata}
-        lapply(fit$conf,plotSingleConfBound,opafit=opafit,...)
+#        lapply(fit$conf,plotSingleConfBound,opafit=opafit,...)
+        lapply(fit$conf,plotSingleConfBound,opafit=opafit,dotargs)
     }
 #    else{if(arg$v >= 1)message(match.call()[[1]],
 #        ": This fit contains no confidence calculations for B-lives.")}
 }
-plotSingleFit <- function(fit,opadata,...){
+plotSingleFit <- function(fit,opadata,dotargs){
     opafit <- opadata
     if(!is.null(fit$options)){
         opafit <- modifyList(opadata,fit$options)
     }
-    opafit <- modifyList(opafit,list(...))
+    opafit <- modifyList(opafit,dotargs)
     if(opafit$is.plot.fit){
 ## removing $threshold influence	
 
