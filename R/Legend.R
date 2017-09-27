@@ -259,11 +259,16 @@ Blifestring <- function(B,blicon,signif,args){
     }
     id <- function(x,y)isTRUE(all.equal(x,y))
     c1 <- is.null(blicon$bounds) || is.null(blicon$bounds$Lower)
-    if(!c1) lo <- si(subset(blicon$bounds,
-        sapply(blicon$bounds$unrel,id,B),Lower))
+## use of subset with select argument upon check --as-cran 
+##  causes Note: 'no visible binding for global variable'
+##  for the Lower and Upper column names 
+#    if(!c1) lo <- si(subset(blicon$bounds,
+#        sapply(blicon$bounds$unrel,id,B),select=Lower))
+    if(!c1) lo <- si(blicon$bounds[
+        sapply(blicon$bounds$unrel,id,B),which(colnames(blicon$bounds)=="Lower")])	
     c2 <- is.null(blicon$bounds) || is.null(blicon$bounds$Upper)
-    if(!c2) up <- si(subset(blicon$bounds,
-        sapply(blicon$bounds$unrel,id,B),Upper))
+    if(!c2) up <- si(blicon$bounds[
+        sapply(blicon$bounds$unrel,id,B),which(colnames(blicon$bounds)=="Upper")])
     ret <- paste(sep = "","    B",signif(100*B)," = ",
         ifelse(c1,
            "NA",lo),

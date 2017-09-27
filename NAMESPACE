@@ -1,10 +1,12 @@
 useDynLib(WeibullR, .registration = TRUE)
 importFrom(Rcpp, evalCpp)
 importFrom("graphics", "abline", "axis", "curve", "legend", "lines",
-		 "par", "plot.default", "points", "title")
+		 "par", "plot", "plot.default", "points", "segments",
+		 "title")
 importFrom("stats", "approxfun", "coef", "cor", "lm", "na.omit",
 		 "pexp", "plnorm", "pweibull", "qbeta", "qexp", "qlnorm",
-		 "quantile", "qweibull", "rweibull")
+		 "qnorm", "quantile", "qweibull", "rweibull", "optimHess",
+		 "sd", "var")
 importFrom("utils", "modifyList")
 importFrom("plyr", "ddply", "numcolwise")
 

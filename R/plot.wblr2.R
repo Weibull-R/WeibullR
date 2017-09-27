@@ -422,7 +422,7 @@ plotSingleFit <- function(fit,opadata,dotargs){
 		
         if(!is.null(fit$beta) && !is.null(fit$eta)){
 # One routine suits all . . .
-
+			x <- NULL; rm(x); # Dummy to trick R CMD check
                 cret <- curve(p2y(pweibull(x-tz,
                     fit$beta,fit$eta),opafit$log),
                     add=TRUE,n=1001,
@@ -448,6 +448,7 @@ plotSingleFit <- function(fit,opadata,dotargs){
             ### lognormal ###
 ##            if(opafit$verbosity >= 1)message(
 ##                "plotSingleFit: Adding Lognormal fit ...")
+			x <- NULL; rm(x); # Dummy to trick R CMD check 
             curve(p2y(plnorm(x-tz,fit$meanlog,fit$sdlog),opafit$log),
                 add=TRUE,
                 col=opafit$col,lwd=opafit$lwd,lty=opafit$lty,
@@ -459,7 +460,8 @@ plotSingleFit <- function(fit,opadata,dotargs){
             ### exponential ###
 ##            if(opafit$verbosity >= 1)message(
 ##                "plotSingleFit: Adding Exponential fit ...")
-            curve(p2y(pexp(x+t0,fit$rate),opafit$log),add=TRUE,
+			x <- NULL; rm(x); # Dummy to trick R CMD check 
+            curve(p2y(pexp(x+tz,fit$rate),opafit$log),add=TRUE,
                 col=opafit$col,lwd=opafit$lwd,lty=opafit$lty,
                 xlim=getPlotRangeX(opafit$log),
                 log=opafit$log)
