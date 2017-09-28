@@ -5,6 +5,7 @@ struct AbPval{
 	double Pval,CCC2;
 };
 
+
 #ifdef __cplusplus
 
 #include <RcppArmadillo.h>
@@ -34,6 +35,9 @@ RcppExport SEXP CallgetPvalue(SEXP arg1, SEXP arg2, SEXP arg3);
 extern "C" double getCCC2( int F, int model);
 extern "C" struct AbPval getPvalue(int F, double R2, int model);
 // end abremPivotals
+
+
+RcppExport  void R_init_WeibullR(DllInfo* info);
 
 #endif
 #endif

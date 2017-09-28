@@ -30,7 +30,7 @@ Returns a dataframe of the life[time] data in columns named 'left', 'right', and
 }
 
 \references{
-  Dr. Robert B. Abernethy, (2008) "The New Weibull Handbook, Fifth Edition" 
+  Robert B. Abernethy, (2008) "The New Weibull Handbook, Fifth Edition" 
 }
 
 \examples{

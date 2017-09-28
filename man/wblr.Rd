@@ -1,25 +1,31 @@
 \name{wblr}
 \alias{wblr}
-%- Also NEED an '\alias' for EACH other topic documented here.
+
 \title{
-    Create an \code{wblr} Object for Lifetime and Reliability Analysis
+    Create a \code{wblr} Object for Life Data Analysis
 }
 \description{
     This function creates an object of class \code{"wblr"} for further processing
     by the other functions of \pkg{wblr}.
 }
-\usage{wblr(x,\dots)}
+\usage{wblr(x, s=NULL, interval=NULL,\dots)}
 \arguments{
     \item{x}{
         Either a dataframe containing at least \code{$time} and \code{$event}
         columns, or a vector of class \code{"numeric"} or \code{"integer"} with
         (life-)time observations.
-        
-        See section "Details" for other data passing arguments.
-    }
+	}
+	\item{s}{
+		An optional vector of right-censored data, or suspensions. 
+	}
+	\item{interval}{
+		An optional dataframe of interval data having columns specifically named "left" and "right". 
+		Left values are the last time at which no failure was evident and may be zero for discovery.
+		Right values are the earliest time at which failure was observed.
+	}
     \item{\dots}{
-        Graphical options for plotting the \code{wblr} object; see section "Details".
-        %% Extend this with "type" for type of censoring
+        Graphical options for plotting the \code{wblr} object.
+        See section "Details" for other data passing arguments.
     }
 }
 \details{
@@ -56,7 +62,7 @@
     \code{wblr} always generates (probability) plot positions for graphically
     displaying the (life-)time observations and for (possible) later usage
     by \code{\link{wblr.fit}}. The type of plot positions is
-    controlled with the \code{\link{pp}} argument.
+    controlled with the \code{pp} argument.
     See \code{\link{options.wblr}} for more details.
 
     Additionally, one can supply any options available from \code{options.wblr},
@@ -83,7 +89,7 @@
             %% add support for factors
         }
         \item{\code{$rank. \dots }}{
-            Depending on the argument \code{\link{pp}} (either passed as
+            Depending on the argument \code{pp} (either passed as
             an argument or taken from \code{options.wblr}), a vector
             of class \code{"numeric"} with exact median ranks
             (\code{$rank.median}) or Benard's approximate median ranks
@@ -128,6 +134,8 @@ da3 <- wblr(fail=c(500,1200,900,1300,510),
     event=c(1,1,1,0,0),label="censored dataset",pch=1,col="blue")
 
 ## plot datasets ##
+\dontrun{
 plot.wblr(list(da1,da3))
-%plot.wblr(list(da1,da2,da3))
+}
+
 }

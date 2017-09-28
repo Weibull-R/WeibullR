@@ -4,13 +4,11 @@
 
 \title{Add Confidence to \code{wblr} Objects}
 \description{
-    This function adds confidence calculations to
-    various entities in \code{wblr} objects.
+    This function adds confidence calculations to the last fit entity in a \code{wblr} object.
 }
-\usage{wblr.conf(x,which="all",\dots)}
+\usage{wblr.conf(x,\dots)}
 \arguments{
     \item{x}{Object of class \code{"wblr"}.}
-    \item{which}{Calculate which fit in the \code{wblr} object will be processed.}
     \item{\dots}{Options for calculating confidence, and for plotting the results.}
 }
 \details{
@@ -21,57 +19,25 @@
     Additional options for calculating B-life confidence are passed with:
 
     \describe{
-        \item{\code{cl}}{
-            Confidence level: A single number from the interval \code{[0,[1}
-            specifying the confidence level for various confidence calculations.
+        \item{\code{ci}}{
+            Confidence interval: A single number from the interval \code{[0,[1}
+            specifying the double-sided confidence for various confidence calculations.
 
             Defaults to \code{0.9}.
         }
-        \item{\code{conf.blives.sides}}{
-            Either \code{"lower"}, \code{"upper"} or \code{"double"},
-            specifying the type of bound(s) to be calculated.
 
-            Defaults to \code{c("double")}, the other options are currently
-            not implemented.
-        }
-        \item{\code{unrel.n}}{
-            An integer controlling the amount of unreliability levels for
-            which B-life confidence bounds are calculated and ultimately plotted.
-            
-            Higher numbers will result in smoother confidence bounds. In any
-            case, confidence intervals will be calculated for:
-            \itemize{
-                \item the B-lives at unreliability levels specified with option \code{\link{unrel}}
-                \item the B-life at \code{50 [\%]} unreliability
-                \item the B-life at the calculcate characteristic life
-                    or logmean (depending on the fitted distribution)
-            }
-            
-            Note: When plotting fits and confidence bounds that are adjusted with
-            a threshold (see option \code{"threshold"}), it is often the case that
-            the bounds appear to be cut of on the left. This can be countered by 
-            dramatically increasing \code{unrel.n}, resulting in confidence
-            bounds that extend to the edge of the plotting area.
-
-            Defaults to \code{25}.
-        }
-        \item{\code{conf.what}}{
-            A vector of class \code{"character"} describing for which entities
-            that confidence should be calculated.
-
-            Defaults to \code{c("blives")}, the only type currently supported.
-        }
-        \item{\code{unrel}}{
+        \item{\code{blife.pts}}{
             An unordered numeric vector with unreliability levels for which
             B-life confidence will be calculated.
 
             Defaults to \code{c(0.1,0.05,0.01)}.
         }
 
-        \item{\code{method.conf.blives}}{
+        \item{\code{method.conf}}{
             A vector of class \code{"character"} describing the technique to be
-            used for calculating confidence for B-lives. Possible values are
+            used for calculating confidence intervals. Possible values are
             \code{"bbb"} (Beta Binomial confidence bounds),
+			\code{"fm"}  (Fisher Matrix confidence bounds),
             \code{"lrb"} (Likelihood Ratio confidence bounds) and
             \code{"mcpivotals"} or \code{"mcpivotal"} (Monte Carlo Pivotal
             confidence bounds).
@@ -97,11 +63,6 @@
         \item{\code{in.legend}}{
             Logical value controlling the inclusion of confidence calculation
             results in the legend. 
-            
-            If \code{in.legend=FALSE} is passed ,
-            the resulting confidence calculations will be omitted from the legend.
-            
-            Defaults to \code{TRUE}.
         }
     }
 

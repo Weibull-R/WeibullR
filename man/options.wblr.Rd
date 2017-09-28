@@ -1,56 +1,12 @@
 \name{options.wblr}
 \alias{options.wblr}
-\alias{cex.points}
-\alias{cl}
-\alias{col}
-\alias{col.grid}
-\alias{conf.blives.sides}
-\alias{conf.what}
-\alias{coordinate.text.size}
-\alias{dist}
-\alias{in.legend}
-\alias{in.legend.blives}
-\alias{in.legend.gof}
-\alias{is.plot.cb}
-\alias{is.plot.fit}
-\alias{is.plot.grid}
-\alias{is.plot.legend}
-\alias{is.plot.pp}
-\alias{is.plot.ppcoordinates}
-\alias{label}
-\alias{legend.text.size}
-\alias{log}
-\alias{lty}
-\alias{lwd}
-\alias{lwd.points}
-\alias{main}
-\alias{main.contour}
-\alias{mar}
-\alias{method.conf.blives}
-\alias{method.fit}
-\alias{pch}
-\alias{persistent}
-\alias{pivotals}
-\alias{pp}
-\alias{S}
-\alias{signif}
-\alias{sub}
-\alias{threshold}
-\alias{unrel}
-\alias{unrel.n}
-\alias{verbosity}
-\alias{xlab}
-\alias{xlim}
-\alias{ylab}
-\alias{ylim}
 
-%- Also NEED an '\alias' for EACH other topic documented here.
 \title{
-    \pkg{wblr} Options
+    Options for wblr Objects
 }
 \description{
     This function handles the various calculation, printing and plotting options
-    of the \pkg{wblr} package.
+    for wblr objects.
 }
 \usage{options.wblr(\dots)}
 \arguments{
@@ -75,8 +31,8 @@
 
         Returns the current value of an option.
 
-        \code{options.wblr(cl=0.95) }
-        \code{options.wblr(list(cl=0.95,S=5e4))}
+        \code{options.wblr(ci=0.95) }
+        \code{options.wblr(list(ci=0.95,S=5e4))}
 
         Sets the specified options.
 
@@ -102,9 +58,9 @@
 
             Defaults to \code{1}.
         }
-        \item{\code{cl}}{
-            Confidence level: A single number from the interval \code{[0,[1}
-            specifying the confidence level for various confidence calculations.
+        \item{\code{ci}}{
+            Confidence interval: A single number from the interval \code{[0,[1}
+            specifying the double-sided confidence for various confidence calculations.
 
             Defaults to \code{0.9}.
         }
@@ -120,18 +76,7 @@
 
             Defaults to \code{"gray"}.
         }
-        \item{\code{conf.blives.sides}}{
-            Either \code{"lower"},  \code{"upper"} or \code{"double"},
-            specifying the type of bound(s) to be calculated.
 
-            Defaults to \code{c("double")}.
-        }
-        \item{\code{conf.what}}{
-            A vector of class \code{"character"} describing for which entities
-            that confidence should be calculated.
-
-            Defaults to \code{c("blives")}.
-        }
         \item{\code{coordinate.text.size}}{
             A number determining the relative coordinate text label size.
 
@@ -151,7 +96,7 @@
             Defaults to \code{TRUE}.
         }
         \item{\code{in.legend.blives}}{
-            Logical value controlling the inclusion of B-life confidence bounds
+            Logical value controlling the inclusion of B-life levels
             in the legend.
 
             Defaults to \code{TRUE}.
@@ -191,12 +136,7 @@
 
             Defaults to \code{TRUE}.
         }
-%%        \item{\code{is.plot.ppvalues}}{
-%%            Logical value controlling the plotting of the text labels
-%%            (the coordinates on the plot) next to the plot positions.
-%%
-%%            Defaults to \code{FALSE}.
-%%        }
+
         \item{\code{label}}{
             A character string with the title of the legend box, can be used to
             label a dataset or fit.
@@ -208,15 +148,9 @@
 
             Defaults to \code{0.7}.
         }
-        \item{\code{log}}{
+        \item{\code{canvas}}{
             A character string describing the type of plotting canvas to use.
-            Possible values are \code{"x"} (Weibull canvas), \code{"xy"}
-            (Lognormal canvas), \code{""} (Weibull Y axis, linear X axis)
-            and \code{"y"} (Lognormal Y axis, linear X axis).
-
-
-            Defaults to \code{"x"}, Weibull canvas.
-            For contour plots, \code{log} is always \code{""} and cannot be set.
+            Only \code{"weibull"} (default), and \code{"lognormal"} are implemented.
         }
         \item{\code{lty}}{
             An integer describing the line type of both the fitted
@@ -249,18 +183,20 @@
 
             Defaults to \code{c(5.1,4.1,5.1,2.1)}.
         }
-        \item{\code{method.conf.blives}}{
+        \item{\code{method.conf}}{
             A vector of class \code{"character"} describing the techniques used
-            for calculating confidence for B-lives.
+            for calculating confidence interval bounds.
             See \code{\link{wblr.conf}} for in-depth discussion of the settings.
 
-            Defaults to \code{c("mcpivotals")}.
+            Defaults to \code{"mcpivotals"} for rank regression fitted models, 
+			but will be silently changed to \code{"fm"} for mle fitted models.
         }
         \item{\code{method.fit}}{
             A vector of class \code{"character"} with fitting options.
             See \code{\link{wblr.fit}} for in-depth discussion of the settings.
 
-            Defaults to \code{c("rr","xony")}.
+            Defaults to \code{c("rr","xony")}, but will be silently changed
+			to \code{"mle"} when input data includes intervals.
         }
         \item{\code{pch}}{
             An integer or single character describing the plotting symbol, used for
@@ -269,27 +205,16 @@
 
             Defaults to \code{1}.
         }
-        \item{\code{persistent}}{
-            Experimental parameter, do not use.
 
-            Defaults to \code{TRUE}.
-        }
-        \item{\code{pivotals}}{
-            Currently unused. Defaults to \code{FALSE}.
-        }
         \item{\code{pp}}{
             \code{pp} is short for "probability plot positions", it is a vector of
-            class \code{"character"} describing the type of plot positions to be
-            calculated.
+            class \code{"character"} describing the method of determining plot positions.
             Possible values are \code{"median"} (exact median plot postions
             calculated using the Incomplete Beta function) and  \code{"benard"}
             (a good approximation to the median plot positions). Both options
             can be supplied at the same time but currently, only the first
             element in the \code{pp} vector will be used for
             further fitting by \code{\link{wblr.fit}}
-
-            Currently, there are no plans to implement
-            \code{"hazen"} and \code{"mean"} plotting positions.
 
             Defaults to \code{c("median")}.
         }
@@ -313,46 +238,13 @@
 
             Defaults to \code{""}.
         }
-        \item{\code{threshold}}{
-            A logical value specifying whether a threshold time value should be
-            substracted from the graphical elements before plotting. This is
-            particulary useful when fitting three parameter models like
-            \code{weibull3p}, where the third model parameter is a threshold value.
-
-            If \code{TRUE}, the software will subtract the threshold value
-            (that is to be calculated by \code{wblr.fit}) from its
-            associated graphical
-            elements like plot poistions, fits and confidence bounds.
-
-            If a numeric value is passed, the software will subtract this value
-            from the appropriate graphical elements.
-
-            Note: currently, \code{"threshold"} should only be used in combination with
-            \code{wblr} and \code{wblr.fit} and not with
-            \code{plot.wblr}. See \code{wblr.fit} for more info.
-
-
-            Defaults to \code{FALSE}
-        }
-        \item{\code{unrel}}{
+        \item{\code{blife.pts}}{
             An unordered numeric vector with unreliability levels for which
-            B-life confidence will be calculated.
+            B-life values will be presented.
 
             Defaults to \code{c(0.1,0.05,0.01)}.
         }
-        \item{\code{unrel.n}}{
-            An integer controlling the amount of unreliability levels for
-            which confidence bounds are calculated and ultimately plotted.
-            See \code{\link{wblr.conf}} for more details.
 
-            Defaults to \code{25}
-        }
-        \item{\code{verbosity}}{
-            An integer from \code{c(1,2,3)} setting the level of verbosity of
-            all \pkg{wblr} functions. Use this for debugging.
-
-            Defaults to \code{1}.
-        }
         \item{\code{xlab}, \code{ylab}}{
             Character strings with the labels for the X and Y axis.
 
@@ -387,7 +279,7 @@
 
 \value{
    Executing \code{options.wblr} without arguments returns a named list
-   containing the currently active global options of the \pkg{wblr} package.
+   containing the currently active global options of the \code{wblr} object.
 
    When arguments were supplied, these are returned in a named list.
 }
@@ -412,27 +304,13 @@
     any previously inherited color settings from \code{\link{wblr.fit}}
     or \code{\link{wblr}}.
 }
-\section{To Do}{
-    \itemize{
-        \item Add the possibility to reset to the default values.
-        \item Implement returning of the pivotals dataframe in the
-            \code{wblr} object.
-        \item Add detection of unsupported arguments.
-    }
-}
-\seealso{
-%% ~~objects to See Also as \code{\link{help}}, ~~~
-    \code{\link{wblr}},
-    \code{\link{wblr.fit}},
-    \code{\link{wblr.conf}},
-    \code{\link{plot.wblr}}
-}
+
 \examples{
 ## backup options ##
 wblr.defaults <- options.wblr()
 
 ## setting new options ##
-options.wblr(S=5e5,cl=0.99)
+options.wblr(S=5e5,ci=0.99)
 %%options.wblr(sub="Testing options.wblr()")
 
 ## listing options ##

@@ -31,7 +31,7 @@ options.wblr<- function(...){
         # if the globally accessible variable was not defined yet, then
         # create it here with default values OR reset to default values
         # message ("Resetting Weibull-R options to default values...")
-        options_wblr <<- list(
+        options_wblr <- list(
             dist="weibull",
             method.fit=c("rr","xony"),
 ##            conf.what="blives",
@@ -56,8 +56,8 @@ options.wblr<- function(...){
             ylim=NULL,
             xlab="Time To Failure",
             ylab="Unreliability [%]",
-            log="x", # maybe this should be removed in favor of "canvas"
-            #canvas="weibull",
+            log="x", # this is indeed a graphic option, must remain, but discouraged from use
+            canvas="weibull",
             coordinate.text.size=0.7,
             signif=4,
             pch=1,
@@ -106,12 +106,12 @@ options.wblr<- function(...){
     }
     value <- args
     if(options_wblr$persistent){
-        options_wblr <<-modifyList(options_wblr, value)
+        options_wblr <-modifyList(options_wblr, value)
     }
     if(!is.null(args$persistent)){
         value <- args
         if(args$persistent){
-            options_wblr <<-modifyList(options_wblr, value)
+            options_wblr <-modifyList(options_wblr, value)
         }
     }
     # make the options stick between calls of options.wblr()

@@ -35,9 +35,9 @@ FMbounds<-function(x, dist="weibull", CI=.95, unrel=NULL, debias=NULL, show=FALS
 		yp<-log(log(1/(1-dq)))
 ## bounds should be rotated according to possible debias of beta (shape)
 ## usage rba(Qx, dist="weibull", basis="median")
-		if(debias=="rba") shape<- shape*rba(Qx,dist="weibull")
+		if(!is.null(debias) && debias=="rba") shape<- shape*rba(Qx,dist="weibull")
 ## usage hrbu(Qx,Qs=NULL)
-		if(debias=="hrbu") shape<- shape*hrbu(Qx,Qs)
+		if(!is.null(debias) && debias=="hrbu") shape<- shape*hrbu(Qx,Qs)
 		xp<-scale*(log(1/(1-dq)))^(1/shape)
 		Vt<-V[2,2]/scale^2+yp^2*V[1,1]/shape^4-2*yp*V[1,2]/(shape^2*scale)
 		Lb<-log(scale)+yp/shape-K*sqrt(Vt)
@@ -58,7 +58,7 @@ FMbounds<-function(x, dist="weibull", CI=.95, unrel=NULL, debias=NULL, show=FALS
 			yp<-qnorm(dq,0,1)
 			Vt<-V[1,1] + yp^2*V[2,2] + 2*yp*V[1,2]
 ## bounds are now rotated according to possible debias of sdlog
-			if(debias=="rba"){
+			if(!is.null(debias) && debias=="rba"){
 				sdlog<-sdlog*rba(Qx, dist="lognormal")
 			}			
 			lnxp<-yp*sdlog+meanlog

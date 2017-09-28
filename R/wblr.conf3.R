@@ -47,36 +47,64 @@ wblr.conf <- function(x,...){
 
 ## calculateSingleConf is now inserted here
     # fit is a single fit
+	
+## validation of the ... arguments
     arg <- list(...)
 	if(!is.null(arg$method.conf.blives)) {
 		warning("method.conf.blives has been depreciated in favor of method.conf")
 		arg$method.conf<-arg$method.conf.blives
 		arg<-modifyList(arg, list(method.conf.blives=NULL))
 	}
-
-
-	if(is.null(fit$options$dist)) {
-		stop("missing a fit distribution")
-	}else{ 
-	##perhaps test for valid fit distribution?? (How could this be wrong at this point?) 
-	}
+	if(!is.null(c(arg$log,arg$canvas))) stop("cannot set log or canvas option in wblr.conf")
+	if(!is.null(arg$dist)) stop("cannot set the fit distribution in wblr.conf")
+	
+## tests for valid confidence calculations in args should be made here	
+	
 		
-	if(!is.null(fit$options))  {
+#	if(!is.null(fit$options))  {
+## it should be okay if fit$options is null anyway
 		opafit <- modifyList(opadata,fit$options)
-	}
+#	}
 	opaconf <- modifyList(opafit,arg)
+	
 
-## prepare the descriptive quantiles  -  0.5 and F0(0) are pivot points for pivotal corrections			
-#	unrel <- c(F0(seq(F0inv(1e-3), F0inv(0.999),length.out=25)),
-#				opaconf$unrel, 0.5, F0(0))
+DescriptiveQuantiles<-function(dqlabel)  {
+## Descriptive quantiles are the percentile positions at which points on the curved bounds are 
+## calculated, so that a smoothed curve can be plotted by linear interpolation.
+## This function will return a vector of quantiles based on a named set that can be stored 
+##  in the options.wblr list. This is helpful for comparison with other software.
+## It is expected that this function will most often be called by its aleas, DQ.
 
-	unrel <- c(DQ(opaconf$dq),opaconf$blife.pts, 0.5, 1-exp(-exp(0)))
+	if(tolower(dqlabel)=="minitab") {
+	## these descriptive quantiles match Minitab unchangeable defaults (27 values)
+		dq<-c(seq(.01,.09,by=.01),seq(.10,.90,by=.10),seq(.91,.99, by=.01))
+	}
+	
+	if(tolower(dqlabel)=="supersmith") {
+		## descriptive quantiles for comparison with SuperSMITH (limit of 15 values)	
+		dq<-c(.01, .02, .05, .10, .15, .20, .30, .40, .50,  .60, .70, .80, .90, .95, .99)
+	}
+	
+	if(tolower(dqlabel)=="abrem")  {
+	## this is the original default by Jurgen Symynck for package abrem
+	## it produces 25 evenly spaced points across the y limits of a weibull canvas, including ends
+	#F0(seq(F0inv(1e-3), F0inv(0.999),length.out=25))
+	dq<-1-exp(-exp(seq(log(qweibull((1e-3),1,1)), log(qweibull((0.999),1,1)),length.out=25)))	
+	}
+	
+	dq
+}
+
+DQ<-DescriptiveQuantiles	
+
+## prepare the descriptive quantiles  -  0.5 and F0(0) are pivot points for pivotal corrections	
+	lodq<-1-exp(-exp(log(qweibull((1e-3),1,1))))
+	hidq<-1-exp(-exp(log(qweibull((.999),1,1))))
+	unrel <- c(DQ(opaconf$dq),opaconf$blife.pts, 0.5, 1-exp(-exp(0)),lodq,hidq)
 
 	unrel <- unique(signif(unrel[order(unrel)]))
-		# signif() has been used to eliminate
-		# any identical looking descriptive
-		# quantiles that differ only at place far
-		# from the decimal point
+		# signif() has been used to eliminate any identical looking descriptive
+		# quantiles that differ only at place far from the decimal point
 		
 ## prepare the list objects
 	if(is.null(fit$conf)){
@@ -336,10 +364,9 @@ wblr.conf <- function(x,...){
 										
 	}  ## end mcpivotals
 
-
-	if("fmbounds" %in% tolower(opaconf$method.conf)){
+	if(any(c("fm","fmbounds") %in% tolower(opaconf$method.conf))) {
 		fit$conf[[i]]        <- list()
-		fit$conf[[i]]$type   <- "fmbounds"
+		fit$conf[[i]]$type   <- "fm"
 		fit$conf[[i]]$ci     <- opaconf$ci
 ##		fit$conf[[i]]$sides  <- opaconf$conf.blives.sides
 		fit$conf[[i]]$blife.pts <- opaconf$blife.pts

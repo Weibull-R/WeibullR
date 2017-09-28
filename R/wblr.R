@@ -21,14 +21,51 @@
 #
 
 wblr<-function(x, s=NULL, interval=NULL,...) {			
-arg <- splitargs(...)			
-## arg$opa includes options.wblr list items for update			
-opa <- modifyList(options.wblr(), arg$opa)			
-## arg$rem holds any remaining argument names			
+arg <- splitargs(...)
+## arg$opa includes options.wblr list items for update
+## arg$rem holds any remaining argument names
+### need to split out opa$dat, modified by arg$dat to set data instead of using all modified arg$opa
+## depreciate use of log option and validate log or canvas entry	
+	if(!is.null(arg$opa$log)) {
+		warning("log option is to be depreciated in favor of canvas")
+		#stop("log option is not to be set directly, use canvas") #future hard stop validation
+		if(arg$opa$log=="xy" || arg$opa$log=="yx") {
+			arg$opa$canvas<-"lognormal"
+			arg$opa$log<-"xy"  #just in case "yx" was entered
+		}else{
+			if(arg$opa$log=="x") {
+				arg$opa$canvas<-"weibull"
+			}else{
+				stop("if used, log argument must be \"x\", \"xy\", or \"yx\" ")
+			}
+		}
+	}else{
+		if(!is.null(arg$opa$canvas)) {
+			if(tolower(arg$opa$canvas)=="lognormal") {
+				arg$opa$log<-"xy"
+				arg$opa$canvas<-"lognormal"
+			}else{
+				arg$opa$log<-"x"
+				if(tolower(arg$opa$canvas)!="weibull") {
+					warning("canvas option not recognized, default \"weibull\" is assumed")
+					arg$opa$canvas<-"weibull"	
+				}
+			}
+		}
+	}			
+
+##############################################################
+## it is necessary to process the input data using arg$opa$pp 
+## to permit method.fit and method.conf validations in arg$opa
+##############################################################
+## additional features yet to be implemented could include 
+## handling of ties and rank adjustment method (i.e. "johnson" or "kmestimator")	
+opa <- modifyList(options.wblr(), arg$opa)		
 			
 			
+## arg$rem holds any remaining argument names 			
 # for now, if x exists it will be assumed that it is either a vector of exact failure times, 			
-# or a time/event dataframe. This argument will be validated in mleframe.			
+# or a time/event dataframe. The time/event df will be further validated in mleframe.			
 			
 if(!missing(x)){			
 	ti <- c(arg$rem$time,arg$rem$fail)		

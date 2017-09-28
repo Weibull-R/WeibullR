@@ -49,11 +49,11 @@ David J. Silkworth <djsilk@openreliability.org>
             Machine Manufacturing Technology, Stefan cel Mare University of
             Suceava, 2011).
 
-            Available on
-\url{http://www.fim.usv.ro/conf_1/tehnomusjournal/pagini/journal2011/files/7.pdf}
+%            Available on
+%\url{http://www.fim.usv.ro/conf_1/tehnomusjournal/pagini/journal2011/files/7.pdf}
 %and \url{http://mechanics.kahosl.be/fatimat/index.php/downloads-and-information/40/198}.
         
-        \item \url{http://sourceforge.net/projects/weibulltoolkit/}
+%        \item \url{http://sourceforge.net/projects/weibulltoolkit/}
     }
 }
 

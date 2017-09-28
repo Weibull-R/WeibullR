@@ -1,11 +1,11 @@
 Package: WeibullR
 Title: Weibull-R: Weibull Analysis on R
-Version: 0.0.19
-Date: 2017-09-24
+Version: 0.0.20
+Date: 2017-09-28
 Author: David Silkworth, Jurgen Symynck
 Maintainer: Jacob T. Ormerod <jake@openreliability.org>
 Description: Life data analysis in the graphical tradition of Waloddi Weibull.
-License: GPL (>= 3)
+License: GPL (>=3)
 LazyLoad: yes
 Depends: plyr
 Imports: Rcpp (>= 0.11.1)
