@@ -27,7 +27,7 @@ Returns a dataframe with the failure data (as potentially reduced by ties argume
 }
 
 \references{
-  Dr. Robert B. Abernethy, (2008) "The New Weibull Handbook, Fifth Edition"
+  Robert B. Abernethy, (2008) "The New Weibull Handbook, Fifth Edition"
   Leonard C. Johnson (1964) "The Statistical Treatment of Fatigue Experiments"  
 }
 

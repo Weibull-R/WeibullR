@@ -37,7 +37,7 @@ Returns an appropriate object for the input R2 and CI values.  There are 8 outpu
 }
 
 \references{
-  Dr. Robert B. Abernethy, (2008) "The New Weibull Handbook, Fifth Edition"
+  Robert B. Abernethy, (2008) "The New Weibull Handbook, Fifth Edition"
   Jerald F. Lawless, (2003) "Statistical Models and Methods for Lifelime Data, Second Edition" 
   John I. McCool, (2012) "Using the Weibull Distribution: Reliability, Modeling and Inference"
 }

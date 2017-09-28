@@ -7,14 +7,18 @@
 \description{
    This function fits probability distributions to \code{wblr} objects.
 }
-\usage{wblr.fit(x,\dots)}
+\usage{wblr.fit(x, modify.by.t0=FALSE, \dots)}
 \arguments{
     \item{x}{
         Object of class \code{"wblr"}.
     }
-    \item{\dots}{
-        Options for fitting the (life-)time observations,
-        and for plotting the results.
+	\item{modify.by.t0}{
+		A logical value to signifying whether to revise object data by subtraction of the "t0" (translation) parameter of a 3-parameter fit.
+		A value of TRUE generates a linearized view of the fit on its base distribution canvas. It is recommended that
+		the resulting object have an altered name perhaps adding a ".3p" suffix to the original wblr object to preserve original data.
+	}
+	\item{\dots}{
+        Options for fitting the (life-)time observations, and for plotting the results.
     }
 }
 \details{
@@ -28,18 +32,10 @@
     \describe{
         \item{\code{dist}}{
             A character string with the target distribution for fitting.
-            Possible values are \code{"weibull"} or \code{"weibull2p"},
+            Possible values are \code{"weibull"}, \code{"weibull2p"},
             \code{"weibull3p"} (three parameter Weibull), \code{"lognormal"}
-            or \code{"lognormal2p"}.
-
-            %Currently, some unsupported values can be passed:
-            %\code{"weibull-2"},
-            %\code{"weibull2p-2"},
-            %\code{"lognormal-2"} and
-            %\code{"lognormal2p-2"}. These differentiate between R-based
-            %and C++ based implementations of the rank regression code. Check
-            %the code of function \code{\link{calculateSingleFit}} for implementation details.
-            
+            , \code{"lognormal"}or \code{"lognormal3p"}.
+           
             Defaults to \code{"weibull"}.
         }
         \item{\code{in.legend}}{
@@ -61,7 +57,7 @@
             \itemize{
                 \item \code{"rr"}: Rank Regression (RR). Depending on the method for
                 calculating probability plot positions chosen during the creation of the
-                \code{wblr} object (see option \code{\link{pp}} and
+                \code{wblr} object (see option \code{pp} and
                 function \code{\link{wblr}}), this can
                 either be "exact median rank regression" or
                 "Benard's approximate median rank regression".
@@ -77,23 +73,13 @@
 
                 \item \code{"mle"}: Maximum Likelihood Estimation (MLE), using
                 many functions of the \pkg{debias} package.
-                
-                % In the legend a suffix to the fit method can sometimes be
-                % observed. This indicates which implementation the software
-                % has usedhas to do with ....
 
-
-                \item \code{"mle-rba"}: Maximum Likelihood Estimation with Reduced Bias
-                based on the median bias of the distributions MLE.
-                This options uses functions \code{\link[debias]{RBAbeta}} and 
-                \code{\link[debias]{RBAsigma}}of the
-                \pkg{debias} package.
-
-                %% In the future,
-                %% choosing between different implementations of the MLE code and
-                %% support for other distributions (already available in package
-                %% \pkg{debias}) will be possible.
-            }
+                \item \code{"mle-rba"}: Maximum Likelihood Estimation with Reduced Bias Adjustment
+                as popularized by Abernethy based on the median bias of MLE fitted distributions.
+				
+				\item \code{"mle-unbias"}: Maximum Likelihood Estimation with bias adjustment
+                as popularized by Reliasoft software based on the mean bias of MLE fitted distributions.
+			}
         }
 
         Additionally, one can pass any options available from \code{options.wblr},
@@ -132,15 +118,9 @@
 }
 \author{Jurgen Symynck \email{jusy@openreliability.org}}
 
-
-
 \references{
-    \itemize{
-        \item
-            \emph{Improved Goodness of Fit:
-                P-value of the Correlation Coefficient}, Wes Fulton
-                
-            \url{http://www.barringer1.com/jun05prb.htm}
-    }
+  William Q. Meeker and Luis A. Escobar, (1998) "Statistical Methods for Reliability Data", Wiley-Interscience, New York
+
+  Robert B. Abernethy, (2008) "The New Weibull Handbook, Fifth Edition" 
 }
 

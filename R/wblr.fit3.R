@@ -316,9 +316,10 @@ wblr.fit <- function(x, modify.by.t0=FALSE,...){
 
 ## needed to control legend and fitted curve			
 			x$fit[[i]]$modified<-TRUE
-			## remove the "3p" suffix from the fit$dist to permit conf calculations
-			SL<-nchar(x$fit[[i]]$options$dist)
-			x$fit[[i]]$options$dist<-substr(x$fit[[i]]$options$dist,1,SL-2)		
+			## No, do not remove the "3p" suffix from the fit$dist to permit conf calculations
+			## This is still marked as a 3p fit, so no conf calculations can be made.
+			#SL<-nchar(x$fit[[i]]$options$dist)
+			#x$fit[[i]]$options$dist<-substr(x$fit[[i]]$options$dist,1,SL-2)		
 		}else{
 			 warning("t0 not found for data modification")
 		}

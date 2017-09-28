@@ -42,7 +42,7 @@ rba<-function(Qx, dist="weibull", basis="median")  {
 			return(C4^6)
 		}
 	}
-	if(dist=="lognormal")  {
+	if(tolower(dist) %in% c("lnorm","lognormal","lognormal2p"))  {
 		return(sqrt(Qx/(Qx-1))/C4)
 	}		
 }	

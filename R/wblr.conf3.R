@@ -98,7 +98,9 @@ DescriptiveQuantiles<-function(dqlabel)  {
 DQ<-DescriptiveQuantiles	
 
 ## prepare the descriptive quantiles  -  0.5 and F0(0) are pivot points for pivotal corrections	
-	unrel <- c(DQ(opaconf$dq),opaconf$blife.pts, 0.5, 1-exp(-exp(0)))
+	lodq<-1-exp(-exp(log(qweibull((1e-3),1,1))))
+	hidq<-1-exp(-exp(log(qweibull((.999),1,1))))
+	unrel <- c(DQ(opaconf$dq),opaconf$blife.pts, 0.5, 1-exp(-exp(0)),lodq,hidq)
 
 	unrel <- unique(signif(unrel[order(unrel)]))
 		# signif() has been used to eliminate any identical looking descriptive
@@ -362,10 +364,9 @@ DQ<-DescriptiveQuantiles
 										
 	}  ## end mcpivotals
 
-
-	if("fmbounds" %in% tolower(opaconf$method.conf)){
+	if(any(c("fm","fmbounds") %in% tolower(opaconf$method.conf))) {
 		fit$conf[[i]]        <- list()
-		fit$conf[[i]]$type   <- "fmbounds"
+		fit$conf[[i]]$type   <- "fm"
 		fit$conf[[i]]$ci     <- opaconf$ci
 ##		fit$conf[[i]]$sides  <- opaconf$conf.blives.sides
 		fit$conf[[i]]$blife.pts <- opaconf$blife.pts
