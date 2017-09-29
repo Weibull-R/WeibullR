@@ -25,7 +25,7 @@ legendConf <- function(fit,conftype,opadata,...){
                                 paste0(", S = ",blicon$S))))
                         if(opaconf$in.legend.blives){
 							ssCL<- signif((1-(1-blicon$ci)/2)*100,4)
-							li[[3]] <- bsll(legend=paste0("B-lives ssCL = ",
+							li[[3]] <- bsll(legend=paste0("B-life ssCL = ",
 								ifelse(is.null(blicon$ci),"NA",
 								paste0(ssCL," [%]"))))
 ## keep the params in a list object to pass in as args to Blifestring								
