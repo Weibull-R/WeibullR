@@ -301,9 +301,18 @@ wblr.fit <- function(x, modify.by.t0=FALSE,...){
 	#x$data$modified<-FALSE  ## turns out there is no use for this as notation in the fit is enough
 	x$fit[[i]]$modified<-FALSE
 	 if(modify.by.t0==TRUE) {
-## subtract all input data with x$fit[[i]]$t0
+## subtract all input data (except early suspensions) with x$fit[[i]]$t0
 		if(!is.null(x$fit[[i]]$t0) ){
-			if(!x$fit[[i]]$t0 < min(x$data$lrq_frame$left)) {
+## modify early suspensions so they remain minimal
+			#early_suspension_positions<-match(x$data$lrq_frame$left,x$data$lrq_frame$left<x$fit[[i]]$t0 && x$data$lrq_frame$right<0)
+			#x$data$lrq_frame$left[early_suspension_positions]<-x$fit[[i]]$t0+1e-5
+			for(da_line in 1:nrow(x$data$lrq_frame))  {
+				if(x$data$lrq_frame$left[da_line]<x$fit[[i]]$t0 && x$data$lrq_frame$right[da_line]<0) {
+					x$data$lrq_frame$left[da_line]<-x$fit[[i]]$t0+1e-5
+				}							
+			}
+		
+			if(!x$fit[[i]]$t0 < min(x$data$lrq_frame$left)) { 
 				stop("t0 too large for data modification")
 			}
 			x$data$lrq_frame$left<-x$data$lrq_frame$left - x$fit[[i]]$t0

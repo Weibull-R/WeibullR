@@ -6,7 +6,7 @@ importFrom("graphics", "abline", "axis", "curve", "legend", "lines",
 importFrom("stats", "approxfun", "coef", "cor", "lm", "na.omit",
 		 "pexp", "plnorm", "pweibull", "qbeta", "qexp", "qlnorm",
 		 "qnorm", "quantile", "qweibull", "rweibull", "optimHess",
-		 "sd", "var")
+		 "sd", "var", "pchisq", "dnorm", "dlnorm", "dweibull")
 importFrom("utils", "modifyList")
 importFrom("plyr", "ddply", "numcolwise")
 
@@ -19,6 +19,12 @@ export(
 	lslr,
 	getPercentilePlottingPositions,
 	getPPP,
+	LLln,
+	LLw,
+	MRRln2p,
+	MRRln3p,
+	MRRw2p,
+	MRRw3p,
 	mlefit,
 	mleframe,
 	rba,
