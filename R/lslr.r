@@ -53,7 +53,7 @@ lslr<-function(x, dist="weibull", npar=2, reg_method="XonY")  {
 			outVec<-c(Eta=resultVec[1],Beta=resultVec[2], t0=resultVec[3],Rsqr=resultVec[4])
 			if(resultVec[5]==1)  {			
 				warn="3p optimization did not converge"
-				attr(outvec,"warning")<-warn
+				attr(outVec,"warning")<-warn
 			}			
 		}		
 	}else{			
