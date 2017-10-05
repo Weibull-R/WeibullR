@@ -48,7 +48,7 @@ plot(ival_test)
 
 ```R
 library(WeibullR)
-daDF
+data('daDF')
 # Alternative, read csv
 # daDF <- read.table("./data/daDF.csv")
 da <- as.vector(daDF[,1])
@@ -56,17 +56,11 @@ earlyda <- da[1:10]
 midda <- da[11:131]
 endda <- da[132:200]
 
-earlyfit.3p <- wblr.fit(wblr(fail=earlyda,
-susp=c(midda,endda), col="orange", label="early life"),
-dist="weibull3p", modify.by.t0=T, col="orange")
+earlyfit.3p <- wblr.fit(wblr(fail=earlyda, susp=c(midda,endda), col="orange", label="early life"), dist="weibull3p", modify.by.t0=T, col="orange")
 
-midfit.3p <- wblr.fit(wblr(fail=midda,
-susp=c(earlyda,endda), col="red3", label="mid life"),
-dist="weibull3p", modify.by.t0=T, col="magenta")
+midfit.3p <- wblr.fit(wblr(fail=midda, susp=c(earlyda,endda), col="red3", label="mid life"), dist="weibull3p", modify.by.t0=T, col="magenta")
 
-endfit.3p <- wblr.fit(wblr(fail=endda,
-susp=c(earlyda,midda), col="navyblue", label="end life"),
-dist="weibull3p", modify.by.t0=T, col="blue")
+endfit.3p <- wblr.fit(wblr(fail=endda, susp=c(earlyda,midda), col="navyblue", label="end life"), dist="weibull3p", modify.by.t0=T, col="blue")
 
 plot.wblr(list(earlyfit.3p,midfit.3p,endfit.3p), legend.text.size=0.5,
 main="Division of Life Data Using 3p Weibull") 
