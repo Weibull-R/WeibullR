@@ -24,7 +24,7 @@ It is desired to have a community that will be kept up to date, so you are encou
 - Install the package: 
 
 ```R
-devtools::install_github("CarlesCG/WeibullR")
+devtools::install_github("Weibull-R/WeibullR")
 ```
 
 - A script for using interval data and showing both bbb and fm bounds follows:
@@ -43,6 +43,7 @@ ival_test <- wblr.conf(ival_test, method.conf="bbb",lty=2, lwd=1, col="black")
 ival_test <- wblr.conf(ival_test, method.conf="fm", col="purple")
 plot(ival_test)
 ```
+![](www/probability_plot.png)
 
 - A script for automating 3p fitting with  modification by to follow:
 
@@ -62,7 +63,6 @@ midfit.3p <- wblr.fit(wblr(fail=midda, susp=c(earlyda,endda), col="red3", label=
 
 endfit.3p <- wblr.fit(wblr(fail=endda, susp=c(earlyda,midda), col="navyblue", label="end life"), dist="weibull3p", modify.by.t0=T, col="blue")
 
-plot.wblr(list(earlyfit.3p,midfit.3p,endfit.3p), legend.text.size=0.5,
-main="Division of Life Data Using 3p Weibull") 
+plot.wblr(list(earlyfit.3p,midfit.3p,endfit.3p), legend.text.size=0.5, main="Division of Life Data Using 3p Weibull") 
 ```
-
+![](www/division_life_data.png)
