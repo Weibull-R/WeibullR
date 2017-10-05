@@ -48,7 +48,7 @@ plot(ival_test)
 
 ```R
 library(WeibullR)
-load("./data/daDF.RData")
+daDF
 # Alternative, read csv
 # daDF <- read.table("./data/daDF.csv")
 da <- as.vector(daDF[,1])
