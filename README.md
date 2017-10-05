@@ -23,7 +23,7 @@ It is desired to have a community that will be kept up to date, so you are encou
 # Example
 - Install the package: 
 ```R
-devtools::install_github("Weibull-R/WeibullR")
+devtools::install_github("CarlesCG/WeibullR")
 ```
 
 - A script for using interval data and showing both bbb and fm bounds follows:
@@ -45,9 +45,9 @@ plot(ival_test)
 - A script for automating 3p fitting with  modification by t0 follows:
 ```R
 library(WeibullR)
-load("./data/da.RData")
+load("./data/daDF.RData")
 # Alternative, read csv
-# daDF <- read.table("./data/da.csv")
+# daDF <- read.table("./data/daDF.csv")
 da <- as.vector(daDF[,1])
 earlyda <- da[1:10]
 midda <- da[11:131]
