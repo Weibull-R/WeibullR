@@ -1,6 +1,5 @@
 # RStudio project file 
 *.Rproj
-*.Rbuildignore
 
 # Windows image file caches
 Thumbs.db
