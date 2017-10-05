@@ -10,4 +10,4 @@ LazyLoad: yes
 Depends: plyr
 Imports: Rcpp (>= 0.11.1)
 LinkingTo: Rcpp, RcppArmadillo
-
+RoxygenNote: 6.0.1
