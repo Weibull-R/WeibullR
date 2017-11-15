@@ -198,3 +198,16 @@ getPlotData<-function(x,opa) {
 outlist<-list(dpoints,dlines)				
 outlist 				
 }				
+
+
+splitargs <- function(...){
+    arg         <- list(...)
+    argnames    <- names(arg)
+    parplot     <- plot_default_args()
+    ret         <- list()
+    opanames    <- names(options.wblr())
+    ret$opa     <- arg[tolower(argnames) %in% tolower(opanames)]
+        # ret$opa can be an emply list, which is compatible with modifyList()
+    ret$rem     <- arg[!(tolower(argnames) %in% tolower(opanames))]
+    ret
+}

@@ -4,7 +4,7 @@
  ##   (c)2014-2017 OpenReliability.org
 ##
 
-getPercentilePlottingPositions<-function(x, s=NULL, interval=NULL, ppos="Benard", aranks="Johnson", ties=NULL)  {							
+getPercentilePlottingPositions<-function(x, s=NULL, interval=NULL, ppos="beta", aranks="Johnson", ties=NULL)  {							
 	F<-length(x)						
 	N<-F+length(s)						
 	##  create the event vector						

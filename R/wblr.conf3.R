@@ -55,11 +55,13 @@ wblr.conf <- function(x,...){
 		arg$method.conf<-arg$method.conf.blives
 		arg<-modifyList(arg, list(method.conf.blives=NULL))
 	}
+	if(!is.null(arg$unrel.n)) modifyList(arg, list(num_dq=arg$unrel.n)) 
+	## silent refactoring for undocumented abrem list option.
+	##
+	## tests for valid confidence calculations in args should be made here	
 	if(!is.null(c(arg$log,arg$canvas))) stop("cannot set log or canvas option in wblr.conf")
 	if(!is.null(arg$dist)) stop("cannot set the fit distribution in wblr.conf")
-	
-## tests for valid confidence calculations in args should be made here	
-	
+	if(!is.null(arg$method.fit)) stop("cannot set the fit method in wblr.conf")	
 		
 #	if(!is.null(fit$options))  {
 ## it should be okay if fit$options is null anyway
@@ -85,11 +87,19 @@ DescriptiveQuantiles<-function(dqlabel)  {
 		dq<-c(.01, .02, .05, .10, .15, .20, .30, .40, .50,  .60, .70, .80, .90, .95, .99)
 	}
 	
+	if(tolower(dqlabel)=="user") {
+		dq<-opaconf$user_dq
+	}
+	
 	if(tolower(dqlabel)=="abrem")  {
 	## this is the original default by Jurgen Symynck for package abrem
-	## it produces 25 evenly spaced points across the y limits of a weibull canvas, including ends
-	#F0(seq(F0inv(1e-3), F0inv(0.999),length.out=25))
-	dq<-1-exp(-exp(seq(log(qweibull((1e-3),1,1)), log(qweibull((0.999),1,1)),length.out=25)))	
+	## it produces evenly spaced points across the y limits of a weibull canvas
+	#F0(seq(F0inv(1e-3), F0inv(0.999),length.out=??)) Attempting to hold a constant number of points.
+	spec_pts<-c(opaconf$blife.pts, 0.5, 1-exp(-exp(0)))
+	len_out<-opaconf$num_dq-length(unique(spec_pts)) # in case any blife.points duplicate pivot points
+	mini <- min(c(opaconf$ylim[1]/10,datarange$yrange[1]/10),0.001)
+	maxi <- max(c((1-(1-opaconf$ylim[2])/10),(1-(1-datarange$yrange[2])/10),0.999))		
+	dq<-1-exp(-exp(seq(log(qweibull((mini),1,1)), log(qweibull((maxi),1,1)),length.out=len_out)))	
 	}
 	
 	dq
@@ -98,8 +108,11 @@ DescriptiveQuantiles<-function(dqlabel)  {
 DQ<-DescriptiveQuantiles	
 
 ## prepare the descriptive quantiles  -  0.5 and F0(0) are pivot points for pivotal corrections	
-	lodq<-1-exp(-exp(log(qweibull((1e-3),1,1))))
-	hidq<-1-exp(-exp(log(qweibull((.999),1,1))))
+	mini <- min(c(opaconf$ylim[1]/10,datarange$yrange[1]/10),0.001)
+	maxi <- max(c((1-(1-opaconf$ylim[2])/10),(1-(1-datarange$yrange[2])/10),0.999))	
+
+	lodq<-1-exp(-exp(log(qweibull((mini),1,1))))
+	hidq<-1-exp(-exp(log(qweibull((maxi),1,1))))
 	unrel <- c(DQ(opaconf$dq),opaconf$blife.pts, 0.5, 1-exp(-exp(0)),lodq,hidq)
 
 	unrel <- unique(signif(unrel[order(unrel)]))
@@ -246,20 +259,6 @@ DQ<-DescriptiveQuantiles
 ## data with intervals should already have been excluded from pivotalMC
 		if(!is.null(xdata$dlines)) stop("mcpivotals not performed with interval data")
  
-## must form an event vector from xdata$lrq_frame$right, if value is >0 event=1, else event=0 
-## what about qty field? Okay, lets run a quick brute force loop:
-
- 
-		event_vec<-NULL
-		for(di in 1:dim(xdata$lrq_frame)[1]) {
-			if(xdata$lrq_frame$right[di]>0) {
-				this_event=rep(1,xdata$lrq_frame$qty[di])
-			}else{
-				this_event=rep(0,xdata$lrq_frame$qty[di])
-			}
-			event_vec<-c(event_vec,this_event)
-		}
-
 		if(tolower(fit$options$dist) %in% c("weibull","weibull2p")) {
 			fit_dist<-"weibull"
 ## prepare the weibull parameters for pivotal evaluation per Jurgen Symynck's	method	
@@ -296,17 +295,15 @@ DQ<-DescriptiveQuantiles
 ## given CI value >0 <1 a "pivotals" dataframe of interval bounding values will be returned
 		
 		
-
-		
 		ret<-pivotal.rr(
 			xdata$dpoints, 
-			event=event_vec,
+#			event=event_vec, # in this case, if present it would be rep(1,length(xdata$dpoints[,1])
 			dist=fit_dist, 
 			reg_method=regression_order,
 			R2=0,
 			CI=opaconf$ci,
 			unrel=unrel,
-			S=10^4,
+			S=opaconf$S,
 			P1=P1,
 			P2=P2,
 			seed=opaconf$seed,
@@ -318,10 +315,10 @@ DQ<-DescriptiveQuantiles
 
 				if(!is.null(ret)){
 					atLeastOneBLifeConf <- TRUE
-					if(fit_dist=="weibull") {
+					if(fit_dist=="weibull") {					
 ## David Silkworth's final adaptation to nail the bounds around the fitted line
 		rotation_slope<-(log(log(1/(1-unrel[length(unrel)])))-log(log(1/(1-unrel[1]))))/(ret[length(unrel),2]-ret[1,2])	
-# F0(0) is coded as (1-exp(-exp(0)))
+## F0(0) is coded as (1-exp(-exp(0)))
 		rotation_pos<-which(unrel > (1-exp(-exp(0)))-10^-5)[1]
 		rotation_intercept<-ret[rotation_pos,2]-log(log(1/(1-unrel[rotation_pos])))/rotation_slope
 		ret<-(ret-rotation_intercept)*rotation_slope					
