@@ -12,7 +12,11 @@ getPPP(x, s=NULL, interval=NULL, ppos="beta", aranks="Johnson", ties=NULL)
 }
 
 \arguments{
-  \item{x}{A vector of failure data.}
+  \item{x}{
+	Either a dataframe containing at least \code{$time} and \code{$event}
+	columns and optionally a \code{$qty} column, or a vector of class \code{"numeric"} or \code{"integer"} with
+	(life-)time observations.
+  }
   \item{s}{An optional vector of suspension data.}
   \item{interval}{reserved argument for interval censored data - NOT YET IMPLEMENTED.}
   \item{ppos}{A string defining a plotting position method.  Implemented options include "beta" the incomplete beta function (as default), "Benard", "mean" also known as Herd-Johnson, "Hazen" or modified Kaplan-Meier, "Kaplan-Meier" with modification for final complete failure, and "Blom.}
