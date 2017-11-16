@@ -126,6 +126,7 @@ mleframe<-function(x, s=NULL, interval=NULL)  {
 				if(is.null(x$qty)) {
 					failures <- data.frame(left = f, right = f, qty = rep(1, length(f)))
 				}else{
+					if(any(!is.integer(x$qty))) stop("non-integers in input object qty column")
 					failures <- data.frame(left = f, right = f, qty = x$qty[x$event==1])
 				}
 			if(identical(ev_info, c("0","1"))) {
