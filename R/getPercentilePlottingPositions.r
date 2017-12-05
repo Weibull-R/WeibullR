@@ -56,7 +56,7 @@ if(is.vector(x)) {
 
 			failures<-x[x$event==1,]
 				if(is.null(x$qty)) {
-					qty<-rep(1,nrows(failures))
+					qty<-rep(1,nrow(failures))
 					failures<-cbind(failures,qty)
 				}else{
 					if(any(!is.integer(x$qty))) stop("non-integers in input object qty column")
@@ -65,7 +65,7 @@ if(is.vector(x)) {
 			if(identical(ev_info, c("0","1"))) {
 			suspensions<-x[x$event==0,]
 				if(is.null(x$qty)) {
-					qty<-rep(0,nrows(suspensions))
+					qty<-rep(0,nrow(suspensions))
 					suspensions <-cbind(suspensions,qty)
 
 				}
