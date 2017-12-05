@@ -94,7 +94,7 @@ mleframe<-function(x, s=NULL, interval=NULL)  {
 	## here a time-event dataframe can be evaluated, if provided as x				
 	## This is the support for a time-event dataframe 
 		if (class(x) == "data.frame") {
-		## original mleframe did not permit extraneous columns
+	
 		## this test is drawn from Abrem.R
 			if(is.null(x$time) || is.null(x$event)){
                 stop(': Argument \"x\" is missing $time and/or ",
@@ -123,10 +123,19 @@ mleframe<-function(x, s=NULL, interval=NULL)  {
 
 
 			f<-x$time[x$event==1]
+				if(is.null(x$qty)) {
 					failures <- data.frame(left = f, right = f, qty = rep(1, length(f)))
+				}else{
+					if(any(!is.integer(x$qty))) stop("non-integers in input object qty column")
+					failures <- data.frame(left = f, right = f, qty = x$qty[x$event==1])
+				}
 			if(identical(ev_info, c("0","1"))) {
 			s<-x$time[x$event==0]
+				if(is.null(x$qty)) {
 						suspensions <- data.frame(left = s, right = -1, qty = rep(1, length(s)))
+					}else{
+						suspensions <- data.frame(left = s, right = -1, qty = x$qty[x$event==0])
+					}
 			}
 		}else {		
 			if (length(x) > 0) {
@@ -135,7 +144,7 @@ mleframe<-function(x, s=NULL, interval=NULL)  {
 		}
 	}			
 	DF<-rbind(failures,suspensions,interval)			
-## assure all integers in qty				
+## assure all integers in qty field, if it exists				
 	DF$qty<-ceiling(DF$qty)
 	
 ## futile attempt to consolidate duplicate data	
@@ -149,11 +158,14 @@ mleframe<-function(x, s=NULL, interval=NULL)  {
 ##			outline<-outline+1	
 ##		}		
 ##	}	
-
+if(is.null(DF$qty)) {
+## aggregate duplicate data only if qty was not defined on input
 ## plyr code to aggregate duplicate data
 ## http://stackoverflow.com/questions/10180132/consolidate-duplicate-rows
 	outDF<-ddply(DF,c("left","right"),numcolwise(sum))
-
+}else{
+	outDF<-DF
+}
 ## don't know why but this bombed mlefit
 ##			attr(outDF,"fsiq")<-TRUE			
 				

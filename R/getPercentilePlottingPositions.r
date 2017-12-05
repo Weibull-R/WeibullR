@@ -4,7 +4,9 @@
  ##   (c)2014-2017 OpenReliability.org
 ##
 
-getPercentilePlottingPositions<-function(x, s=NULL, interval=NULL, ppos="Benard", aranks="Johnson", ties=NULL)  {							
+getPercentilePlottingPositions<-function(x, s=NULL, interval=NULL, ppos="beta", aranks="Johnson", ties=NULL)  {
+
+if(is.vector(x)) {
 	F<-length(x)						
 	N<-F+length(s)						
 	##  create the event vector						
@@ -13,7 +15,7 @@ getPercentilePlottingPositions<-function(x, s=NULL, interval=NULL, ppos="Benard"
 		## suspension data has been provided					
 		    data<-c(x,s)					
 		    event<-c(rep(1,F),rep(0,N-F))					
-		    prep_df<-data.frame(data=data,event=event)					
+		    prep_df<-data.frame(time=data,event=event)					
 		## now sort the dataframe on data values					
 		    NDX<-order(prep_df[,1])					
 		    prep_df<-prep_df[NDX,]					
@@ -21,9 +23,82 @@ getPercentilePlottingPositions<-function(x, s=NULL, interval=NULL, ppos="Benard"
 		## this is simply a complete failure set					
 		    data<-sort(x)					
 		    event<-rep(1,F)					
-		    prep_df<-data.frame(data=data,event=event)					
+		    prep_df<-data.frame(time=data,event=event)					
 	  }						
-							
+}else{
+	if(class(x)=="data.frame") {
+		## this test is drawn from Abrem.R
+			if(is.null(x$time) || is.null(x$event)){
+                stop(': Argument \"x\" is missing $time and/or ",
+                    "$event columns...')
+            }		
+
+	## verify positive time values
+			if (anyNA(x$time)) {
+				stop("NA in failure or suspension data")
+			}
+			if (any(x$time<= 0)) {
+				stop("non-positive values in failure or suspension data")
+			}
+	## verify 1's and 0's only in event
+	## using Jurgen's validation code
+			ev_info <- levels(factor(x$event))
+			if(identical(ev_info,c("0","1")) || identical(ev_info,"1")){
+			# okay x is holding event indicators
+			}else{
+			stop("event column not '1' or '0' ")
+			}
+
+			if(length(s)>0)  {
+			warning("argument 's' ignored when time-event dataframe provided")
+			}
+
+
+			failures<-x[x$event==1,]
+				if(is.null(x$qty)) {
+					qty<-rep(1,nrow(failures))
+					failures<-cbind(failures,qty)
+				}else{
+					if(any(!is.integer(x$qty))) stop("non-integers in input object qty column")
+				}
+				
+			if(identical(ev_info, c("0","1"))) {
+			suspensions<-x[x$event==0,]
+				if(is.null(x$qty)) {
+					qty<-rep(0,nrow(suspensions))
+					suspensions <-cbind(suspensions,qty)
+
+				}
+			}
+			
+			F<-sum(failures$qty)
+			N<-F+sum(suspensions$qty)
+	
+			prep_df<-rbind(failures,suspensions)
+## now sort the dataframe on data values					
+		    NDX<-order(prep_df[,1])					
+		    prep_df<-prep_df[NDX,]
+		
+## expand the qty values, if present
+			if(!is.null(x$qty)) {
+				exp_df<-data.frame(time=rep(prep_df$time[1],prep_df$qty[1]), event=rep(prep_df$event[1],prep_df$qty[1]))
+				for(da_line in 2:nrow(prep_df)) {
+				this_df<-data.frame(time=rep(prep_df$time[da_line],prep_df$qty[da_line]), event=rep(prep_df$event[da_line],prep_df$qty[da_line]))
+				exp_df<-rbind(exp_df,this_df)				
+				}
+				prep_df<-exp_df
+
+			}else{
+				prep_df<-prep_df[,-3]
+			}
+
+	}else{
+		stop("error in x argument type")
+	}
+
+}
+
+
 	if(aranks=="Johnson")  {						
 		## adjust ranks using Drew Auth's simplification of Leonard Johnson's method					
 		## start with extra element to reference zero as previous rank to first					
@@ -98,7 +173,7 @@ getPercentilePlottingPositions<-function(x, s=NULL, interval=NULL, ppos="Benard"
 	}						
 							
 	## special note:  the number of data entries N remains as originally identified						
-	## if CANNOT be changed due to removal of suspensions or ties						
+	## it CANNOT be changed due to removal of suspensions or ties						
 							
 	## prep_df now contains the data to be plotted with their final adjusted ranks						
 	## finally we get the probability plotting positions						
@@ -146,7 +221,7 @@ getPercentilePlottingPositions<-function(x, s=NULL, interval=NULL, ppos="Benard"
 		}		
 	}						
 							
-	outDF<-cbind(prep_df$data,data.frame(ppp),prep_df$adj_rank)						
+	outDF<-cbind(prep_df$time,data.frame(ppp),prep_df$adj_rank)						
 	colnames(outDF)<-c("time","ppp","adj_rank")						
 return(outDF)							
 }							

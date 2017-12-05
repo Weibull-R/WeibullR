@@ -37,6 +37,7 @@ options.wblr<- function(...){
 ##            conf.what="blives",
 ##            conf.blives.sides="double",
 ##            unrel.n=25,
+			num_dq=25,
             method.conf="mcpivotals",
             pp="median",#,"benard","hazen","mean", "kaplan.meier", "blom"),
             S=1e4,
@@ -45,6 +46,8 @@ options.wblr<- function(...){
 			ci=0.9,
 ##            unrel=c(0.1,0.05,0.01),
 			dq="abrem",
+##   assigning dq="user" permits defined user_dq to be applied.  minitab dq exampled here:			
+			user_dq=c(seq(.01,.09,by=.01),seq(.10,.90,by=.10),seq(.91,.99, by=.01)),
             blife.pts=c(0.1,0.05,0.01),
             mar=c(5.1,4.1,5.1,2.1),
             main="Probability Plot",
@@ -121,19 +124,6 @@ options.wblr<- function(...){
     value
 }
 # TODO :options that are NULL are not shown in the printout
-
-
-splitargs <- function(...){
-    arg         <- list(...)
-    argnames    <- names(arg)
-    parplot     <- plot_default_args()
-    ret         <- list()
-    opanames    <- names(options.wblr())
-    ret$opa     <- arg[tolower(argnames) %in% tolower(opanames)]
-        # ret$opa can be an emply list, which is compatible with modifyList()
-    ret$rem     <- arg[!(tolower(argnames) %in% tolower(opanames))]
-    ret
-}
 
 plot_default_args <- function(){
     paronly <- c("ask","fig", "fin","lheight","mai", "mar", "mex", "mfcol",

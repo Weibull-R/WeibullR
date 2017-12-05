@@ -12,7 +12,7 @@
 \arguments{
     \item{x}{
         Either a dataframe containing at least \code{$time} and \code{$event}
-        columns, or a vector of class \code{"numeric"} or \code{"integer"} with
+        columns and optionally a \code{$qty} column, or a vector of class \code{"numeric"} or \code{"integer"} with
         (life-)time observations.
 	}
 	\item{s}{
