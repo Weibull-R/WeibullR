@@ -168,9 +168,8 @@ mlefit<-function(x, dist="weibull", npar=2, debias=NULL, optcontrol=NULL)  {
 	MLEclassList<-list(fsdi=fsdi,q=q,N=N)
 ## Test for successful log-likelihood calculation with given vstart
 ## tz is required for MLEloglike call now
-		LLtest<-.Call("MLEloglike",MLEclassList,vstart,dist_num, default_sign, default_tz, package="abremDebias")
+		LLtest<-.Call("MLEloglike",MLEclassList,vstart,dist_num, default_sign, default_tz, package="WeibullR")
 ## This should have failed as left with abremDebias call.
-browser()
 		if(!is.finite(LLtest))  {
 			stop("Cannot start mle optimization with given parameters")
 		}
@@ -227,7 +226,7 @@ browser()
 				if(debias=="hirose-ross")  {
 					outvec[2]<-outvec[2]*hrbu(Q[1]-Q[3], Q[3])
 				}
-			outvec[3]<-.Call("MLEloglike",MLEclassList,c(outvec[2],outvec[1]),dist_num, default_sign, default_tz, package="abremDebias")
+			outvec[3]<-.Call("MLEloglike",MLEclassList,c(outvec[2],outvec[1]),dist_num, default_sign, default_tz, package="WeibullR")
 			attr(outvec,"bias_adj")<-debias
 			}
 		}
@@ -240,7 +239,7 @@ browser()
 					warning("rba has been applied to adjust lognormal")
 					debias="rba"
 				}
-			outvec[3]<-.Call("MLEloglike",MLEclassList,c(outvec[1],outvec[2]),dist_num, default_sign, default_tz, package="abremDebias")
+			outvec[3]<-.Call("MLEloglike",MLEclassList,c(outvec[1],outvec[2]),dist_num, default_sign, default_tz, package="WeibullR")
 			attr(outvec,"bias_adj")<-debias
 			}
 		}
@@ -271,7 +270,7 @@ browser()
 
 
 ## for now enter a default tz=0
-			result_of_simplex_call<-.Call("MLEsimplex",MLEclassList, ControlList, vstart, default_tz, listout_int, package="abremDebias")
+			result_of_simplex_call<-.Call("MLEsimplex",MLEclassList, ControlList, vstart, default_tz, listout_int, package="WeibullR")
 			if(result_of_simplex_call[4]>0)  {
 				stop("2p model does not converge")
 			}
@@ -306,13 +305,13 @@ browser()
 				if(X1>C1) {X1<-X0+0.9*(C1-X0)}
 
 				tz=0
-				FX0vec<-.Call("MLEdMaxLLdx", MLEclassList, ControlList, vstart, tz, package="abremDebias")
+				FX0vec<-.Call("MLEdMaxLLdx", MLEclassList, ControlList, vstart, tz, package="WeibullR")
 				FX0<-FX0vec[1]
 ## new start estimate from last fit (without any modification)
 				vstart<-FX0vec[-1]
 ## X1 is next proposed tz
 				tz=X1
-				FX1vec<-.Call("MLEdMaxLLdx", MLEclassList, ControlList, vstart, tz, package="abremDebias")
+				FX1vec<-.Call("MLEdMaxLLdx", MLEclassList, ControlList, vstart, tz, package="WeibullR")
 				FX1<-FX1vec[1]
 ## new start estimate from last fit (without any modification)
 				vstart<-FX1vec[-1]
@@ -334,7 +333,7 @@ browser()
 				FX0vec<-FX1vec
 ## X1 is next proposed tz
 				tz=X1
-				FX1vec<-.Call("MLEdMaxLLdx", MLEclassList, ControlList, vstart, tz, package="abremDebias")
+				FX1vec<-.Call("MLEdMaxLLdx", MLEclassList, ControlList, vstart, tz, package="WeibullR")
 				FX1<-FX1vec[1]
 				if(is.nan(FX1))  {
 				FX1<-FX0
@@ -362,7 +361,7 @@ browser()
 		vstart<-FX0vec[-1]
 ## Can X0 be first trial, but ultimately subject to convergence problems??
 		listout_int<-0
-		result_of_simplex_call<-.Call("MLEsimplex",MLEclassList, ControlList, vstart, X0, listout_int, package="abremDebias")
+		result_of_simplex_call<-.Call("MLEsimplex",MLEclassList, ControlList, vstart, X0, listout_int, package="WeibullR")
 
 ## extract fit vector from result of call to enable finishing treatment of the outvec
 
@@ -380,7 +379,7 @@ browser()
 				if(debias=="hirose-ross")  {
 					outvec[2]<-outvec[2]*hrbu(Q[1]-Q[3], Q[3])
 				}
-				outvec[3]<-.Call("MLEloglike",MLEclassList,c(outvec[2],outvec[1]),dist_num, default_sign, X0, package="abremDebias")
+				outvec[3]<-.Call("MLEloglike",MLEclassList,c(outvec[2],outvec[1]),dist_num, default_sign, X0, package="WeibullR")
 				attr(outvec,"bias_adj")<-debias
 			}
 		}
@@ -392,7 +391,7 @@ browser()
 					warning("rba has been applied to adjust lognormal")
 					debias="rba"
 				}
-				outvec[3]<-.Call("MLEloglike",MLEclassList,c(outvec[1],outvec[2]),dist_num, default_sign, X0, package="abremDebias")
+				outvec[3]<-.Call("MLEloglike",MLEclassList,c(outvec[1],outvec[2]),dist_num, default_sign, X0, package="WeibullR")
 				attr(outvec,"bias_adj")<-debias
 			}
 		}
