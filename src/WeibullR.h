@@ -13,7 +13,7 @@ struct AbPval{
 // abremDebias code
 RcppExport SEXP MLEloglike(SEXP arg1, SEXP arg3, SEXP arg4, SEXP arg5, SEXP arg6);
 RcppExport SEXP MLEsimplex(SEXP arg1, SEXP arg2, SEXP arg3, SEXP arg4, SEXP arg5);
-// exported for testing purposes only. Never called from R.
+// used in secant method for determination of 3rd parameter optimization
 RcppExport SEXP MLEdMaxLLdx(SEXP arg1, SEXP arg2, SEXP arg3, SEXP arg4);
 //******************//
 // end abremDebias
