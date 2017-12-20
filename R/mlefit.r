@@ -86,46 +86,55 @@ mlefit<-function(x, dist="weibull", npar=2, debias=NULL, optcontrol=NULL)  {
 
 ## now form the arguments for C++ call
 ## fsdi is the time vector to pass into C++
-## data_est is used to estimate the magnitude of data
+## data_est is no longer used to prepare the vstart
 	fsd<-NULL
-	data_est<-NULL
+#	data_est<-NULL
 	if((Nf+Ns)>0)  {
 		fsd<-fsiq$left[1:(Nf_rows + Ns_rows)]
 ## assure that data_est is a clone
-		data_est<-fsiq$left[1:(Nf_rows + Ns_rows)]
+#		data_est<-fsiq$left[1:(Nf_rows + Ns_rows)]
 	}
 	if(Nd>0) {
 		fsd<-c(fsd,fsiq$right[(Nf_rows + Ns_rows + 1):(Nf_rows +  Ns_rows + Nd_rows)])
-		data_est <- c(data_est, 0.5*(fsiq$right[(Nf_rows + Ns_rows + 1):(Nf_rows + Ns_rows + Nd_rows)]))
+#		data_est <- c(data_est, 0.5*(fsiq$right[(Nf_rows + Ns_rows + 1):(Nf_rows + Ns_rows + Nd_rows)]))
 	}
 	if(Ni>0)  {
 		fsdi<-c(fsd, fsiq$left[(Nf_rows + Ns_rows + Nd_rows + 1):nrow(fsiq)],
 		fsiq$right[(Nf_rows + Ns_rows + Nd_rows + 1):nrow(fsiq)])
-		data_est<-c(data_est, (fsiq$left[(Nf_rows + Ns_rows + Nd_rows + 1):nrow(fsiq)] +
-				 fsiq$right[(Nf_rows + Ns_rows + Nd_rows + 1):nrow(fsiq)])/2)
+#		data_est<-c(data_est, (fsiq$left[(Nf_rows + Ns_rows + Nd_rows + 1):nrow(fsiq)] +
+#				 fsiq$right[(Nf_rows + Ns_rows + Nd_rows + 1):nrow(fsiq)])/2)
 	}else{
 		fsdi<-fsd
-		data_est<-fsd
+#		data_est<-fsd
 	}
 
 	q<-fsiq$qty
 ## third argument will be c(Nf,Ns,Nd,Ni)
 	N<-c(Nf_rows,Ns_rows,Nd_rows,Ni_rows)
+	
+	mrr_fail_data<- c(x[failNDX,1], x[discoveryNDX,2]/2, interval[intervalsNDX,1]+(interval[intervalsNDX,2]-interval[intervalsNDX,1])/2)
+	mrr_susp_data<-x[suspNDX,1]
 
 ## establish distribution number and start parameters
 	if(fit_dist=="weibull"){
 		dist_num=1
-		m <- mean(log(data_est))
-		v <- var(log(data_est))
-		shape <- 1.2/sqrt(v)
-		scale <- exp(m + 0.572/shape)
+		mrr_fit<-MRRw2p(mrr_fail_data, mrr_susp_data)
+		shape<-mrr_fit[2]
+		scale<- mrr_fit[1]
+#		m <- mean(log(data_est))
+#		v <- var(log(data_est))
+#		shape <- 1.2/sqrt(v)
+#		scale <- exp(m + 0.572/shape)
 		vstart <- c(shape, scale)
 
 	}else{
 		if(fit_dist=="lnorm"){
 			dist_num=2
-			ml <- mean(log(data_est))
-			sdl<- sd(log(data_est))
+			mrr_fit<-MRRln2p(mrr_fail_data, mrr_susp_data)
+			ml<- mrr_fit[1]
+			sdl<- mrr_fit[2]
+#			ml <- mean(log(data_est))
+#			sdl<- sd(log(data_est))
 			vstart<-c(ml,sdl)
 		}else{
 			stop("distribution not resolved for mle fitting")
