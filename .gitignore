@@ -1,3 +1,6 @@
+# RStudio project file 
+*.Rproj
+
 # Windows image file caches
 Thumbs.db
 ehthumbs.db
@@ -5,6 +8,9 @@ ehthumbs.db
 # Folders holding Windows compiled objects
 src-i386
 src-x64
+
+# Folders holding MacOS compiled objects
+/src/*
 
 # Folder config file
 Desktop.ini
@@ -49,3 +55,4 @@ $RECYCLE.BIN/
 Network Trash Folder
 Temporary Items
 .apdisk
+.Rproj.user
