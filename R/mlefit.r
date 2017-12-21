@@ -111,9 +111,12 @@ mlefit<-function(x, dist="weibull", npar=2, debias=NULL, optcontrol=NULL)  {
 	q<-fsiq$qty
 ## third argument will be c(Nf,Ns,Nd,Ni)
 	N<-c(Nf_rows,Ns_rows,Nd_rows,Ni_rows)
-	
-	mrr_fail_data<- c(x[failNDX,1], x[discoveryNDX,2]/2, interval[intervalsNDX,1]+(interval[intervalsNDX,2]-interval[intervalsNDX,1])/2)
-	mrr_susp_data<-x[suspNDX,1]
+
+	mrr_fail_data<- c(rep(x[failNDX,1],x[failNDX,3]),
+		rep( x[discoveryNDX,2]/2, x[discoveryNDX,3]),
+		rep((interval[intervalsNDX,1]+(interval[intervalsNDX,2]-interval[intervalsNDX,1])/2), interval[intervalsNDX,3])
+		)
+	mrr_susp_data<-rep(x[suspNDX,1], x[suspNDX,3])
 
 ## establish distribution number and start parameters
 	if(fit_dist=="weibull"){
