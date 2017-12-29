@@ -21,6 +21,7 @@ export(
 	getPPP,
 	LLln,
 	LLw,
+	MLEcontour,
 	MRRln2p,
 	MRRln3p,
 	MRRw2p,

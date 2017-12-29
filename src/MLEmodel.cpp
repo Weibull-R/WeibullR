@@ -1,44 +1,12 @@
 // traditional header file content - class declaration
 #include "WeibullR.h"
+#include "MLEmodel.h"
 #include <math.h>
 
     using namespace Rcpp ;
 
-class MLEmodel {
-
-arma::colvec time;
-arma::colvec qty;
-Rcpp::NumericVector N;
-
-double failcomp;
-double suscomp;
-double discomp;
-double intcomp;
-int endf;
-int ends;
-int endd;
-int endil;
-int endir;
-arma::colvec fail;
-arma::colvec nf;
-arma::colvec susp;
-arma::colvec ns;
-arma::colvec disc;
-arma::colvec nd;
-arma::colvec left;
-arma::colvec right;
-arma::colvec ni;
-
-public:
-MLEmodel(SEXP);
-double LogLike(arma::colvec, int, int, double);
-SEXP MLE_Simplex(SEXP, arma::colvec, double, int);
-SEXP dMaxLLdx( SEXP, arma::colvec, double);
-};
-// end of class declaration
-
-
 // class implementation
+MLEmodel::MLEmodel(){}
 
 MLEmodel::MLEmodel( SEXP arg1) {
 	Rcpp::List L(arg1);
@@ -160,7 +128,88 @@ double MLEmodel::LogLike(arma::colvec par, int sign, int dist_num, double tz)  {
 }
 
 
+////************* Method tryLL ***************/
+//
+//  This method is specifically intended to be called by the getContourPt method of class contour
+//  It will return zero given any negative parameter argument, or other condition producing a non-finite result.
+//
+//double MLEmodel::tryLL(arma::colvec par, int sign, int dist_num, double tz)  {
+double MLEmodel::tryLL(arma::colvec par, int dist_num)  {
+		double failcomp =0.0;
+		double suscomp =0.0;
+		double discomp =0.0;
+		double intcomp =0.0;
+		double value =0.0;
+// elimintate needless processing with negative parameter
+	if(par(0)>0 && par(1)>0) {
+		if(dist_num==1) {
+			if(N[0]>0)  {
+				for(int i=0; i<N[0]; i++)  {
+					failcomp=failcomp+nf(i)*R::dweibull(fail(i),par(0),par(1),1);
+				}
+			}
+
+			if(N[1]>0)  {
+				for(int i=0; i<N[1]; i++)  {
+					suscomp=suscomp+ns(i)*R::pweibull(susp(i),par(0),par(1),0,1);
+				}
+			}
+			if(N[2]>0)  {
+				for(int i=0; i<N[2]; i++)  {
+					discomp=discomp+nd(i)*log(1-R::pweibull(disc(i),par(0),par(1),0,0));
+				}
+			}
+			if(N[3]>0)  {
+				for(int i=0; i<N[3]; i++)  {
+					intcomp=intcomp+ni(i)*log(
+					R::pweibull(left(i),par(0),par(1),0,0) -
+					R::pweibull(right(i),par(0),par(1),0,0)
+					);
+				}
+			}
+
+		}
+		else if(dist_num==2)  {
+				if(N[0]>0)  {
+					for(int i=0; i<N[0]; i++)  {
+					failcomp=failcomp+nf(i)*R::dlnorm(fail(i),par(0),par(1),1);
+					}
+				}
+
+			if(N[1]>0)  {
+				for(int i=0; i<N[1]; i++)  {
+					suscomp=suscomp+ns(i)*R::plnorm(susp(i),par(0),par(1),0,1);
+				}
+			}
+			if(N[2]>0)  {
+				for(int i=0; i<N[2]; i++)  {
+					discomp=discomp+nd(i)*log(1-R::plnorm(disc(i),par(0),par(1),0,0));
+				}
+			}
+			if(N[3]>0)  {
+				for(int i=0; i<N[3]; i++)  {
+					intcomp=intcomp+ni(i)*log(
+					R::plnorm(left(i),par(0),par(1),0,0) -
+					R::plnorm(right(i),par(0),par(1),0,0)
+					);
+				}
+			}
+		}
+		
+		value = failcomp+suscomp+discomp+intcomp;
+		if(!std::isfinite(value)) {
+			value=0.0;
+		}
+	}
+	return value;
+}
+
+
 ////************* Method MLE_Simplex ***************/
+//
+//	An implementation of the Nelder-Meade simplex algorithm 
+//  for optimizing the likelihood, specific to two parameters
+
 SEXP MLEmodel::MLE_Simplex(SEXP arg1, arma::colvec vstart, double tz, int listout)  {
 		Rcpp::List L(arg1);
 		int dist_num=Rcpp::as<int>(L["dist_num"]);
@@ -309,6 +358,9 @@ SEXP MLEmodel::MLE_Simplex(SEXP arg1, arma::colvec vstart, double tz, int listou
 
 
 ////************* Method dMaxLLdx ***************/
+//
+// A method for getting the secant slope used during 3rd parameter optimization.
+
 	SEXP MLEmodel::dMaxLLdx( SEXP arg1, arma::colvec vstart, double tz)  {
 		Rcpp::List L(arg1);
 		int dist_num=Rcpp::as<int>(L["dist_num"]);
