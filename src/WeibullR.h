@@ -32,7 +32,7 @@ extern "C" struct AbPval getPvalue(int F, double R2, int model);
 // contour code
 RcppExport SEXP getContour(SEXP arg1, SEXP arg2, SEXP arg3, SEXP arg4, SEXP arg5, SEXP arg6, SEXP arg7);
 
-RcppExport  void R_init_WeibullR(DllInfo* info);
+extern "C" void R_init_WeibullR(DllInfo* info);
 
 #endif
 #endif

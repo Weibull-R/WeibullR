@@ -1,4 +1,4 @@
-MLEcontour<-function(x,  dist="weibull", CL=0.9,DF=1,MLEfit=NULL, RadLimit=1e-5,
+MLEcontour<-function(x,  dist="weibull", CL=0.9,dof=1,MLEfit=NULL, RadLimit=1e-5,
 		ptDensity=120, debias=NULL, applyFF=FALSE, show=FALSE)  {
 ## check basic parameters of x
 	if(class(x)!="data.frame") {stop("mlefit takes a structured dataframe input, use mleframe")}
@@ -117,7 +117,7 @@ MLEcontour<-function(x,  dist="weibull", CL=0.9,DF=1,MLEfit=NULL, RadLimit=1e-5,
 			FF<-(Nf-1)/(Nf+0.618)
 		}
 	}
-	ratioLL  <-  MLLx- qchisq(CL,DF)/(2*FF)
+	ratioLL  <-  MLLx- qchisq(CL,dof)/(2*FF)
 
 ## assure ptDensity is an integer
 	ptDensity<-ceiling(ptDensity)
