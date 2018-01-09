@@ -8,7 +8,7 @@ This function implements a fast pivotal engine enabling a wide assortment of opt
 }
 
 \usage{
-pivotal.rr(x, event=NULL, dist="weibull", reg_method="XonY", R2, CI, unrel,
+pivotal.rr(x, event=NULL, dist="weibull", reg_method="XonY", R2, CI, unrel=NULL,
   P1=1.0, P2=1.0, S=10^4,seed=1234, ProgRpt=FALSE) 
 }
 
@@ -19,7 +19,7 @@ pivotal.rr(x, event=NULL, dist="weibull", reg_method="XonY", R2, CI, unrel,
   \item{reg_method}{A string defining the order of regression whether "XonY" axis(default and "best practice for standard small sample fitting) or "YonX" axis for alternative study ("YonX" recommended for an inspection option by Abernethy).}
   \item{R2}{Output control: for prr and ccc2 the explained variance (R squared) from a linear regression of a data sample of interest. An entry of 0 (zero) suppresses output, 1.0 requests the entire vector of r^2 values.}
   \item{CI}{Output control: for the bounds provide the double sided confidence interval of interest. An entry of 0 (zero) suppresses output, 1.0 requests an entire matrix of generated values.}
-  \item{unrel}{A vector of probabilities at which to determine the pivotal quantities for confidence bounds.  Also referred to as 'descriptive quantiles' or 'confidence bound quantiles' by Jacob Ormerod.}
+  \item{unrel}{An optional vector of unreliability values to be used as the descriptive quantiles at which the bounds will be calculated.}
   \item{P1}{The scale parameter to be used in random sampling.  Default = 1.0 (For lnorm or gumbel distributions this most likely will be preferred to be set to zero.)}
   \item{P2}{The shape parameter to be used in random sampling. Default = 1.0}
   \item{S}{The number of random samples to be drawn for Monte Carlo simulation. S must be a multiple 

@@ -10,13 +10,13 @@ FMbounds<-function(x, dist="weibull", CI=.95, unrel=NULL, debias=NULL, show=FALS
 		stop("3-parameter distributions not handled by FMbounds")
 	}
 
-	
 	if(length(unrel)>0)  {
 	dq<-unrel
 	}else{
 	## these descriptive quantiles match Minitab unchangeable defaults
 	dq=c(seq(.01,.09,by=.01),seq(.10,.90,by=.10),seq(.91,.99, by=.01))
 	}
+
 	K<-qnorm(1-(1-CI)/2)
 	##  validity checking of arguments will also be performed in mlefit
 	##  Note: debias entry to mlefit is left at default NULL here
@@ -76,6 +76,6 @@ FMbounds<-function(x, dist="weibull", CI=.95, unrel=NULL, debias=NULL, show=FALS
 		}
 	}
 
-	outDF<-data.frame(percentile=dq*100, lower=exp(Lb), datum=xp, upper=exp(Ub))
+	outDF<-data.frame(unrel=dq*100, lower=exp(Lb), datum=xp, upper=exp(Ub))
 	return(outDF)
 }	

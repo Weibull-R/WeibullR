@@ -1,4 +1,4 @@
-LRbounds<-function(x,  dist="weibull", CL=0.9, dq=(c(1,5,10,20,30,40,50,60,80,90,95,99)/100),  contour=NULL, dof=1, debias=FALSE,applyFF=FALSE, show=FALSE)  {
+LRbounds<-function(x,  dist="weibull", CL=0.9, unrel=NULL,  contour=NULL, dof=1, debias=FALSE,applyFF=FALSE, show=FALSE)  {
 ## check basic parameters of x
 	if(class(x)!="data.frame") {stop("mlefit takes a structured dataframe input, use mleframe")}
 	if(ncol(x)!=3)  {stop("mlefit takes a structured dataframe input, use mleframe")}
@@ -6,7 +6,14 @@ LRbounds<-function(x,  dist="weibull", CL=0.9, dq=(c(1,5,10,20,30,40,50,60,80,90
 	if(xnames[1]!="left" || xnames[2]!="right"||xnames[3]!="qty")  {
 		 stop("mlefit takes a structured dataframe input, use mleframe")  }
 	if(missing(contour))  {
-		contour<-MLEcontour(x, dist, CL, DF=dof, debias=debias, applyFF=applyFF)
+		contour<-MLEcontour(x, dist, CL, dof=dof, debias=debias, applyFF=applyFF)
+	}
+
+	if(length(unrel)>0)  {
+	dq<-unrel
+	}else{
+	## these descriptive quantiles match Minitab unchangeable defaults
+	dq=c(seq(.01,.09,by=.01),seq(.10,.90,by=.10),seq(.91,.99, by=.01))
 	}
 
 	if(dist=="weibull")  {
@@ -15,17 +22,12 @@ LRbounds<-function(x,  dist="weibull", CL=0.9, dq=(c(1,5,10,20,30,40,50,60,80,90
 ## Need lognormal p2y here
 		ypts<-qnorm(dq,0,1)
 	}
-
-
-
-##		i=1
+	
 		j=1
 
-##	yval<-c(Blife=ypts)
-
-## P1 was Eta	
+## P1 was Eta
 	P1<-contour[j,1]
-## P2 was Beta	
+## P2 was Beta
 	P2<-contour[j,2]
 
 	xvals=NULL
@@ -43,7 +45,7 @@ LRbounds<-function(x,  dist="weibull", CL=0.9, dq=(c(1,5,10,20,30,40,50,60,80,90
 
 	outmat<-rbind(ypts,xlo=xvals, P1=rep(P1,length(ypts)),P2=rep(P2,length(ypts)),
 		xhi=xvals, P1=rep(P1,length(ypts)),P2=rep(P2,length(ypts)))
-##	for(i in 1:4)  {
+
 			clen=length(contour[,1])
 		for(j in 1:clen)  {
 			P1<-contour[j,1]
@@ -120,7 +122,9 @@ LRbounds<-function(x,  dist="weibull", CL=0.9, dq=(c(1,5,10,20,30,40,50,60,80,90
 
 
 
-	outDF<-data.frame(percentile=dq*100, lower=exp(outmat[2,]), datum=exp(xvals), upper=exp(outmat[5,]))
-##	outDF<-data.frame(ypts=ypts,Lower=outmat[2,],Datum=xvals, Upper=outmat[5,])
-outDF
+	outDF<-data.frame(unrel=dq*100, lower=exp(outmat[2,]), datum=exp(xvals), upper=exp(outmat[5,]))
+	outList<-list(outDF,contour)
+
+outList
 }
+

@@ -2,7 +2,7 @@
 ## This function name has been refactored to avoid confusion with pivotalMC in abremPivotals
 
 
-pivotal.rr<-function(x, event=NULL, dist="weibull", reg_method="XonY", R2, CI, unrel, P1=1.0, P2=1.0, S=10^4, seed=1234, ProgRpt=FALSE)  {		
+pivotal.rr<-function(x, event=NULL, dist="weibull", reg_method="XonY", R2, CI, unrel=NULL, P1=1.0, P2=1.0, S=10^4, seed=1234, ProgRpt=FALSE)  {		
 				
 	if(is.vector(x))  {			
 		stop("use MRR functions for casual fitting, or pre-process with getPPP")		
@@ -26,9 +26,17 @@ pivotal.rr<-function(x, event=NULL, dist="weibull", reg_method="XonY", R2, CI, u
 			stop("event vector has wrong length")
 		}
 	}
-	    if (R2 < 0|| R2>1) stop("Invalid R-squared value")
-	    if (CI < 0|| CI>1) stop("Invalid Confidence Interval")	
-		if(min(unrel)<=0||max(unrel)>=1) stop("Invalid unreliability vector")
+	
+	if (R2 < 0|| R2>1) stop("Invalid R-squared value")
+	if (CI < 0|| CI>1) stop("Invalid Confidence Interval")
+		
+	if(length(unrel)>0)  {
+	dq<-unrel
+	}else{
+	## these descriptive quantiles match Minitab unchangeable defaults
+	dq=c(seq(.01,.09,by=.01),seq(.10,.90,by=.10),seq(.91,.99, by=.01))
+	}
+
 		
 		if(dist!="weibull" && P1==1.0) message("lognormal or gumbel sampled with P1=1.0")
 		
@@ -48,7 +56,7 @@ pivotal.rr<-function(x, event=NULL, dist="weibull", reg_method="XonY", R2, CI, u
 	if(dist=="gumbel") casenum=casenum+4			
 				
 				
-	result<-.Call("pivotalMC", x$ppp, event, c(R2,CI,P1,P2), S, seed, unrel, ProgRpt, casenum , package="WeibullR")
+	result<-.Call("pivotalMC", x$ppp, event, c(R2,CI,P1,P2), S, seed, dq, ProgRpt, casenum , package="WeibullR")
 
 
 return(result)				
