@@ -76,6 +76,6 @@ FMbounds<-function(x, dist="weibull", CI=.95, unrel=NULL, debias=NULL, show=FALS
 		}
 	}
 
-	outDF<-data.frame(unrel=dq*100, lower=exp(Lb), datum=xp, upper=exp(Ub))
+	outDF<-data.frame(percentile=dq*100, lower=exp(Lb), datum=xp, upper=exp(Ub))
 	return(outDF)
 }	

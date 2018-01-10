@@ -19,7 +19,7 @@
 options.wblr<- function(...){
     # function to handle the many options of the Weibull-R functions
     # the option list should only be manipulated through this function!
-    
+
     # TODO: WARNING: partial matching is in effect!
     # options.wblr()$ylim will return options.wblr()$ylim.default if
     # $ylim was set to NULL!
@@ -31,24 +31,55 @@ options.wblr<- function(...){
         # if the globally accessible variable was not defined yet, then
         # create it here with default values OR reset to default values
         # message ("Resetting Weibull-R options to default values...")
+
         options_wblr <- list(
-            dist="weibull",
-            method.fit=c("rr","xony"),
-##            conf.what="blives",
-##            conf.blives.sides="double",
-##            unrel.n=25,
-			num_dq=25,
-            method.conf="mcpivotals",
-            pp="median",#,"benard","hazen","mean", "kaplan.meier", "blom"),
+## options specific to initial wblr object creation with data prepared for graphical display
+         ## plotting position method
+            pp="median",           ## ("benard","hazen","mean", "kaplan.meier", "blom")
+##  adjustment method for suspension data
+            rank.adj ="johnson",          ## ("KMestimator")
+         ## graphical control over data points
+            pch=1,
+            lwd.points=2,
+            cex.points=1,
+         ## independent graphical control over interval lines
+            interval.col="black",
+            interval.lty="dashed",
+            interval.lwd=1,
+
+## options specific to wblr.fit
+            dist="weibull",           ##  ("lognormal","lnorm","lognormal2p", "weibull2p","lognormal3p", "weibull3p")
+            method.fit=c("rr","xony"),           ## (c("rr","yonx"),"", "mle","mle-rba", "mle-unbias")
+## thinking of implementing               "principal-components" or "princ-comp" for short
+
+## options specific to wblr.conf
+            method.conf="mcpivotals",           ## ("bbb","fm", "fmbounds","lrb", "likelihood-ratio")
+           num_dq=25,
+           dq="abrem",
+        ##   assigning dq="user" permits defined user_dq to be applied.  minitab dq exampled here:
+           user_dq=c(seq(.01,.09,by=.01),seq(.10,.90,by=.10),seq(.91,.99, by=.01)),
+        ## double-sided confidence interval, also chi sq conf level for likelihood ratio
+           ci=0.9,
+        ## probability points at which to report Blife on legend
+            blife.pts=c(0.1,0.05,0.01),
+        ## specific control for pivotal analysis; RNG seed, and sample rate
+             seed= 1234,
+##        rgen=FALSE,
             S=1e4,
             pivotals=FALSE,
-##            cl=0.9,
-			ci=0.9,
-##            unrel=c(0.1,0.05,0.01),
-			dq="abrem",
-##   assigning dq="user" permits defined user_dq to be applied.  minitab dq exampled here:			
-			user_dq=c(seq(.01,.09,by=.01),seq(.10,.90,by=.10),seq(.91,.99, by=.01)),
-            blife.pts=c(0.1,0.05,0.01),
+        ## specific control for likelihood ratio contour and bounds
+            contour.dof=1,            ## degrees of freedom, dof=1 for conf interval, dof=2 for comparison
+            applyFF=FALSE,            ## can only be TRUE when method.fit="mle-rba"
+
+## General graphical options
+        ## graphical control for fitted lines, confidence bounds, or contours can be set at
+        ## can be set at wblr, wblr.fit, or wblr.conf functions for individual object control
+		## see man page for R graphics function par
+            lwd=2,
+            lty=1,
+            col="black",
+        ## graphical control used with plot or plot.wblr
+            canvas="weibull",            ## ( "lognormal" thinking about something like "plain","linear", or "raw"
             mar=c(5.1,4.1,5.1,2.1),
             main="Probability Plot",
             main.contour="Contour Plot",
@@ -59,21 +90,10 @@ options.wblr<- function(...){
             ylim=NULL,
             xlab="Time To Failure",
             ylab="Unreliability [%]",
-            log="x", # this is indeed a graphic option, must remain, but discouraged from use
-            canvas="weibull",
+            log="x", # this is indeed a graphic option, must remain, but will cause an error if used as an argument.
             coordinate.text.size=0.7,
-            signif=4,
-            pch=1,
-            lwd=2,
-            lwd.points=2,
-            cex.points=1,
-            lty=1,
-            col="black",
+            signif=4,    # used to control display of numbers in Legend
             col.grid="gray",
-			interval.col="black",
-			interval.lty="dashed",
-			interval.lwd=1,
-
             is.plot.grid=TRUE,
             is.plot.fit=TRUE,
             is.plot.pp=TRUE,
@@ -88,7 +108,7 @@ options.wblr<- function(...){
             in.legend.gof=TRUE,
             is.plot.cb = TRUE,
             persistent=TRUE)
-            
+
     if (!length(args))
         args <- options_wblr
            # return the current option list
@@ -131,19 +151,19 @@ plot_default_args <- function(){
         "usr","xlog", "ylog","ylbias")
         # parameters that can only be set using par()
         # see $par() for the origin of this list
-    parreadonly <- c("xlog", "ylog", "adj", "ann", "ask", 
-        "bg", "bty", "cex", "cex.axis", "cex.lab", 
-        "cex.main", "cex.sub", "col", "col.axis", "col.lab", 
-        "col.main", "col.sub", "crt", "err", "family", 
+    parreadonly <- c("xlog", "ylog", "adj", "ann", "ask",
+        "bg", "bty", "cex", "cex.axis", "cex.lab",
+        "cex.main", "cex.sub", "col", "col.axis", "col.lab",
+        "col.main", "col.sub", "crt", "err", "family",
         "fg", "fig", "fin", "font", "font.axis",
-        "font.lab", "font.main", "font.sub", "lab", "las", 
-        "lend", "lheight", "ljoin", "lmitre", "lty", 
-        "lwd", "mai", "mar", "mex", "mfcol", 
-        "mfg", "mfrow", "mgp", "mkh", "new", 
-        "oma", "omd", "omi", "pch", "pin", 
-        "plt", "ps", "pty", "smo", "srt", 
-        "tck", "tcl", "usr", "xaxp", "xaxs", 
-        "xaxt", "xpd", "yaxp", "yaxs", "yaxt", 
+        "font.lab", "font.main", "font.sub", "lab", "las",
+        "lend", "lheight", "ljoin", "lmitre", "lty",
+        "lwd", "mai", "mar", "mex", "mfcol",
+        "mfg", "mfrow", "mgp", "mkh", "new",
+        "oma", "omd", "omi", "pch", "pin",
+        "plt", "ps", "pty", "smo", "srt",
+        "tck", "tcl", "usr", "xaxp", "xaxs",
+        "xaxt", "xpd", "yaxp", "yaxs", "yaxt",
         "ylbias")
         # par() parameter that can be set
         # par(no.readonly=TRUE)
@@ -154,4 +174,3 @@ plot_default_args <- function(){
           # to plot.default
     parplot
 }
-

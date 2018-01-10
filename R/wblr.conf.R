@@ -233,8 +233,9 @@ DQ<-DescriptiveQuantiles
 		# | | | | | | (__| |_) | |\ V / (_) | || (_| | \__ \
 		# |_| |_| |_|\___| .__/|_| \_/ \___/ \__\__,_|_|___/
 		#
+## this qualifier needs to apply to all bounds
 	if(any(c("weibull3p", "lognormal3p") %in% tolower(fit$options$dist))) {
-		stop("3-parameter fits are not handled by mcpivotals")
+		stop("confidence bounds are not prepared on 3-parameter fits")
 	}
 		if(!is.integer(opaconf$seed))  {
 			##warning(paste0("opaconf$seed: ",opaconf$seed,"is not an integer"))
@@ -245,7 +246,7 @@ DQ<-DescriptiveQuantiles
 		fit$conf[[i]]$type   <- "mcpivotals"
 		fit$conf[[i]]$S      <- 10^4
 		fit$conf[[i]]$seed   <- opaconf$seed
-		fit$conf[[i]]$rgen   <- opaconf$rgen
+##		fit$conf[[i]]$rgen   <- opaconf$rgen
 		fit$conf[[i]]$ci     <- opaconf$ci
 ##		fit$conf[[i]]$sides  <- opaconf$conf.blives.sides
 		fit$conf[[i]]$blife.pts <- opaconf$blife.pts
@@ -419,6 +420,81 @@ if(!is.null(debias)) fit$conf[[i]]$debias <- debias
 
 	}  # end FM bounds
 
+	if(any(c("lrb","lrbounds") %in% tolower(opaconf$method.conf))) {
+		fit$conf[[i]]        <- list()
+		fit$conf[[i]]$type   <- "lrb"
+		fit$conf[[i]]$ci     <- opaconf$ci
+	## It is likely desirable to list input characteristics of the contour
+		fit$conf[[i]]$dof <- opaconf$contour.dof
+		fit$conf[[i]]$applyFF     <- opaconf$applyFF
+
+		fit$conf[[i]]$blife.pts <- opaconf$blife.pts
+		ret <- NULL
+	## this qualifier needs to apply to all bounds
+		if(any(c("weibull3p", "lognormal3p") %in% tolower(fit$options$dist))) {
+			stop("confidence bounds are not prepared on 3-parameter fits")
+		}
+
+
+## just get the distribution from the fit object, no crossfire
+	fit_dist<-fit$options$dist
+
+
+
+
+
+## interpret input for debias
+		debias<-NULL
+		if(fit$options$method.fit == "mle-rba")  debias <- "rba"
+		if(fit$options$method.fit == "mle-unbias") {
+			if(fit_dist == "weibull") {
+				debias <- "hirose-ross"
+			}else{
+#mle-unbias taken as mle-rba for lognormal
+				debias <- "rba"
+			}
+		}
+		if(!is.null(debias)) fit$conf[[i]]$debias <- debias
+
+
+
+
+
+## usage LRbounds(x,  dist="weibull", CL=0.9, unrel=NULL,  contour=NULL, dof=1, debias=FALSE,applyFF=FALSE, show=FALSE)
+		ret<-LRbounds(xdata$lrq_frame,
+			dist=fit$options$dist,
+			CL=opaconf$ci,
+			 unrel=unrel,
+#			contour=NULL,
+			dof=fit$conf[[i]]$dof,
+			debias=debias,
+			applyFF=fit$conf[[i]]$applyFF,
+		)
+
+		if(!is.null(ret)){
+			atLeastOneBLifeConf <- TRUE
+
+			ret$bounds$percentile<-ret$bounds$percentile/100
+
+			fit$conf[[i]]$bounds <- ret$bounds
+			names(fit$conf[[i]]$bounds) <- c("unrel","Lower","Datum", "Upper")
+
+			fit$conf[[i]]$contour<-ret$contour
+
+			op <- unique(c(names(opafit),names(opaconf)))
+				# this is needed to add options from opafit into li that
+				# are NULL in opafit
+				# TODO:tolower() not needed?
+			if(length(li <- opaconf[sapply(op,function(y){
+				!identical(opafit[[y]], opaconf[[y]])})]) > 0){
+				fit$conf[[i]]$options <- li
+			}
+		}else{
+			message("calculateSingleConf: Confidence calculation failed.")
+			fit$conf[[i]] <- NULL
+		}
+
+	}  # end LRB bounds
 
 
 

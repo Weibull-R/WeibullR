@@ -254,6 +254,7 @@ wblr.fit <- function(x, modify.by.t0=FALSE,...){
 		
         if(!is.null(fit_vec)){
 			atleastonefit<-TRUE
+			x$fit[[i]]$MLEfit <- fit_vec
 			if(fit_dist=="weibull") {
 				x$fit[[i]]$beta <- fit_vec[2]
 				x$fit[[i]]$eta <- fit_vec[1]				

@@ -122,8 +122,8 @@ LRbounds<-function(x,  dist="weibull", CL=0.9, unrel=NULL,  contour=NULL, dof=1,
 
 
 
-	outDF<-data.frame(unrel=dq*100, lower=exp(outmat[2,]), datum=exp(xvals), upper=exp(outmat[5,]))
-	outList<-list(outDF,contour)
+	outDF<-data.frame(percentile=dq*100, lower=exp(outmat[2,]), datum=exp(xvals), upper=exp(outmat[5,]))
+	outList<-list(bounds=outDF,contour=contour)
 
 outList
 }
