@@ -189,7 +189,7 @@ mlefit<-function(x, dist="weibull", npar=2, debias="none", optcontrol=NULL)  {
 	ControlList<-list(dist_num=dist_num,limit=limit,maxit=maxit)
 
 ## here is a good place to validate any debias argument (before more calculations begin)
-	if(length(debias)>0 && dist_num==1)  {
+	if(debias!="none" && dist_num==1)  {
 		if(tolower(debias)!="rba"&&tolower(debias)!="mean"&&tolower(debias)!="hirose-ross")  {
 			stop("debias method not resolved")
 		}
