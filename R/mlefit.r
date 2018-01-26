@@ -1,4 +1,4 @@
-mlefit<-function(x, dist="weibull", npar=2, debias=NULL, optcontrol=NULL)  {
+mlefit<-function(x, dist="weibull", npar=2, debias="none", optcontrol=NULL)  {
 ## tz is required for MLEloglike and MLEsimplex calls now
 		default_tz=0
 ## sign is now required for MLEloglike call
@@ -225,7 +225,7 @@ mlefit<-function(x, dist="weibull", npar=2, debias=NULL, optcontrol=NULL)  {
 
 		if(dist_num == 1)  {
 			names(outvec)<-c("Eta","Beta","LL")
-			if(length(debias)>0)  {
+			if(debias!="none")  {
 				if(debias!="rba"&&debias!="mean"&&debias!="hirose-ross")  {
 					stop("debias method not resolved")
 				}
@@ -245,7 +245,7 @@ mlefit<-function(x, dist="weibull", npar=2, debias=NULL, optcontrol=NULL)  {
 
 		if(dist_num == 2)  {
 			names(outvec)<-c("Mulog","Sigmalog","LL")
-			if(length(debias)>0)  {
+			if(debias!="none")  {
 				outvec[2]<-outvec[2]*rba(Q[1]-Q[3], dist="lognormal")
 				if(debias!="rba")  {
 					warning("rba has been applied to adjust lognormal")
@@ -381,7 +381,7 @@ mlefit<-function(x, dist="weibull", npar=2, debias=NULL, optcontrol=NULL)  {
 
 		if(dist_num==1)  {
 			names(outvec)<-c("Eta","Beta", "t0", "LL")
-			if(length(debias)>0)  {
+			if(debias!="none")  {
 				if(debias=="rba")  {
 					outvec[2]<-outvec[2]*rba(Q[1]-Q[3], dist="weibull",basis="median")
 				}
@@ -397,7 +397,7 @@ mlefit<-function(x, dist="weibull", npar=2, debias=NULL, optcontrol=NULL)  {
 		}
 		if(dist_num == 2)  {
 			names(outvec)<-c("Mulog","Sigmalog", "t0", "LL")
-			if(length(debias)>0)  {
+			if(debias!="none")  {
 				outvec[2]<-outvec[2]*rba(Q[1]-Q[3], dist="lognormal")
 				if(debias!="rba")  {
 					warning("rba has been applied to adjust lognormal")

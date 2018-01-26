@@ -1,5 +1,10 @@
 MLEcontour<-function(x,  dist="weibull", CL=0.9,dof=1,MLEfit=NULL, RadLimit=1e-5,
-		ptDensity=120, debias=NULL, applyFF=FALSE, show=FALSE)  {
+		ptDensity=120, debias="none", show=FALSE)  {
+## warn on attempt to set debias
+	if(debias!="none")  {
+		warning("bias adjustement is not implemnented for likelihood ratio contours")
+	}
+		
 ## check basic parameters of x
 	if(class(x)!="data.frame") {stop("mlefit takes a structured dataframe input, use mleframe")}
 	if(ncol(x)!=3)  {stop("mlefit takes a structured dataframe input, use mleframe")}
@@ -104,21 +109,21 @@ MLEcontour<-function(x,  dist="weibull", CL=0.9,dof=1,MLEfit=NULL, RadLimit=1e-5
 	par_hat <- c(MLEfit[2], MLEfit[1])
 	MLLx<-MLEfit[3]
 
-	FF<-1
-	if(applyFF==TRUE) {
-## The 'Fulton Factor' is a non-achademic component discussed in Abernethy's book.
+##	FF<-1
+##	if(applyFF==TRUE) {
+## The 'Fulton Factor' is a non-achademic component discussed in Abernethy's book as part of a "Justified Likelihood Function".
 ## It was a further adjustement, beyond RBA, to add a "pleasing" shape to contour bounds
 ## when comparing them to pivotal rank regression interval bounds.
-## This factor has never been demonstrated to have any statistical basis.
-		if(debias!="rba")  {
-			stop('FF is only applicable when debias is set to "rba"')
-		}else{
-			Nf<-length(x)
-			FF<-(Nf-1)/(Nf+0.618)
-		}
-	}
-	ratioLL  <-  MLLx- qchisq(CL,dof)/(2*FF)
-
+## This factor has never been demonstrated to have any statistical basis, and is not implented in WeibullR.
+##		if(debias!="rba")  {
+##			stop('FF is only applicable when debias is set to "rba"')
+##		}else{
+##			Nf<-length(x)
+##			FF<-(Nf-1)/(Nf+0.618)
+##		}
+##	}
+##	ratioLL  <-  MLLx- qchisq(CL,dof)/(2*FF)
+	ratioLL  <-  MLLx- qchisq(CL,dof)/2
 ## assure ptDensity is an integer
 	ptDensity<-ceiling(ptDensity)
 

@@ -10,8 +10,8 @@
 }
 
 \usage{
-MLEcontour(x,  dist="weibull", CL=0.9,DF=1,MLEfit=NULL, RadLimit=1e-5,
-             ptDensity=120, debias=NULL, applyFF=FALSE, show=FALSE)
+MLEcontour(x,  dist="weibull", CL=0.9,dof=1,MLEfit=NULL, RadLimit=1e-5,
+             ptDensity=120, debias="none", show=FALSE)
 }
 
 \arguments{
@@ -23,20 +23,14 @@ MLEcontour(x,  dist="weibull", CL=0.9,DF=1,MLEfit=NULL, RadLimit=1e-5,
   \item{dist}{A string defining a distribution to be fit. Implemented distributions are "weibull" (default) and "lognormal".
   }
   \item{CL}{a confidence limit to be applied to the Chi square test.}
-  \item{DF}{an integer value indicating degrees of freedom to apply to the Chi square test, which defaults to DF=1 for
+  \item{dof}{an integer value indicating degrees of freedom to apply to the Chi square test, which defaults to dof=1 for
   confidence interval bound use. Should be set to 2 for comparison of two models each with 2 parameters.}
   \item{MLEfit}{an optional argument to use a fit made external to the function. Disaster awaits any mismatch between data
   entered and this fit. When provided, the MLEfit} shall be a vector in the order of scale(or logmean), shape (or std dev) and Loglikelihood.
   \item{ptDensity}{an integer value for the number of points to be plotted around the circumference of the contour.}
   \item{RadLimit}{a convergence limit for the contour radials based on specific units of Eta/Eta_hat and Beta/Beta_hat.}
-  \item{debias}{An optional string argument indicating the adjustment to be applied to the shape or standard deviation
-  parameter of the fitted data. Adjustments recognized are: "rba" (default), "mean", and "hirose-ross". Any entry for debias
-  with the lognormal distribution will be processed as "rba" with a warning if it was not clearly specified.
-  }
-  \item{applyFF}{The 'Fulton Factor' is a non-achademic component discussed in Abernethy's book.
-  It is a further adjustement, beyond RBA, to add a "pleasing" shape to contour bounds when comparing them
-  to pivotal rank regression interval bounds.  This factor has never been demonstrated to have any statistical basis.
-  It has been accomodated here for demonstration purposes only.
+  \item{debias}{A place holder for an optional string argument indicating the adjustment to be applied to the shape or standard deviation
+  parameter of the fitted data. NOT YET IMPLEMEMENTED - see details.
   }
   \item{show}{a logical value indicating whether a graphical output is desired (independent of wblr activity).}
 }
@@ -47,12 +41,14 @@ MLEcontour(x,  dist="weibull", CL=0.9,DF=1,MLEfit=NULL, RadLimit=1e-5,
 
 \details{
    The contour points (p1,p2) identified as satisfying the root of the equation,
-   (log(ML(p1_hat,p2_hat))-log(RL(p1,p2))*FF - chisquare(CL,DF)/2=0,where ML is Maximum Likelihood for the data,and RL
+   (log(ML(p1_hat,p2_hat))-log(RL(p1,p2)) - chisquare(CL,DF)/2=0,where ML is Maximum Likelihood for the data,and RL
    is Ratioed Likelihood for the data at selected points for the contour.
    The algorithm for this function (executed in compiled C++ code) uses a quinary search for the root optimization of each radial
    on a polar coordinate loop. It is believed to be unique from commercial implementatons and appears to have improved stability
    for this notoriously challenging calculation.
-   Depending on the value of debias, the contour points  are then modified by the RBA (median basis) on the Wiebull shape parameter, Beta.
+   
+  Some commercial softwares apply a modification of the likelihood coontour based on the application of a bias adjustment. Abernethy's "Justified Likelihood Function" has not been demonstrated to be academically accepted, so no attempt has been made to implement similar modification.
+  Contribution of evidence or a method contrary to this position will gladly be reviewed by the package maintainer.
 }
 
 \references{
@@ -62,7 +58,7 @@ MLEcontour(x,  dist="weibull", CL=0.9,DF=1,MLEfit=NULL, RadLimit=1e-5,
 \examples{
 fig3cF<-c(1500,2250,4000,4300,7000)
 fig3cS<-c(1750,5000)
-Contour<-MLEcontour(mleframe(fig3cF,fig3cS),debias=TRUE)
+Contour<-MLEcontour(mleframe(fig3cF,fig3cS))
 }
 
 \keyword{ likelihood }

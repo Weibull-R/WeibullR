@@ -1,9 +1,14 @@
-FMbounds<-function(x, dist="weibull", CI=.95, unrel=NULL, debias=NULL, show=FALSE)  {
+FMbounds<-function(x, dist="weibull", CI=.90, unrel=NULL, debias="none", show=FALSE)  {
+## warn on attempt to set debias
+	if(debias!="none")  {
+		warning("bias adjustement is not implemnented for Fisher [information] Matrix bounds")
+	}
+
 ##  x must be an lrq dataframe such as returned by mleframe
-	if(class(x)!="data.frame") {stop("FMbounds takes a structured dataframe input, use mleframe")}			
-	if(ncol(x)!=3)  {stop("FMbounds takes a structured dataframe input, use mleframe")}			
-	xnames<-names(x)			
-	if(xnames[1]!="left" || xnames[2]!="right"||xnames[3]!="qty")  {			
+	if(class(x)!="data.frame") {stop("FMbounds takes a structured dataframe input, use mleframe")}
+	if(ncol(x)!=3)  {stop("FMbounds takes a structured dataframe input, use mleframe")}
+	xnames<-names(x)
+	if(xnames[1]!="left" || xnames[2]!="right"||xnames[3]!="qty")  {
 		 stop("FMbounds takes a structured dataframe input, use mleframe")  }
 
 	if(tolower(dist) %in% c("weibull3p", "lognormal3p")){
@@ -26,7 +31,7 @@ FMbounds<-function(x, dist="weibull", CI=.95, unrel=NULL, debias=NULL, show=FALS
 ## get failure and suspension counts from the input lrq_frame for possible debias calculations
 	Qs<-sum(x$qty[x$right<0])
 	Qx<-sum(x$qty)-Qs
-	
+
 	if(tolower(dist) %in% c("weibull","weibull2p")){
 		shape<-fit[2]
 		scale<-fit[1]
@@ -43,13 +48,13 @@ FMbounds<-function(x, dist="weibull", CI=.95, unrel=NULL, debias=NULL, show=FALS
 		Lb<-log(scale)+yp/shape-K*sqrt(Vt)
 		Ub<-log(scale)+yp/shape+K*sqrt(Vt)
 
-		
+
 		if(show==TRUE)  {
 			plot(log(xp),yp, type="l")
 			lines(Lb,yp, col="red")
 			lines(Ub,yp, col="blue")
 		}
-	}else{	
+	}else{
 		if(tolower(dist) %in% c("lnorm", "lognormal","lognormal2p")){
 			meanlog<-fit[1]
 			sdlog<-fit[2]
@@ -60,12 +65,12 @@ FMbounds<-function(x, dist="weibull", CI=.95, unrel=NULL, debias=NULL, show=FALS
 ## bounds are now rotated according to possible debias of sdlog
 			if(!is.null(debias) && debias=="rba"){
 				sdlog<-sdlog*rba(Qx, dist="lognormal")
-			}			
+			}
 			lnxp<-yp*sdlog+meanlog
 			Lb<-lnxp-K*sqrt(Vt)
 			Ub<-lnxp+K*sqrt(Vt)
 			xp<-exp(lnxp)
-			
+
 			if(show==TRUE)  {
 				plot(lnxp,yp, type="l")
 				lines(Lb,yp, col="red")
@@ -78,4 +83,4 @@ FMbounds<-function(x, dist="weibull", CI=.95, unrel=NULL, debias=NULL, show=FALS
 
 	outDF<-data.frame(percentile=dq*100, lower=exp(Lb), datum=xp, upper=exp(Ub))
 	return(outDF)
-}	
+}

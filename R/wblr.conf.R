@@ -381,21 +381,22 @@ DQ<-DescriptiveQuantiles
 		fit_dist<-"lognormal"
 	}
 
-## interpret input for debias
-		debias<-NULL
-		if(tolower(opafit$method.fit) == "mle-rba")  debias <- "rba"
-		if(tolower(opafit$method.fit) == "mle-unbias") {
-			if(fit_dist == "weibull") {
-				debias <- "hirose-ross"
-			}else{
+## bias adjustement is not implemented in FMbounds
+		debias<-"none"
+##		if(tolower(opafit$method.fit) == "mle-rba")  debias <- "rba"
+##		if(tolower(opafit$method.fit) == "mle-unbias") {
+##			if(fit_dist == "weibull") {
+##				debias <- "hirose-ross"
+##			}else{
 #mle-unbias taken as mle-rba for lognormal
-				debias <- "rba"
-			}
-		}
-if(!is.null(debias)) fit$conf[[i]]$debias <- debias
+##				debias <- "rba"
+##			}
+##		}
+##if(!is.null(debias)) fit$conf[[i]]$debias <- debias
 
-## usage FMbounds(x, dist="weibull", CI=.95, unrel=NULL, debias=NULL, show=FALSE)
-		ret<-FMbounds(xdata$lrq_frame, dist=fit$options$dist, CI=opaconf$ci, unrel=unrel, debias=debias)
+## usage FMbounds(x, dist="weibull", CI=.90, unrel=NULL, debias="none", show=FALSE)
+#		ret<-FMbounds(xdata$lrq_frame, dist=fit$options$dist, CI=opaconf$ci, unrel=unrel, debias=debias)
+		ret<-FMbounds(xdata$lrq_frame, dist=fit$options$dist, CI=opaconf$ci, unrel=unrel)
 
 		if(!is.null(ret)){
 			atLeastOneBLifeConf <- TRUE
@@ -443,32 +444,32 @@ if(!is.null(debias)) fit$conf[[i]]$debias <- debias
 
 
 
-## interpret input for debias
-		debias<-NULL
-		if(fit$options$method.fit == "mle-rba")  debias <- "rba"
-		if(fit$options$method.fit == "mle-unbias") {
-			if(fit_dist == "weibull") {
-				debias <- "hirose-ross"
-			}else{
+## bias adjustement is not implemented in LRbounds
+		debias<-"none"
+##		if(tolower(opafit$method.fit) == "mle-rba")  debias <- "rba"
+##		if(tolower(opafit$method.fit) == "mle-unbias") {
+##			if(fit_dist == "weibull") {
+##				debias <- "hirose-ross"
+##			}else{
 #mle-unbias taken as mle-rba for lognormal
-				debias <- "rba"
-			}
-		}
-		if(!is.null(debias)) fit$conf[[i]]$debias <- debias
+##				debias <- "rba"
+##			}
+##		}
+##if(!is.null(debias)) fit$conf[[i]]$debias <- debias
 
 
 
 
 
-## usage LRbounds(x,  dist="weibull", CL=0.9, unrel=NULL,  contour=NULL, dof=1, debias=FALSE,applyFF=FALSE, show=FALSE)
+## usage LRbounds(x,  dist="weibull", CL=0.9, unrel=NULL,  contour=NULL, dof=1, debias="none", show=FALSE)
 		ret<-LRbounds(xdata$lrq_frame,
 			dist=fit$options$dist,
 			CL=opaconf$ci,
 			 unrel=unrel,
 #			contour=NULL,
 			dof=fit$conf[[i]]$dof,
-			debias=debias,
-			applyFF=fit$conf[[i]]$applyFF,
+			debias=debias
+#			applyFF=fit$conf[[i]]$applyFF
 		)
 
 		if(!is.null(ret)){
