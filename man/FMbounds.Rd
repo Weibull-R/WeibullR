@@ -23,8 +23,8 @@ FMbounds(x, dist="weibull", CI=.95, unrel=NULL, debias="none", show=FALSE)
   }
   \item{unrel}{An optional vector of unreliability values to be used as the descriptive quantiles at which the bounds will be calculated.
   }
-  \item{debias}{A place holder for an optional string argument indicating the adjustment to be applied to the shape or standard deviation
-  parameter of the fitted data. NOT YET IMPLEMEMENTED - see details.
+  \item{debias}{A string argument indicating the adjustment to be applied to the shape or standard deviation
+  parameter of the fitted data.
   }
    \item{show}{A logical determining whether a crude graphic of the bounds shall be displayed.
   } 
@@ -37,8 +37,8 @@ FMbounds(x, dist="weibull", CI=.95, unrel=NULL, debias="none", show=FALSE)
 \details{
   An "observed" information matrix is derived numerically as the hessian by means of optimHess.  From the variance-covariance matrix (inverse of the hessian) variation of life(-time) at given quantiles is determined.
   
-  Some commercial softwares apply a modification of the FM bounds based on the application of a bias adjustment. No academically accepted method has been identified for such modification, so no attempt has been made to implement similar modification.
-  Contribution of a method contrary to this position will gladly be reviewed by the package maintainer.
+  Application of a bias adjustment alters the calculation of the hessian, thus the bounds are based on a "modified" Fisher Matrix.
+
 }
 
 \references{

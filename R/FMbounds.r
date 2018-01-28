@@ -1,8 +1,4 @@
 FMbounds<-function(x, dist="weibull", CI=.90, unrel=NULL, debias="none", show=FALSE)  {
-## warn on attempt to set debias
-	if(debias!="none")  {
-		warning("bias adjustement is not implemnented for Fisher [information] Matrix bounds")
-	}
 
 ##  x must be an lrq dataframe such as returned by mleframe
 	if(class(x)!="data.frame") {stop("FMbounds takes a structured dataframe input, use mleframe")}
@@ -24,8 +20,7 @@ FMbounds<-function(x, dist="weibull", CI=.90, unrel=NULL, debias="none", show=FA
 
 	K<-qnorm(1-(1-CI)/2)
 	##  validity checking of arguments will also be performed in mlefit
-	##  Note: debias entry to mlefit is left at default NULL here
-	##         any adjustment to bounds will not be compounded.
+
 	fit<-mlefit(x, dist=dist)
 
 ## get failure and suspension counts from the input lrq_frame for possible debias calculations
@@ -35,14 +30,15 @@ FMbounds<-function(x, dist="weibull", CI=.90, unrel=NULL, debias="none", show=FA
 	if(tolower(dist) %in% c("weibull","weibull2p")){
 		shape<-fit[2]
 		scale<-fit[1]
+## if bias adjustment is made, a modified hessian is determined
+## thus this becomes a "modified" Fisher Matrix bound calculation
+		if(debias=="rba") shape<- shape*rba(Qx,dist="weibull")
+		if(debias=="hrbu") shape<- shape*hrbu(Qx,Qs)
+
 		hessian<-optimHess(c(shape,scale),wblrLoglike, x=x, dist="weibull", sign=-1)
 		V<-solve(hessian)
 		yp<-log(log(1/(1-dq)))
-## bounds should be rotated according to possible debias of beta (shape)
-## usage rba(Qx, dist="weibull", basis="median")
-		if(!is.null(debias) && debias=="rba") shape<- shape*rba(Qx,dist="weibull")
-## usage hrbu(Qx,Qs=NULL)
-		if(!is.null(debias) && debias=="hrbu") shape<- shape*hrbu(Qx,Qs)
+
 		xp<-scale*(log(1/(1-dq)))^(1/shape)
 		Vt<-V[2,2]/scale^2+yp^2*V[1,1]/shape^4-2*yp*V[1,2]/(shape^2*scale)
 		Lb<-log(scale)+yp/shape-K*sqrt(Vt)
@@ -58,14 +54,16 @@ FMbounds<-function(x, dist="weibull", CI=.90, unrel=NULL, debias="none", show=FA
 		if(tolower(dist) %in% c("lnorm", "lognormal","lognormal2p")){
 			meanlog<-fit[1]
 			sdlog<-fit[2]
+## if bias adjustment is made, a modified hessian is determined
+## thus this becomes a "modified" Fisher Matrix bound calculation
+		if(debias=="rba") sdlog<-sdlog*rba(Qx, dist="lognormal")
+
 			hessian<-optimHess(c(meanlog,sdlog),wblrLoglike, x=x, dist="lognormal", sign=-1)
 			V<-solve(hessian)
 			yp<-qnorm(dq,0,1)
 			Vt<-V[1,1] + yp^2*V[2,2] + 2*yp*V[1,2]
-## bounds are now rotated according to possible debias of sdlog
-			if(!is.null(debias) && debias=="rba"){
-				sdlog<-sdlog*rba(Qx, dist="lognormal")
-			}
+
+
 			lnxp<-yp*sdlog+meanlog
 			Lb<-lnxp-K*sqrt(Vt)
 			Ub<-lnxp+K*sqrt(Vt)

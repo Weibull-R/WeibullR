@@ -381,22 +381,22 @@ DQ<-DescriptiveQuantiles
 		fit_dist<-"lognormal"
 	}
 
-## bias adjustement is not implemented in FMbounds
+
 		debias<-"none"
-##		if(tolower(opafit$method.fit) == "mle-rba")  debias <- "rba"
-##		if(tolower(opafit$method.fit) == "mle-unbias") {
-##			if(fit_dist == "weibull") {
-##				debias <- "hirose-ross"
-##			}else{
+		if(tolower(opafit$method.fit) == "mle-rba")  debias <- "rba"
+		if(tolower(opafit$method.fit) == "mle-unbias") {
+			if(fit_dist == "weibull") {
+				debias <- "hrbu"
+			}else{
 #mle-unbias taken as mle-rba for lognormal
-##				debias <- "rba"
-##			}
-##		}
-##if(!is.null(debias)) fit$conf[[i]]$debias <- debias
+				debias <- "rba"
+			}
+		}
+		fit$conf[[i]]$debias <- debias
 
 ## usage FMbounds(x, dist="weibull", CI=.90, unrel=NULL, debias="none", show=FALSE)
-#		ret<-FMbounds(xdata$lrq_frame, dist=fit$options$dist, CI=opaconf$ci, unrel=unrel, debias=debias)
-		ret<-FMbounds(xdata$lrq_frame, dist=fit$options$dist, CI=opaconf$ci, unrel=unrel)
+		ret<-FMbounds(xdata$lrq_frame, dist=fit_dist, CI=opaconf$ci, unrel=unrel, debias=debias)
+
 
 		if(!is.null(ret)){
 			atLeastOneBLifeConf <- TRUE
