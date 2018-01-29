@@ -95,18 +95,24 @@ MLEcontour<-function(x,  dist="weibull", CL=0.9,dof=1,MLEfit=NULL, RadLimit=1e-5
 
 ## start of main contour procedures
 	if(is.null(MLEfit))  {
-		require(WeibullR)
+##		require(WeibullR)
 ## in this case the x argument is already an mleframe
-		MLEfit<-unname(mlefit(x))
+		if(dist_num==1) {
+			MLEfit<-unname(mlefit(x))
+		}else{
+			MLEfit<-unname(mlefit(x, dist="lognormal"))
+		}
 	}else{
 		unname(MLEfit)
 	}
-## Eta_hat and Beta_hat are plotting coordinates for show=TRUE
-		Beta_hat<-MLEfit[2]
-		Eta_hat<-MLEfit[1]
 
-## par is provided as a vector c(shape, scale)
+if(dist_num==1)  {
+## par is provided as a vector c(shape, scale) for weibull
 	par_hat <- c(MLEfit[2], MLEfit[1])
+}else{
+## par is provided as a vector c(meanlog, sdlog) for lognormal
+	par_hat <- c(MLEfit[1], MLEfit[2])
+}
 	MLLx<-MLEfit[3]
 
 ##	FF<-1
@@ -127,34 +133,44 @@ MLEcontour<-function(x,  dist="weibull", CL=0.9,dof=1,MLEfit=NULL, RadLimit=1e-5
 ## assure ptDensity is an integer
 	ptDensity<-ceiling(ptDensity)
 
-## Test for successful identification of a contour point at angle theta
+## Call the C++ code to deliver a matrix of contour points
 	resultMat<- .Call("getContour", MLEclassList, par_hat, dist_num, MLLx, ratioLL, RadLimit, ptDensity, package="WeibullR")
 
-##	resultMat
-#}
+
 
 	if(sum(resultMat[,3])>0) {
 		warning("instability detected")
 	}
 	contourpts<-data.frame(resultMat[,1:2])
-	names(contourpts)<- c("Eta", "Beta")
+	if(dist_num==1) {
+		names(contourpts)<- c("Eta", "Beta")
+	}else{
+		names(contourpts)<- c("Mulog", "Sigmalog")
+	}
 
 	if(show==TRUE)  {
 
-		maxBeta<-max(contourpts[,2])
-		minBeta<-min(contourpts[,2])
-		minEta<-min(contourpts[,1])
-		maxEta<-max(contourpts[,1])
+		maxYpar<-max(contourpts[,2])
+		minYpar<-min(contourpts[,2])
+		minXpar<-min(contourpts[,1])
+		maxXpar<-max(contourpts[,1])
 
-		ylo<-floor(minBeta)
-		yhi<-floor(maxBeta)+1
+		ylo<-floor(minYpar)
+		yhi<-floor(maxYpar)+1
 
-		EtaDec<-10^(floor(log(minEta)/log(10))-1)
-		xlo<-EtaDec*(floor(minEta/EtaDec)-1)
-		xhi<-EtaDec*(floor(maxEta/EtaDec)+1)
-
-		if(!exists("ba")) ba<-1
-		plot(Eta_hat,Beta_hat*ba,xlim=c(xlo,xhi),ylim=c(ylo,yhi), col="red")
+		XparDec<-10^(floor(log(minXpar)/log(10))-1)
+		xlo<-XparDec*(floor(minXpar/XparDec)-1)
+		xhi<-XparDec*(floor(maxXpar/XparDec)+1)
+		if(dist_num==1)  {
+			Beta<-MLEfit[2]
+			Eta<-MLEfit[1]
+			plot(Eta,Beta,xlim=c(xlo,xhi),ylim=c(ylo,yhi), col="red")
+		}else{
+			Sigmalog<-MLEfit[2]
+			Mulog<-MLEfit[1]
+			plot(Mulog,Sigmalog,xlim=c(xlo,xhi),ylim=c(ylo,yhi), col="red")
+		}
+	
 		lines(contourpts)
 
 	}

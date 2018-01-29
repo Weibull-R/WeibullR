@@ -40,8 +40,14 @@ arma::rowvec MLEcontour::getContourPt( double theta)  {
 		Rincr = Rincr/5;
 		//CorrLevel++;
 		r_test = r_test + Rincr;
-		testPt(0) = (1+ r_test*cos(theta))*arma::as_scalar(par_hat(0));
-		testPt(1) = (1+ r_test*sin(theta))*arma::as_scalar(par_hat(1));
+		if(dist_num==1) {
+			testPt(0) = (1+ r_test*cos(theta))*arma::as_scalar(par_hat(0));
+			testPt(1) = (1+ r_test*sin(theta))*arma::as_scalar(par_hat(1));
+		}else{
+			testPt(0) = (1+ r_test*sin(theta))*arma::as_scalar(par_hat(0));
+			testPt(1) = (1+ r_test*cos(theta))*arma::as_scalar(par_hat(1));
+		}
+
 // This is the initial attempt to identify the outerPt, it is primarily successful
 // So it is handled first before any incrementing loop
 		LL_test = model.tryLL(testPt, dist_num);
@@ -69,8 +75,14 @@ arma::rowvec MLEcontour::getContourPt( double theta)  {
 		while(LL_test > RatioLL && Rincr>RadLimit)  {
 			//IncrLevel++;
 			r_test = r_test + Rincr;
-			testPt(0) = (1+ r_test*cos(theta))*arma::as_scalar(par_hat(0));
-			testPt(1) = (1+ r_test*sin(theta))*arma::as_scalar(par_hat(1));
+			if(dist_num==1) {
+				testPt(0) = (1+ r_test*cos(theta))*arma::as_scalar(par_hat(0));
+				testPt(1) = (1+ r_test*sin(theta))*arma::as_scalar(par_hat(1));
+			}else{
+				testPt(0) = (1+ r_test*sin(theta))*arma::as_scalar(par_hat(0));
+				testPt(1) = (1+ r_test*cos(theta))*arma::as_scalar(par_hat(1));
+			}
+
 
 			LL_test = model.tryLL(testPt, dist_num);
 
@@ -123,7 +135,8 @@ arma::rowvec MLEcontour::getContourPt( double theta)  {
 	arma::rowvec contourPt(3);
 	double Beta = 0.0;
 	double Eta = 0.0;
-
+	double Mulog = 0.0;
+	double Sdlog = 0.0;
 
 	while(delta_r > RadLimit)  {
 		//test_i++;
@@ -142,8 +155,14 @@ arma::rowvec MLEcontour::getContourPt( double theta)  {
 			}
 		}
 
-		testPt(0) = (1+ r_test*cos(theta))*arma::as_scalar(par_hat(0));
-		testPt(1) = (1+ r_test*sin(theta))*arma::as_scalar(par_hat(1));
+		if(dist_num==1) {
+			testPt(0) = (1+ r_test*cos(theta))*arma::as_scalar(par_hat(0));
+			testPt(1) = (1+ r_test*sin(theta))*arma::as_scalar(par_hat(1));
+		}else{
+			testPt(0) = (1+ r_test*sin(theta))*arma::as_scalar(par_hat(0));
+			testPt(1) = (1+ r_test*cos(theta))*arma::as_scalar(par_hat(1));
+		}
+
 
 		LL_test = model.tryLL(testPt, dist_num);
 
@@ -174,12 +193,22 @@ arma::rowvec MLEcontour::getContourPt( double theta)  {
 		contourR = outerR;
 	}
 
-	Beta = (1+ contourR*cos(theta))*arma::as_scalar(par_hat(0));
-	Eta = (1+ contourR * sin(theta))*arma::as_scalar(par_hat(1));
+	if(dist_num == 1)  {
+		Beta = (1+ contourR*cos(theta))*arma::as_scalar(par_hat(0));
+		Eta = (1+ contourR * sin(theta))*arma::as_scalar(par_hat(1));
 
-	contourPt(0) = Eta;
-	contourPt(1) = Beta;
-	contourPt(2) = unstablePt;
+		contourPt(0) = Eta;
+		contourPt(1) = Beta;
+		contourPt(2) = unstablePt;
+	}else{
+		Mulog =  (1+ contourR * sin(theta))*arma::as_scalar(par_hat(0));
+		Sdlog = (1+ contourR*cos(theta))*arma::as_scalar(par_hat(1));
+
+		contourPt(0) = Mulog;
+		contourPt(1) = Sdlog;
+		contourPt(2) = unstablePt;
+	}
+
 
 
 	return contourPt;
