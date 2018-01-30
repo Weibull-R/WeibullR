@@ -7,7 +7,7 @@
  Generates the asymptotic bounds by means of the information matrix.}
 
 \usage{
-FMbounds(x, dist="weibull", CI=.95, unrel=NULL, debias="none", show=FALSE)
+FMbounds(x, dist="weibull", CI=.90, unrel=NULL, debias="none", show=FALSE)
 }
 
 \arguments{

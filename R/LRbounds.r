@@ -95,7 +95,7 @@ LRbounds<-function(x,  dist="weibull", CL=0.9, unrel=NULL,  contour=NULL, dof=1,
 			P2<- P2*rba(Qx,dist=dist)
 		}else{
 			if(debias=="hrbu" && dist=="weibull")  {
-				P2<- P2*hbru(Qx,Qs)
+				P2<- P2*hrbu(Qx,Qs)
 			}else{
 				if(debias=="hrbu" && dist=="lnorm") P2<- P2*rba(Qx,dist=dist)
 			}

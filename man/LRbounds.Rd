@@ -7,7 +7,8 @@
  Generates bounds across a double-sided confidence interval based on a likelihood ratio contour.}
 
 \usage{
-LRbounds(x,  dist="weibull", CL=0.9, unrel=NULL,  contour=NULL, dof=1, debias="none", show=FALSE)
+LRbounds(x,  dist="weibull", CL=0.9, unrel=NULL,  contour=NULL, dof=1,
+                debias="none", show=FALSE)
 }
 
 \arguments{
