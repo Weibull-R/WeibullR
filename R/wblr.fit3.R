@@ -232,14 +232,14 @@ wblr.fit <- function(x, modify.by.t0=FALSE,...){
 		
 		
 ## prepare arguments for mlefit		
-## usage: mlefit(x, dist="weibull", npar=2, debias=NULL, optcontrol=NULL)
+## usage: mlefit(x, dist="weibull", npar=2, debias="none", optcontrol=NULL)
 ## x is the x$data$lrq_frame
 ## dist is fit_dist
 ## npar is npar
 ## no need for optcontrol changes from default
 
 ## interpret input for debias
-		debias<-NULL
+		debias<-"none"
 		if(tolower(opafit$method.fit) == "mle-rba")  debias <- "rba" 
 		if(tolower(opafit$method.fit) == "mle-unbias") { 
 			if(fit_dist == "weibull") {
@@ -254,6 +254,7 @@ wblr.fit <- function(x, modify.by.t0=FALSE,...){
 		
         if(!is.null(fit_vec)){
 			atleastonefit<-TRUE
+			x$fit[[i]]$MLEfit <- fit_vec
 			if(fit_dist=="weibull") {
 				x$fit[[i]]$beta <- fit_vec[2]
 				x$fit[[i]]$eta <- fit_vec[1]				

@@ -6,7 +6,7 @@ importFrom("graphics", "abline", "axis", "curve", "legend", "lines",
 importFrom("stats", "approxfun", "coef", "cor", "lm", "na.omit",
 		 "pexp", "plnorm", "pweibull", "qbeta", "qexp", "qlnorm",
 		 "qnorm", "quantile", "qweibull", "rweibull", "optimHess",
-		 "sd", "var", "pchisq", "dnorm", "dlnorm", "dweibull")
+		 "sd", "var", "pchisq", "qchisq", "dnorm", "dlnorm", "dweibull")
 importFrom("utils", "modifyList")
 importFrom("plyr", "ddply", "numcolwise")
 
@@ -21,6 +21,8 @@ export(
 	getPPP,
 	LLln,
 	LLw,
+	LRbounds,
+	MLEcontour,
 	MRRln2p,
 	MRRln3p,
 	MRRw2p,

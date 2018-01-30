@@ -8,7 +8,7 @@
 }
 
 \usage{
-mlefit(x, dist="weibull", npar = 2, debias=NULL, optcontrol=NULL)
+mlefit(x, dist="weibull", npar = 2, debias="none", optcontrol=NULL)
 }
 
 \arguments{
