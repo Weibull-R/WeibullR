@@ -28,6 +28,17 @@ mleframe<-function(x, s=NULL, interval=NULL)  {
 			if(test_names[2] !="right") {
 				stop("'right' column name error in interval dataframe object")
 			}
+## test qty column name				
+		if(ncol(interval)>2)  {		
+			if(test_names[3] != "qty")  {	
+				stop("'qty' column name error in interval dataframe object")
+			}	
+		}		
+## assure no extraneous columns exist in interval				
+		if(!(ncol(interval)==2 || ncol(interval)==3))  {		
+			stop("extraneous columns in interval argument")	
+		}		
+
 ## additional validations on interval argument, such as positive numeric checking
 ## removal of potential na's, etc. could take place here
 		if(anyNA(interval))  {
@@ -64,13 +75,6 @@ mleframe<-function(x, s=NULL, interval=NULL)  {
 			names(interval)<-c("left","right","qty")
 
 			# interval<- cbind(interval, qty=c(rep(1,nrow(interval))))
-		}else{
-## assure that a "qty" column exists (and is only extra column used)
-			if(is.null(x$qty)) {
-				stop("'qty' column name error in interval dataframe object")
-			}
-## strip any extraneous columns
-			interval<-cbind(interval$time, interval$event, interval$qty)
 		}
 
 ## sort to facilitate consolidation of any duplicated entries, may not be required
@@ -150,6 +154,7 @@ mleframe<-function(x, s=NULL, interval=NULL)  {
 	## The assumption is that data input with a qty field is appropriately  consolidated
 	## But let's be sure the qty field is all integer, else future havoc could ensue
 				if(any(!is.integer(x$qty))) x$qty<-ceiling(x$qty)
+				f<-x$time[x$event==1]
 				failures <- data.frame(left = f, right = f, qty = x$qty[x$event==1])
 			}
 
