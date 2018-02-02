@@ -8,7 +8,6 @@ importFrom("stats", "approxfun", "coef", "cor", "lm", "na.omit",
 		 "qnorm", "quantile", "qweibull", "rweibull", "optimHess",
 		 "sd", "var", "pchisq", "qchisq", "dnorm", "dlnorm", "dweibull")
 importFrom("utils", "modifyList")
-importFrom("plyr", "ddply", "numcolwise")
 
 
 export(

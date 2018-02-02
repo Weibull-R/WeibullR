@@ -21,43 +21,65 @@ mleframe<-function(x, s=NULL, interval=NULL)  {
 	colname_error<-FALSE
 	if(class(interval)=="data.frame")  {
 ## test names in first two columns
-	test_names<-names(interval)
-		if(test_names[1] !="left") {
-			colname_error<-TRUE
+		test_names<-names(interval)
+			if(test_names[1] !="left") {
+				stop("'left' column name error in interval dataframe object")
+			}
+			if(test_names[2] !="right") {
+				stop("'right' column name error in interval dataframe object")
+			}
+## test qty column name				
+		if(ncol(interval)>2)  {		
+			if(test_names[3] != "qty")  {	
+				stop("'qty' column name error in interval dataframe object")
+			}	
+		}		
+## assure no extraneous columns exist in interval				
+		if(!(ncol(interval)==2 || ncol(interval)==3))  {		
+			stop("extraneous columns in interval argument")	
+		}		
+
+## additional validations on interval argument, such as positive numeric checking
+## removal of potential na's, etc. could take place here
+		if(anyNA(interval))  {
+		stop("NA not handled in interval data")
 		}
-		if(test_names[2] !="right") {
-			colname_error<-TRUE
+		if(any(c(interval$left,interval$right)<0)) {
+		stop("negative values in interval data")
 		}
+		if(any((interval$right-interval$left)<=0))  {
+		stop("non-positive interval")
+		}
+		
 ## add qty column if not provided
 		if(ncol(interval)<3)  {
-			interval<- cbind(interval, qty=c(rep(1,nrow(interval))))
-		}else{
-## assure that a "qty" column exists (and is only extra column used)
-			if(test_names[3] != "qty")  {
-				colname_error<-TRUE
-			}
-## strip any extraneous columns
-			interval<-interval[,1:3]
+
+			ivalchar<- apply(interval,2,as.character)
+			ivalstr<-paste0(ivalchar[,1],"_",ivalchar[,2])
+			ivaldf<-as.data.frame(table(ivalstr))
+			ivalstr2<-as.character(levels(ivaldf[,1]))
+## much done here, but this returns the tabled left and right columns
+## in a dataframe with rows corresponding to the tabled quantities
+			lrdf<-data.frame(
+				matrix(
+					as.numeric(
+						unlist(
+							strsplit(ivalstr2,"_")
+						)
+					)
+				,ncol=2, byrow=T
+				)
+			)
+## now just complete the consolidation of duplicates in the interval dataframe
+			interval<-cbind(lrdf,ivaldf[,2])
+			names(interval)<-c("left","right","qty")
+
+			# interval<- cbind(interval, qty=c(rep(1,nrow(interval))))
 		}
-	if(colname_error==TRUE) {
-		stop("column name error in interval dataframe object")
-	}
-## any additional validations, such as positive numeric checking
-## removal of potential na's, etc. could take place here
-	if(anyNA(interval))  {
-	stop("NA not handled in interval data")
-	}
 
-	if(any(c(interval$left,interval$right)<0)) {
-	stop("negative values in interval data")
-	}
-
-	if(any((interval$right-interval$left)<=0))  {
-	stop("non-positive interval")
-	}
-## sort to permit consolidation of any duplicated entries
-	NDX<-order(interval$left,interval$right)
-	interval<-interval[NDX,]
+## sort to facilitate consolidation of any duplicated entries, may not be required
+		NDX<-order(interval$left,interval$right)
+		interval<-interval[NDX,]
 
 ## finally, reject any other object type but NULL
 	}else{
@@ -77,8 +99,11 @@ mleframe<-function(x, s=NULL, interval=NULL)  {
 		stop("non-positive values in failure/occurrence data")
 		}
 
-		x<-sort(x)
-		failures<-data.frame(left=x,right=x,qty=rep(1,length(x)))
+		#x<-sort(x)
+## I'm not convinced this needs to be sorted here, but it doesn't hurt
+		fail_vec<-sort(x)
+
+		# failures<-data.frame(left=x,right=x,qty=rep(1,length(x)))
 
 		if(length(s)>0)  {
 		if(anyNA(s))  {
@@ -87,9 +112,11 @@ mleframe<-function(x, s=NULL, interval=NULL)  {
 		if(any(s<=0))  {
 		stop("non-positive values in suspension data")
 		}
-		s<-sort(s)
-		suspensions<-data.frame(left=s,right=-1,qty=rep(1,length(s)))
+		susp_vec<-sort(s)
+
+		# suspensions<-data.frame(left=s,right=-1,qty=rep(1,length(s)))
 		}
+## end pure vector argument processing
 	}else{
 	## here a time-event dataframe can be evaluated, if provided as x
 	## This is the support for a time-event dataframe
@@ -97,9 +124,8 @@ mleframe<-function(x, s=NULL, interval=NULL)  {
 
 		## this test is drawn from Abrem.R
 			if(is.null(x$time) || is.null(x$event)){
-                stop(': Argument \"x\" is missing $time and/or ",
-                    "$event columns...')
-            }
+				stop(': Argument \"x\" is missing $time and/or ","$event columns...')
+			}
 
 	## verify positive time values
 			if (anyNA(x$time)) {
@@ -121,19 +147,25 @@ mleframe<-function(x, s=NULL, interval=NULL)  {
 			warning("argument 's' ignored when time-event dataframe provided")
 			}
 
+			if(is.null(x$qty)) {
+				fail_vec<-x$time[x$event==1]
+				# failures <- data.frame(left = f, right = f, qty = rep(1, length(f)))
+			}else{
+	## The assumption is that data input with a qty field is appropriately  consolidated
+	## But let's be sure the qty field is all integer, else future havoc could ensue
+				if(any(!is.integer(x$qty))) x$qty<-ceiling(x$qty)
+				f<-x$time[x$event==1]
+				failures <- data.frame(left = f, right = f, qty = x$qty[x$event==1])
+			}
 
-			f<-x$time[x$event==1]
-				if(is.null(x$qty)) {
-					failures <- data.frame(left = f, right = f, qty = rep(1, length(f)))
-				}else{
-					if(any(!is.integer(x$qty))) stop("non-integers in input object qty column")
-					failures <- data.frame(left = f, right = f, qty = x$qty[x$event==1])
-				}
 			if(identical(ev_info, c("0","1"))) {
 			s<-x$time[x$event==0]
 				if(is.null(x$qty)) {
-						suspensions <- data.frame(left = s, right = -1, qty = rep(1, length(s)))
+
+					susp_vec<-s
+						# suspensions <- data.frame(left = s, right = -1, qty = rep(1, length(s)))
 					}else{
+	## The assumption is that data input with a qty field is appropriately  consolidated
 						suspensions <- data.frame(left = s, right = -1, qty = x$qty[x$event==0])
 					}
 			}
@@ -142,32 +174,26 @@ mleframe<-function(x, s=NULL, interval=NULL)  {
 				stop("error in x argument type")
 			}
 		}
+## end the time_event dataframe  evaluation and close argument processing
 	}
-	DF<-rbind(failures,suspensions,interval)
-## assure all integers in qty field, if it exists
-	DF$qty<-ceiling(DF$qty)
 
-## futile attempt to consolidate duplicate data
-##	outDF<-DF[1,]
-##	outline<-2
-##	for(line in 2:nrow(DF))  {
-##		if(DF[line,1]-DF[line-1,1]+DF[line,2]-DF[line-1,2]==0)  {
-##			outDF[outline-1,3]<-DF[line,3]+DF[line-1,3]
-##		}else{
-##			outDF<-rbind(outDF,DF[line,])
-##			outline<-outline+1
-##		}
-##	}
-if(is.null(DF$qty)) {
-## aggregate duplicate data only if qty was not defined on input
-## plyr code to aggregate duplicate data
-## http://stackoverflow.com/questions/10180132/consolidate-duplicate-rows
-	outDF<-ddply(DF,c("left","right"),numcolwise(sum))
-}else{
-	outDF<-DF
-}
-## don't know why but this bombed mlefit
-##			attr(outDF,"fsiq")<-TRUE
+## consolidate duplicates in any pure failure or suspension vectors
 
-return(outDF)
+	if(exists("fail_vec")) {
+		fdf<-as.data.frame(table(fail_vec))
+		ft<-as.numeric(levels(fdf[,1]))
+		fq<-fdf[,2]
+		failures<-data.frame(left=ft, right=ft, qty=fq)
+	}
+
+	if(exists("susp_vec")) {
+		sdf<-as.data.frame(table(susp_vec))
+		st<-as.numeric(levels(sdf[,1]))
+		sq<-sdf[,2]
+		suspensions<-data.frame(left=st, right=-1, qty=sq)
+	}
+
+	outDF<-rbind(failures,suspensions,interval)
+
+	outDF
 }

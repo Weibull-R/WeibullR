@@ -20,12 +20,12 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-wblr<-function(x, s=NULL, interval=NULL,...) {			
+wblr<-function(x, s=NULL, interval=NULL,...) {
 arg <- splitargs(...)
 ## arg$opa includes options.wblr list items for update
 ## arg$rem holds any remaining argument names
 ### need to split out opa$dat, modified by arg$dat to set data instead of using all modified arg$opa
-## depreciate use of log option and validate log or canvas entry	
+## depreciate use of log option and validate log or canvas entry
 	if(!is.null(arg$opa$log)) {
 		warning("log option is to be depreciated in favor of canvas")
 		#stop("log option is not to be set directly, use canvas") #future hard stop validation
@@ -48,113 +48,113 @@ arg <- splitargs(...)
 				arg$opa$log<-"x"
 				if(tolower(arg$opa$canvas)!="weibull") {
 					warning("canvas option not recognized, default \"weibull\" is assumed")
-					arg$opa$canvas<-"weibull"	
+					arg$opa$canvas<-"weibull"
 				}
 			}
 		}
-	}			
+	}
 
 ##############################################################
-## it is necessary to process the input data using arg$opa$pp 
+## it is necessary to process the input data using arg$opa$pp
 ## to permit method.fit and method.conf validations in arg$opa
 ##############################################################
-## additional features yet to be implemented could include 
-## handling of ties and rank adjustment method (i.e. "johnson" or "kmestimator")	
-opa <- modifyList(options.wblr(), arg$opa)		
-			
-			
-## arg$rem holds any remaining argument names 			
-# for now, if x exists it will be assumed that it is either a vector of exact failure times, 			
-# or a time/event dataframe. The time/event df will be further validated in mleframe.			
-			
-if(!missing(x)){			
-	ti <- c(arg$rem$time,arg$rem$fail)		
-	if(!is.null(ti)) warning("fail times are taken from first argument, time or fail arguments are ignored")		
-	if (class(x) == "data.frame") {		
-		su<-c(s,arg$rem$susp)	
+## additional features yet to be implemented could include
+## handling of ties and rank adjustment method (i.e. "johnson" or "kmestimator")
+opa <- modifyList(options.wblr(), arg$opa)
+
+
+## arg$rem holds any remaining argument names
+# for now, if x exists it will be assumed that it is either a vector of exact failure times,
+# or a time/event dataframe. The time/event df will be further validated in mleframe.
+
+if(!missing(x)){
+	ti <- c(arg$rem$time,arg$rem$fail)
+	if(!is.null(ti)) warning("fail times are taken from first argument, time or fail arguments are ignored")
+	if (class(x) == "data.frame") {
+		su<-c(s,arg$rem$susp)
 		if(!is.null(su)) warning("suspension times are taken from first argument dataframe, s or susp arguments are ignored")
 	}
-}else{			
-	if(!is.null(arg$rem$fail)) {		
-		x<-arg$rem$fail	
-		if(!is.null(arg$rem$time)) {	
+}else{
+	if(!is.null(arg$rem$fail)) {
+		x<-arg$rem$fail
+		if(!is.null(arg$rem$time)) {
 			warning("fail times are taken from fail argument, time argument has been ignored")
-		}	
-	}else{		
-		if(!is.null(arg$rem$time)) {	
+		}
+	}else{
+		if(!is.null(arg$rem$time)) {
 			x<-arg$rem$time
-		}	
-	}		
-}			
-if (!class(x) == "data.frame") {			
-if(!missing(s)){			
-	if(!is.null(arg$rem$susp)) warning("suspension times are taken from second argument s, argument susp is ignored")		
-}else{			
-	if(!is.null(arg$rem$susp)) s<-arg$rem$susp		
-}			
-}			
-			
-lrq_frame<-mleframe(x,s,interval)			
-			
-plot_data<-getPlotData(lrq_frame,opa)			
-			
-			
-    obj <- list()			
-	obj$data <- list()		
-	obj$data$lrq_frame<-lrq_frame		
-	obj$data$dpoints<-plot_data[[1]]		
-	obj$data$dlines<-plot_data[[2]]		
+		}
+	}
+}
+if (!class(x) == "data.frame") {
+if(!missing(s)){
+	if(!is.null(arg$rem$susp)) warning("suspension times are taken from second argument s, argument susp is ignored")
+}else{
+	if(!is.null(arg$rem$susp)) s<-arg$rem$susp
+}
+}
 
-	
+lrq_frame<-mleframe(x,s,interval)
+
+plot_data<-getPlotData(lrq_frame,opa)
+
+
+    obj <- list()
+	obj$data <- list()
+	obj$data$lrq_frame<-lrq_frame
+	obj$data$dpoints<-plot_data[[1]]
+	obj$data$dlines<-plot_data[[2]]
+
+
 	obj$fail <- length(obj$data$dpoints$time)
-##    obj$cens <- length(s)	
-	obj$interval <- length(obj$data$dlines$t1)   
+##    obj$cens <- length(s)
+	obj$interval <- length(obj$data$dlines$t1)
 	obj$n    <- sum(lrq_frame$qty)
 	obj$cens <- obj$n - obj$fail - obj$interval
 	obj$discovery <-sum(lrq_frame$qty[lrq_frame$left==0])
 	obj$interval <- obj$interval-obj$discovery
 
     obj$options <- opa
-        # always store a full copy of the options.wblr structure here	
-    class(obj) <- "wblr"			
-			
-obj			
-}			
+        # always store a full copy of the options.wblr structure here
+    class(obj) <- "wblr"
+
+obj
+}
 
 
 
 
 
-getPlotData<-function(x,opa) {					
-	row.names(x)<-seq(1, dim(x)[1])				
-	f<-NULL				
-	s<-NULL				
-	m<-NULL				
-	for(frow in 1: dim(x)[1])  {				
-					
-		if(x$left[frow]==x$right[frow]) {			
-			for(q in 1:x$qty[frow])  {		
-				f<-c(f,x$left[frow])	
-			}		
-			m<-c(m,x$left[frow])		
-		}else{			
-					
-			if(x$right[frow]<0) {		
-				for(q in 1:x$qty[frow])  {	
+getPlotData<-function(x,opa) {
+	row.names(x)<-seq(1, dim(x)[1])
+	f<-NULL
+	s<-NULL
+	m<-NULL
+	for(frow in 1: dim(x)[1])  {
+
+		if(x$left[frow]==x$right[frow]) {
+			for(q in 1:x$qty[frow])  {
+				f<-c(f,x$left[frow])
+			}
+			m<-c(m,x$left[frow])
+		}else{
+
+			if(x$right[frow]<0) {
+				for(q in 1:x$qty[frow])  {
 					s<-c(s,x$left[frow])
-				}	
-				m<-c(m, NA)	
-			}else{		
-				for(q in 1:x$qty[frow])  {	
+				}
+				m<-c(m, NA)
+			}else{
+				for(q in 1:x$qty[frow])  {
 					f<-c(f,mean(c(x$left[frow],x$right[frow])))
-				}	
-				m<-c(m,mean(c(x$left[frow],x$right[frow])))	
-			}		
-		}			
-					
-	}				
-					
-	x<-cbind(x,mean=m)				
+				}
+				m<-c(m,mean(c(x$left[frow],x$right[frow])))
+			}
+		}
+
+	}
+
+	x<-cbind(x,mean=m)
 ## adjustmets to ppp are made by using options
 ## it is also possible to alter the rank adjustment from "Johnson" to"KMestimator"
 ## it is also possible to adjust the handling of ties as covered by getPercentilePlottingPositions
@@ -166,38 +166,38 @@ getPlotData<-function(x,opa) {
 		kaplan.meier="Kaplan-Meier",
 		blom="Blom"
 		)
-	p<-getPPP(f,s, ppos=ppos)				
-					
-	dpoints<-NULL				
-	dlines<-NULL				
-	##   dpoints<-data.frame(time=NULL, ppp=NULL)				
-	##   dlines<-data.frame(t1=NULL, t2=NULL,, ppp=NULL)				
-					
-	for(frow in 1: dim(x)[1])  {				
-		if(x$left[frow]==x$right[frow]) {			
-			for(q in 1:x$qty[frow])  {		
-				prow<-match(x$mean[frow], p$time)	
-				point_row<-data.frame(time=x$mean[frow], ppp=p$ppp[prow], adj_rank=p$adj_rank[prow])	
-				dpoints<-rbind(dpoints, point_row)	
-				p<-p[-prow,]	
-			}		
-					
-		}else{			
-			if(!is.na(x$mean[frow]))  {		
-				for(q in 1:x$qty[frow])  {	
+	p<-getPPP(f,s, ppos=ppos)
+
+	dpoints<-NULL
+	dlines<-NULL
+	##   dpoints<-data.frame(time=NULL, ppp=NULL)
+	##   dlines<-data.frame(t1=NULL, t2=NULL,, ppp=NULL)
+
+	for(frow in 1: dim(x)[1])  {
+		if(x$left[frow]==x$right[frow]) {
+			for(q in 1:x$qty[frow])  {
+				prow<-match(x$mean[frow], p$time)
+				point_row<-data.frame(time=x$mean[frow], ppp=p$ppp[prow], adj_rank=p$adj_rank[prow])
+				dpoints<-rbind(dpoints, point_row)
+				p<-p[-prow,]
+			}
+
+		}else{
+			if(!is.na(x$mean[frow]))  {
+				for(q in 1:x$qty[frow])  {
 					prow<-match(x$mean[frow], p$time)
-					line_row<-data.frame(t1=x$left[frow], t2=x$right[frow], ppp=p$ppp[prow], adj_rank=p$adj_rank[prow])	
+					line_row<-data.frame(t1=x$left[frow], t2=x$right[frow], ppp=p$ppp[prow], adj_rank=p$adj_rank[prow])
 					dlines<-rbind(dlines, line_row)
 					p<-p[-prow,]
-				}	
-			}		
-		}			
-	}				
-					
-					
-outlist<-list(dpoints,dlines)				
-outlist 				
-}				
+				}
+			}
+		}
+	}
+
+
+outlist<-list(dpoints,dlines)
+outlist
+}
 
 
 splitargs <- function(...){

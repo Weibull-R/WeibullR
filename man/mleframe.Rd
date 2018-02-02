@@ -30,7 +30,9 @@ Returns a dataframe of the life[time] data in columns named 'left', 'right', and
 }
 
 \references{
+  William Q. Meeker and Luis A. Escobar, (1998) "Statistical Methods for Reliability Data", Wiley-Interscience, New York
   Robert B. Abernethy, (2008) "The New Weibull Handbook, Fifth Edition" 
+  John I. McCool, (2012) "Using the Weibull Distribution: Reliability, Modeling and Inference"
 }
 
 \examples{
@@ -41,6 +43,20 @@ right<-c(30,70,100,80,85)
 qty<-c(2,1,1,2,1)
 interval_ex<-data.frame(left,right,qty)
 input_frame<-mleframe(fail,susp,interval_ex)
+## time_event dataframe argument
+failDF<-data.frame(time=fail, event=1)
+suspDF<-data.frame(time=susp, event=0)
+time_event_frame<-rbind(failDF, suspDF)
+input_frame2<-mleframe(time_event_frame)
+## now a time_event_qty dataframe argument
+fa<-c(10,40,50)
+fq<-c(1,2,1)
+su<-susp
+faDF<-data.frame(time=fa, event=rep(1,length(fa)), qty=fq)
+## note: data.frame is forgiving about repeated single column entry
+suDF<-data.frame(time=su, event=0, qty=1)
+time_event_qty<-rbind(faDF, suDF)
+input_frame3<-mleframe(time_event_qty)
 }
 
 \keyword{ interval }
