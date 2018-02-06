@@ -1,6 +1,6 @@
 \name{plot.wblr}
 \alias{plot.wblr}
-%- Also NEED an '\alias' for EACH other topic documented here.
+
 \title{
     \code{wblr} Object Plotting
 }
@@ -52,33 +52,14 @@
 \value{
     Currently, the function returns no value. 
 }
-%\section{To Do/Known issues/Bugs}{
-%    \itemize{
-%        \item The legend positions are slightly to the right, overlapping the
-%            right Y axis (especially for small horizontal ranges).
-%        \item Have the function return the updated \code{wblr} arguments.
-%   }
-%}
-\author{Jurgen Symynck jusy@openreliability.oeg
 
-%\examples{
-%da1 <- wblr(rweibull(5,3,1000))
-%da1 <- wblr.fit(da1,dist="weibull",  method.fit=c("rr","xony"),pch=3)
-%##da1 <- wblr.fit(da1,dist="weibull",  method.fit="mle",col="red1")
-%##da1 <- wblr.fit(da1,dist="weibull",  method.fit="mle-rba",col="orange",lty=2)
-%da1 <- wblr.fit(da1,dist="lognormal",method.fit=c("rr","xony"),
-%    col="steelblue3",pch=8)
-%da1 <- wblr.conf(da1)
-%plot(da1,col="black") # plot all in black
-%plot(da1,main="Weibull distributed observations") # plot with specified colors
-    
-### usage of lists ###
+\examples{
 options.wblr(blives=0.1) # make the legend boxes a bit shorter...
 da2 <- wblr.conf(wblr.fit(wblr(runif(5,10,100),col="red")))
 da3 <- wblr.conf(wblr.fit(wblr(rweibull(5,2,1000),col="green4",pch=3)))
 da4 <- wblr.conf(wblr.fit(wblr(rlnorm(5,log(500),log(2)),col="blue3",pch=8),
     dist="lognormal"))
-
-plot.wblr(list(da2,da3,da4),xlim=c(1,1e6),
-    main="Uniformly distributed observations")
+% not run due to device dependence
+%plot.wblr(list(da2,da3,da4),xlim=c(1,1e6),
+%    main="Uniformly distributed observations")
 }
