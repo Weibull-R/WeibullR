@@ -23,7 +23,7 @@ plot_contour(x, CL=NULL, AL=TRUE, main="", sub="")
     }
     \item{main}{A string override for the the plot title that would otherwise be drawn from the contour.main option in the first \code{"wblr"} object provided.
 	}
-    \item{main}{A string override for the the plot subtitle that would otherwise be drawn from the contour.sub option in the first \code{"wblr"} object provided.
+    \item{sub}{A string override for the the plot subtitle that would otherwise be drawn from the contour.sub option in the first \code{"wblr"} object provided.
 	}
 }
 
