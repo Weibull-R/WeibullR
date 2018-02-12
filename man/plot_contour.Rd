@@ -9,7 +9,7 @@
     Plots likelihood ratio contours from a \code{wblr} object or a list of \code{wblr} objects. 
 }
 
-\usage{plot_contour(x, CL=NULL), AL=TRUE, main="", sub="")
+\usage{plot_contour(x, CL=NULL), AL=TRUE, main="", sub="")}
 
 \arguments{
     \item{x}{
