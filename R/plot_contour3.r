@@ -11,9 +11,9 @@
 
 
 
-plot_contour <- function(x ,dist=NULL,CL=NULL, dof=NULL,...){
-if(!is.null(dist)) {
-if(class(dist)=="wblr") stop("multiple wblr objects must be entered as a list")
+plot_contour <- function(x ,CL=NULL ){
+if(!is.null(CL)) {
+if(class(CL)=="wblr") stop("multiple wblr objects must be entered as a list")
 }
 	    if(identical(class(x),"wblr")) x <- list(x)
 	    if(!all(sapply(x,function(x)identical(class(x),"wblr")))){
@@ -23,20 +23,21 @@ if(class(dist)=="wblr") stop("multiple wblr objects must be entered as a list")
 	    # as of this point, x is always a list of one or more wblr objects
 
     # get options list from first object
+## opa options appear to set main.contour and sub.contour, which could have better been added directly as arguments to plot_contour
+## also used to set MLEpoint graphic parameters as cex.points and lwd.points 
+## temporarily setting lty and lwd for contour lines 
 	    opa <- x[[1]]$options
-## handling of dots to be performed later. Dots arguments cannot override fixed args
-## but want to permit revision of opa$main.contour and opa$sub.contour
-## this might be the way to introduce debias options for calculated contours?
 
 
 
-	if(length(dist)==0 && length(CL)==0 && length(dof)==0 )  {
+
+	if(is.null(CL))  {
 		C2P<-ExtractContoursFromObjects(x)
-	## it could be desirable to exponentiate the log parameters of lognormal contours here.
+	}else{
+		C2P<-CalculateContours(x, CL)
 	}
-## }else{
-## 		C2P<-CalculateContours(x, dist, CL, dof)   # yet to be written
-## }
+
+	## it could be desirable to exponentiate the log parameters of lognormal contours here.
 
 	    # +--------------------------+
 	    # |  create new plot canvas  |
@@ -75,12 +76,13 @@ if(class(dist)=="wblr") stop("multiple wblr objects must be entered as a list")
 
 	# plot MLE points same options as data points in first object
 		points(x=C2P[[cntr]]$MLEpt[1],y=C2P[[cntr]]$MLEpt[2],
-			pch=opa$options$pch,
+#			pch=opa$options$pch,
+			pch=opa$pch,
 			#col=C2P[[cntr]]$color,
 			col=opa$col,
 			lwd=opa$lwd.points,
 			cex=opa$cex.points)
-
+#browser()
 	# plot the contours
 		points(C2P[[cntr]]$contour,type="l",
 			lwd=opa$lwd,
@@ -88,7 +90,7 @@ if(class(dist)=="wblr") stop("multiple wblr objects must be entered as a list")
 			col=C2P[[cntr]]$color)
 
 	}
-
+return(C2P)
 }
 
 getContoursFromSingleObject<-function(wblr) {
@@ -180,3 +182,87 @@ findContourRanges <- function(cplist) {
 	do.call("rbind",lapply(cplist,findrange))
 }
 
+ExtractContourParamsFromObject<-function(wblr) {
+	str_eval=function(x) {return(eval(parse(text=x)))}
+	getParam<-function(par_name) {
+		val<-NULL
+		if( !is.null(str_eval(paste0('conf$options$',par_name))) )  {
+			val<-str_eval(paste0('conf$options$',par_name))
+		}else{
+			if( !is.null(str_eval(paste0('fit$options$',par_name))) )  {
+				val<-str_eval(paste0('fit$options$',par_name))
+			}else{
+				if( !is.null(str_eval(paste0('wblr$options$',par_name))) )  {
+					val<-str_eval(paste0('wblr$options$',par_name))
+				}
+			}
+		}
+		val
+	}
+
+
+	if(!is.null(wblr$fit)) {
+## a fit list exists
+
+		for(fit_num in 1:length(wblr$fit)) {
+			fit<-wblr$fit[[fit_num]]
+			if(!is.null(fit$conf)) {
+				for(conf_num in 1:length(fit$conf)) {
+					conf<-fit$conf[[conf_num]]
+					if(!is.null(conf$contour)) {
+	## Yeah!, we found a contour
+						dist<-getParam("dist")
+						dof<-getParam("dof")
+						col<-getParam("col")
+						lty<-getParam("lty")
+						lwd<-getParam("lwd")
+					}
+				}
+			}
+		}
+	}
+	outlist<-NULL
+	if(exists("dist")) {
+		outlist<-list(dist=dist,dof=dof,col=col,lty=lty,lwd=lwd)
+	}
+	outlist
+}
+
+CalculateContours<-function(x, CL)  {
+	c2p<-list()
+	wblr_num<-0
+	while(wblr_num < length(x))  {
+		wblr_num<-wblr_num+1
+		params<-ExtractContourParamsFromObject(x[[wblr_num]])
+		fit<-unname(mlefit(x[[wblr_num]]$data$lrq_frame, dist=params$dist))
+		
+		for(cl_num in 1:length(CL))  {
+## ptDensity could be a function of CL[cl_num]
+## 360 for CL=.9, 40 for CL=.1
+			dens<-ceiling(360*CL[cl_num]/.9)
+
+			if(wblr_num==1 && cl_num==1)  {
+				c2p_num<-1
+			}else{
+				c2p_num<-length(c2p)+1
+			}
+## usage MLEcontour(x,  dist="weibull", CL=0.9,dof=1,MLEfit=NULL, RadLimit=1e-5,
+##		ptDensity=120, debias="none", show=FALSE)  {
+			c2p[[c2p_num]]<-list()
+			c2p[[c2p_num]]$contour<-MLEcontour(
+					x[[wblr_num]]$data$lrq_frame, 
+					dist=params$dist, 
+					CL=CL[cl_num], 
+					dof=params$dof, 
+					MLEfit=fit,
+					ptDensity=dens
+					)
+			c2p[[c2p_num]]$MLEpt<-fit
+			c2p[[c2p_num]]$color<-params$col
+# check implementation of ExtractParamsFromObject here
+#			c2p[[c2p_num]]$lty<-params$lty
+#			c2p[[c2p_num]]$lwd<-params$lwd
+		}
+	}
+	c2p
+}
