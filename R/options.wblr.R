@@ -68,15 +68,16 @@ options.wblr<- function(...){
             S=1e4,
             pivotals=FALSE,
         ## specific control for likelihood ratio contour and bounds
-            contour.dof=1,            ## degrees of freedom, dof=1 for conf interval, dof=2 for comparison
-            applyFF=FALSE,            ## can only be TRUE when method.fit="mle-rba"
+            dof=1,            ## degrees of freedom, dof=1 for conf interval, dof=2 for comparison
+##            applyFF=FALSE,            ## can only be TRUE when method.fit="mle-rba"
 
 ## General graphical options
         ## graphical control for fitted lines, confidence bounds, or contours can be set at
         ## can be set at wblr, wblr.fit, or wblr.conf functions for individual object control
 		## see man page for R graphics function par
-            lwd=2,
-            lty=1,
+            lwd=2,  # The line width, a positive number
+            lty=1,  # Line type, specified as an integer (0=blank, 1=solid (default), 2=dashed, 3=dotted, 4=dotdash, 5=longdash, 6=twodash)
+			#lty can also be specified by string: "blank", "solid", "dashed", "dotted", "dotdash", "longdash", or "twodash"
             col="black",
         ## graphical control used with plot or plot.wblr
             canvas="weibull",            ## ( "lognormal" thinking about something like "plain","linear", or "raw"

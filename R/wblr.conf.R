@@ -426,7 +426,7 @@ DQ<-DescriptiveQuantiles
 		fit$conf[[i]]$type   <- "lrb"
 		fit$conf[[i]]$ci     <- opaconf$ci
 	## It is likely desirable to list input characteristics of the contour
-		fit$conf[[i]]$dof <- opaconf$contour.dof
+		fit$conf[[i]]$dof <- opaconf$dof
 		fit$conf[[i]]$applyFF     <- opaconf$applyFF
 
 		fit$conf[[i]]$blife.pts <- opaconf$blife.pts

@@ -35,6 +35,7 @@ export(
 	wblrLoglike,
 	options.wblr,
 	pivotal.rr,
+	plot_contour,
 	plot.wblr
 )
 S3method(plot, wblr) 
