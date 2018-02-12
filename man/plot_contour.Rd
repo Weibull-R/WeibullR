@@ -2,16 +2,14 @@
 \alias{plot_contour}
 
 \title{
-    Plotting of Likelihood Ratio Contours from \code{wblr} Object Data
+    Plotting of Likelihood Ratio Contours from \code{wblr} Objects
 }
 
 \description{
-    Currently, this function plots likelihood ratio contours for weibull distribution fitted data, only, as found in an \code{wblr}
-    object or a list of \code{wblr} objects. In the future this will be expanded to cover lognormal fitted data also with options to calculate modified
-	versions of the contour based on alteration of the fit distribution, confidence level, and degrees of freedom based solely on the data in the listed \code{wblr} object.
+    Plots likelihood ratio contours from a \code{wblr} object or a list of \code{wblr} objects. 
 }
 
-\usage{plot_contour(x, CL=NULL)}
+\usage{plot_contour(x, CL=NULL), AL=TRUE, main="", sub="")
 
 \arguments{
     \item{x}{
@@ -19,6 +17,12 @@
     }
     \item{CL}{An optional argument for establishing the confidence limit(s) for calculated contours. A vector of values may be provided to generate concentric contours on a single object.
     }
+    \item{AL}{A Logical defining whether parameters of lognormal contours should be presented as AntiLog values.
+    }
+    \item{main}{A string override for the the plot title that would otherwise be drawn from the contour.main option in the first \code{"wblr"} object provided.
+	}
+    \item{main}{A string override for the the plot subtitle that would otherwise be drawn from the contour.sub option in the first \code{"wblr"} object provided.
+	}
 }
 
 \value{
@@ -28,7 +32,7 @@
 \details{
    If no CL argument is provided, the contours generated in the provided \code{wblr} objects for likelihood confidence bounds will be plotted.
    If a vector is provided for CL, multiple contours for each provided object will be calculated to display concentric contours according to values in the CL vector.
-   In all cases options for distribution and degrees of freedom, as well as graphic options will be drawn from the underlying objects.
+   In all cases options for distribution, degrees of freedom and graphic options will be extracted from the underlying objects.
 }
 
 \examples{

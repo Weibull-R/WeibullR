@@ -5,13 +5,11 @@
 ## to this data format which specifies a single level of contour in only x,y coordinates.
 
 ## This rewrite is intended to add ability to calculate contours based on the data contained in
-## a wblr object list, but permitting specification of distribution, multiple confidence levels,
-## and degrees of freedom, the latter of which is important when contours are used for comparison
-## of datasets.
+## a wblr object list, but permitting specification of multiple confidence levels.
 
 
 
-plot_contour <- function(x ,CL=NULL ){
+plot_contour <- function(x ,CL=NULL, AL=TRUE, main="", sub=""){
 if(!is.null(CL)) {
 if(class(CL)=="wblr") stop("multiple wblr objects must be entered as a list")
 }
@@ -24,18 +22,26 @@ if(class(CL)=="wblr") stop("multiple wblr objects must be entered as a list")
 
     # get options list from first object
 ## opa options appear to set main.contour and sub.contour, which could have better been added directly as arguments to plot_contour
-## also used to set MLEpoint graphic parameters as cex.points and lwd.points 
-## temporarily setting lty and lwd for contour lines 
+## also used to set MLEpoint graphic parameters as cex.points and lwd.points
+## temporarily setting lty and lwd for contour lines
 	    opa <- x[[1]]$options
-
-
-
 
 	if(is.null(CL))  {
 		C2P<-ExtractContoursFromObjects(x)
 	}else{
 		C2P<-CalculateContours(x, CL)
 	}
+
+## convert lognormal parameters to antilog (AL) if specified
+##	antilog<-function(y) exp(y)
+	if(names(C2P[[1]]$contour)[1]=="Mulog" && AL==TRUE)  {
+		for(C2Pli in 1:length(C2P))  {
+##			C2P[[C2Pli]]$contour<-antilog(C2P[[C2Pli]]$contour)
+			C2P[[C2Pli]]$contour<-exp(C2P[[C2Pli]]$contour)
+		}
+## axis labels drawn from first contour names, but all have been converted
+		names(C2P[[1]]$contour)<-c("MuAL", "SigAL")
+		}
 
 	## it could be desirable to exponentiate the log parameters of lognormal contours here.
 
@@ -51,8 +57,18 @@ if(class(CL)=="wblr") stop("multiple wblr objects must be entered as a list")
 	  opa[opanames %in% plot_default_args()])
 	        plotargs$xlim <- xlimits
 	        plotargs$ylim <- ylimits
-	        plotargs$main <- opa$main.contour
-	        plotargs$sub  <- opa$sub.contour
+			if(main=="")  {
+				plotargs$main <- opa$main.contour
+			}else{
+				plotargs$main<-main
+			}
+			if(sub=="")  {
+				plotargs$sub <- opa$sub.contour
+			}else{
+				plotargs$sub<-sub
+			}
+#	        plotargs$main <- opa$main.contour
+#	        plotargs$sub  <- opa$sub.contour
 	        plotargs$log <- ""
 	        plotargs$xlab <- names(C2P[[1]]$contour)[1]
 	        plotargs$ylab <- names(C2P[[1]]$contour)[2]
@@ -85,8 +101,8 @@ if(class(CL)=="wblr") stop("multiple wblr objects must be entered as a list")
 #browser()
 	# plot the contours
 		points(C2P[[cntr]]$contour,type="l",
-			lwd=opa$lwd,
-			lty=opa$lty,
+			lwd=C2P[[cntr]]$lwd,
+			lty=C2P[[cntr]]$lty,
 			col=C2P[[cntr]]$color)
 
 	}
@@ -129,6 +145,24 @@ FOUND=FALSE
 
 						CP[[j]]$contour<-conf$contour
 						CP[[j]]$MLEpt<-fit$MLEfit[-3]
+						if(!is.null(conf$options$lty)) {
+							CP[[j]]$lty<-conf$options$lty
+						}else{
+							if(!is.null(fit$options$lty)) {
+								CP[[j]]$lty<-fit$options$lty
+							}else{
+								CP[[j]]$lty<-wblr$options$lty
+							}
+						}
+						if(!is.null(conf$options$lwd)) {
+							CP[[j]]$lwd<-conf$options$lwd
+						}else{
+							if(!is.null(fit$options$lwd)) {
+								CP[[j]]$lwd<-fit$options$lwd
+							}else{
+								CP[[j]]$lwd<-wblr$options$lwd
+							}
+						}
 						if(!is.null(conf$options$col)) {
 							CP[[j]]$color<-conf$options$col
 						}else{
@@ -235,7 +269,7 @@ CalculateContours<-function(x, CL)  {
 		wblr_num<-wblr_num+1
 		params<-ExtractContourParamsFromObject(x[[wblr_num]])
 		fit<-unname(mlefit(x[[wblr_num]]$data$lrq_frame, dist=params$dist))
-		
+
 		for(cl_num in 1:length(CL))  {
 ## ptDensity could be a function of CL[cl_num]
 ## 360 for CL=.9, 40 for CL=.1
@@ -250,18 +284,18 @@ CalculateContours<-function(x, CL)  {
 ##		ptDensity=120, debias="none", show=FALSE)  {
 			c2p[[c2p_num]]<-list()
 			c2p[[c2p_num]]$contour<-MLEcontour(
-					x[[wblr_num]]$data$lrq_frame, 
-					dist=params$dist, 
-					CL=CL[cl_num], 
-					dof=params$dof, 
+					x[[wblr_num]]$data$lrq_frame,
+					dist=params$dist,
+					CL=CL[cl_num],
+					dof=params$dof,
 					MLEfit=fit,
 					ptDensity=dens
 					)
 			c2p[[c2p_num]]$MLEpt<-fit
 			c2p[[c2p_num]]$color<-params$col
 # check implementation of ExtractParamsFromObject here
-#			c2p[[c2p_num]]$lty<-params$lty
-#			c2p[[c2p_num]]$lwd<-params$lwd
+			c2p[[c2p_num]]$lty<-params$lty
+			c2p[[c2p_num]]$lwd<-params$lwd
 		}
 	}
 	c2p
