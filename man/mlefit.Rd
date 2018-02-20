@@ -46,6 +46,8 @@ the optcontrol argument has been provided to give debug developers a means of al
   William Q. Meeker and Luis A. Escobar, (1998) "Statistical Methods for Reliability Data", Wiley-Interscience, New York
 
   Robert B. Abernethy, (2008) "The New Weibull Handbook, Fifth Edition" 
+  
+  John I. McCool, (2012) "Using the Weibull Distribution: Reliability, Modeling and Inference"
 }
 
 \examples{

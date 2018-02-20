@@ -86,24 +86,6 @@
         such as \code{col} or \code{is.plot.legend}. The graphical options
         will be used when plotting the (life-)time observations using \code{plot.wblr}.
         Subsequent calls to \code{wblr.conf} will inherit these options.
-
-        The "prr" goodness-of-fit indicator is also calculated
-        here. See the "Examples" section on how to retrieve it, see the "References"
-        section for additional information on the prr and pve value.
-        % \code{\link[wblrout:plot.wblr]{plot.wblr}}.
-        
-        Passing the \code{threshold} parameter here will result in plotting the
-        fit (and its associated plot positions) with a threshold value subtracted. 
-        
-        If three parameter models like \code{weibull3p} are used and 
-        \code{threshold = TRUE}, the calculated third parameter (\code{t0}) of
-        the \emph{last three-parameter fit} in the wblr object will be used for 
-        plotting the graphical entities. If a numeric value is passed, then 
-        only the value from the \emph{last} call to \code{wblr.fit} is used.
-        % what if different t0 values are given with different fits? this should
-        % result in only one fit used.
-        % test the statement that the t0 of the last three-parameter fit
-        % is used
         
         Currently, there is no graceful error recovery after attempting to fit
         lifetime data including negative time observations, for example 
@@ -116,11 +98,11 @@
     calculated fit and the optional graphical and calculation arguments as
     provided to the function.
 }
-\author{Jurgen Symynck \email{jusy@openreliability.org}}
 
 \references{
   William Q. Meeker and Luis A. Escobar, (1998) "Statistical Methods for Reliability Data", Wiley-Interscience, New York
 
   Robert B. Abernethy, (2008) "The New Weibull Handbook, Fifth Edition" 
+  
+  John I. McCool, (2012) "Using the Weibull Distribution: Reliability, Modeling and Inference"
 }
-
