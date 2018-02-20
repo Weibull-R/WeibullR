@@ -2,7 +2,7 @@
 \alias{wblr.conf}
 
 
-\title{Add Confidence to \code{wblr} Objects}
+\title{Add Confidence Interval Bounds to \code{wblr} Objects}
 \description{
     This function adds confidence calculations to the last fit entity in a \code{wblr} object.
 }
@@ -12,11 +12,15 @@
     \item{\dots}{Options for calculating confidence, and for plotting the results.}
 }
 \details{
-    This function adds confidence calculations to various entities in
-    \code{wblr} objects and adds them to the object alongside any pre-existing
+    This function adds confidence calculations to the last fit entity in a
+    \code{wblr} object and adds the result to the object alongside any pre-existing
     confidence calculations.
+	
+	Certain confidence calculations pertain to specific fit methods. The pivotal.rr confidence method
+	can only apply to a rank regression fit, while a likelihood ratio calculation can only be
+	performed on an mle fit.
     
-    Additional options for calculating B-life confidence are passed with:
+    Additional options for calculating confidence are passed with:
 
     \describe{
         \item{\code{ci}}{
@@ -28,7 +32,7 @@
 
         \item{\code{blife.pts}}{
             An unordered numeric vector with unreliability levels for which
-            B-life confidence will be calculated.
+            B-life confidence will be calculated for report in legend.
 
             Defaults to \code{c(0.1,0.05,0.01)}.
         }
@@ -75,16 +79,6 @@
     calculations and any optional graphical and calculation arguments
     as passed to the function.
 }
-\author{Jurgen Symynck \email{jusy@openreliability.org}}
-\note{
-   \itemize{
-        \item Currently, only \code{which = "all"} is supported, meaning that a
-            call to \code{wblr.conf} attempts calculation of confidence for all
-            fits in the \code{wblr} object.
-        \item Currently, only \code{conf.what = "blives"} and
-            \code{conf.blives.sides = "double"} are supported.
-    }
-}
 
 
 \examples{
@@ -95,7 +89,10 @@ da1 <- wblr.conf(da1,method.conf.blives="mcpivotals",col="red")
 da1 <- wblr.conf(da1,method.conf.blives="bbb",col="orange")
 da1 <- wblr.conf(da1,method.conf.blives="lrb",col="yellow3")
 print(da1$fit[[1]]$conf$blives[[1]])
+## plot datasets ##
+\dontrun{
 plot(da1,main="Comparison between MC Pivotal bounds and BB Bounds")
+}
 
 ## censored dataset: generates a warning for MC Pivotal confidence bounds ##
 da2 <- runif(8,100,1e4)
@@ -105,13 +102,25 @@ da2 <- wblr.fit(da2)
 da2 <- wblr.conf(da2,method.conf.blives="mcpivotals",col="blue1")
 da2 <- wblr.conf(da2,method.conf.blives="bbb",col="steelblue")
 da2 <- wblr.conf(da2,method.conf.blives="lrb",col="cyan3")
+\dontrun{
 plot(da2,main="Comparison between different bound types.")
+}
 
 ## show variability in Monte Carlo Pivotal bounds with low S ##
 da3 <- wblr(rweibull(5,3,1000))
 da3 <- wblr.fit(da3)
 for(i in 1:20) da3 <- wblr.conf(da3,S=1000,lwd=1,col="red")
     # just keep adding bounds to the wblr object...
+\dontrun{
 plot(da3,is.plot.legend=FALSE,
     main="Variability in MC Pivotal Conf. Bounds for S=1000")
+}
+}
+
+\references{
+  William Q. Meeker and Luis A. Escobar, (1998) "Statistical Methods for Reliability Data", Wiley-Interscience, New York
+
+  Robert B. Abernethy, (2008) "The New Weibull Handbook, Fifth Edition" 
+  
+  John I. McCool, (2012) "Using the Weibull Distribution: Reliability, Modeling and Inference"
 }

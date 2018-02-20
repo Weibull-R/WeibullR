@@ -9,6 +9,7 @@
     by the other functions of \pkg{wblr}.
 }
 \usage{wblr(x, s=NULL, interval=NULL,\dots)}
+
 \arguments{
     \item{x}{
         Either a dataframe containing at least \code{$time} and \code{$event}
@@ -28,6 +29,7 @@
         See section "Details" for other data passing arguments.
     }
 }
+
 \details{
     There are several methods to passing arguments for building an \code{wblr}
     object.
@@ -45,7 +47,7 @@
             a vector of event indicators with possible values of
             \code{0} and \code{1}. See section "Value" for more details on
             event vectors.
-        \item If the \code(x) argument is not provided as a dataframe and \code{susp} is provided, 
+        \item If the \code{x} argument is not provided as a dataframe and \code{susp} is provided, 
 			it is treated as a vector of right-censored (life-)time observations 
             (also called suspended observations or suspensions).
     }
@@ -60,9 +62,8 @@
     such as \code{col} or \code{is.plot.legend}. Some of these options
     will be used when plotting the (life-)time observations using \code{plot.wblr}.
     Subsequent calls to \code{wblr.fit} and \code{wblr.conf} will inherit these options.
-
-    % \code{\link[wblrout:plot.wblr]{plot.wblr}}.
 }
+
 \value{
     A named list of class \code{"wblr"}. The first list
     item (\code{$data}) is a list with up to least three items:
@@ -80,20 +81,15 @@
         }
     }
 }
-\author{Jurgen Symynck \email{jusy@openreliability.org}}
 
-%%\section{To Do}{
-%%    \itemize{
-%%        \item Add support for specifying right censored (life-)time observations
-%%        using the format
-%%
-%%        \code{wblr(fail=c(500,1200,900),susp=c(1300,510))}.
-%%    }
-%%}
-\seealso{
-%% ~~objects to See Also as \code{\link{help}}, ~~~
-    \code{\link{options.wblr}}
+\references{
+  William Q. Meeker and Luis A. Escobar, (1998) "Statistical Methods for Reliability Data", Wiley-Interscience, New York
+
+  Robert B. Abernethy, (2008) "The New Weibull Handbook, Fifth Edition" 
+  
+  John I. McCool, (2012) "Using the Weibull Distribution: Reliability, Modeling and Inference"
 }
+
 \examples{
 ## These code lines all generate the same object ##
 wblr(c(500,1200,900,1300,510))

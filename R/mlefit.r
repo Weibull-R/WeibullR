@@ -63,19 +63,6 @@ mlefit<-function(x, dist="weibull", npar=2, debias="none", optcontrol=NULL)  {
 		Ni<-sum(x[intervalsNDX,3])
 	}
 
-## further validate the input arguments for non-fsiq object
-## somehow this code wrecked function on frames attributed with fsiq from mleframe
-##	if(length(attributes(x)$fsiq)!=1)  {
-## stop if Nf+Ns+Ndi != nrow(x)
-##	if( (Nf+Ns+Nd+Ni) != nrow(x))  {
-##		stop("invalid input dataframe")
-##	}
-## rebuild input vector from components, just to be sure
-##	fsiq<-rbind(x[failNDX,], x[suspNDX,], x[discoveryNDX,], interval[intervalsNDX,])
-## end input validation code
-##	}else{
-##		fsiq<-x
-##	}
 
 ## rebuild input vector from components, because this order is critical
 	fsiq<-rbind(x[failNDX,], x[suspNDX,], x[discoveryNDX,], interval[intervalsNDX,])
@@ -86,26 +73,18 @@ mlefit<-function(x, dist="weibull", npar=2, debias="none", optcontrol=NULL)  {
 
 ## now form the arguments for C++ call
 ## fsdi is the time vector to pass into C++
-## data_est is no longer used to prepare the vstart
 	fsd<-NULL
-#	data_est<-NULL
 	if((Nf+Ns)>0)  {
 		fsd<-fsiq$left[1:(Nf_rows + Ns_rows)]
-## assure that data_est is a clone
-#		data_est<-fsiq$left[1:(Nf_rows + Ns_rows)]
 	}
 	if(Nd>0) {
 		fsd<-c(fsd,fsiq$right[(Nf_rows + Ns_rows + 1):(Nf_rows +  Ns_rows + Nd_rows)])
-#		data_est <- c(data_est, 0.5*(fsiq$right[(Nf_rows + Ns_rows + 1):(Nf_rows + Ns_rows + Nd_rows)]))
 	}
 	if(Ni>0)  {
 		fsdi<-c(fsd, fsiq$left[(Nf_rows + Ns_rows + Nd_rows + 1):nrow(fsiq)],
 		fsiq$right[(Nf_rows + Ns_rows + Nd_rows + 1):nrow(fsiq)])
-#		data_est<-c(data_est, (fsiq$left[(Nf_rows + Ns_rows + Nd_rows + 1):nrow(fsiq)] +
-#				 fsiq$right[(Nf_rows + Ns_rows + Nd_rows + 1):nrow(fsiq)])/2)
 	}else{
 		fsdi<-fsd
-#		data_est<-fsd
 	}
 
 	q<-fsiq$qty
@@ -124,10 +103,6 @@ mlefit<-function(x, dist="weibull", npar=2, debias="none", optcontrol=NULL)  {
 		mrr_fit<-MRRw2p(mrr_fail_data, mrr_susp_data)
 		shape<-mrr_fit[2]
 		scale<- mrr_fit[1]
-#		m <- mean(log(data_est))
-#		v <- var(log(data_est))
-#		shape <- 1.2/sqrt(v)
-#		scale <- exp(m + 0.572/shape)
 		vstart <- c(shape, scale)
 
 	}else{

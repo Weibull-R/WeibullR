@@ -1,10 +1,6 @@
 MLEcontour<-function(x,  dist="weibull", CL=0.9,dof=1,MLEfit=NULL, RadLimit=1e-5,
 		ptDensity=120, debias="none", show=FALSE)  {
-## warn on attempt to set debias
-	if(debias!="none")  {
-		warning("bias adjustement is not implemnented for likelihood ratio contours")
-	}
-		
+
 ## check basic parameters of x
 	if(class(x)!="data.frame") {stop("mlefit takes a structured dataframe input, use mleframe")}
 	if(ncol(x)!=3)  {stop("mlefit takes a structured dataframe input, use mleframe")}
@@ -115,37 +111,63 @@ if(dist_num==1)  {
 }
 	MLLx<-MLEfit[3]
 
-##	FF<-1
-##	if(applyFF==TRUE) {
-## The 'Fulton Factor' is a non-achademic component discussed in Abernethy's book as part of a "Justified Likelihood Function".
-## It was a further adjustement, beyond RBA, to add a "pleasing" shape to contour bounds
-## when comparing them to pivotal rank regression interval bounds.
-## This factor has never been demonstrated to have any statistical basis, and is not implented in WeibullR.
-##		if(debias!="rba")  {
-##			stop('FF is only applicable when debias is set to "rba"')
-##		}else{
-##			Nf<-length(x)
-##			FF<-(Nf-1)/(Nf+0.618)
-##		}
-##	}
-##	ratioLL  <-  MLLx- qchisq(CL,dof)/(2*FF)
 	ratioLL  <-  MLLx- qchisq(CL,dof)/2
 ## assure ptDensity is an integer
 	ptDensity<-ceiling(ptDensity)
 
 ## Call the C++ code to deliver a matrix of contour points
 	resultMat<- .Call("getContour", MLEclassList, par_hat, dist_num, MLLx, ratioLL, RadLimit, ptDensity, package="WeibullR")
-
-
-
 	if(sum(resultMat[,3])>0) {
 		warning("instability detected")
 	}
 	contourpts<-data.frame(resultMat[,1:2])
+
+
+
 	if(dist_num==1) {
 		names(contourpts)<- c("Eta", "Beta")
+		if(debias!="none")  {
+			if(debias!="rba"&&debias!="mean"&&debias!="hirose-ross")  {
+				stop("debias method not resolved")
+			}
+			if(debias=="rba")  {
+				bias_adj<-rba(sum(N)-Ns, dist="weibull",basis="median")
+			}
+			if(debias=="mean")  {
+				bias_adj<-rba(sum(N)-Ns, dist="weibull",basis="mean")
+			}
+			if(debias=="hirose-ross")  {
+				bias_adj<-hrbu(sum(N)-Ns, Ns)
+			}
+
+			minbeta<-min(contourpts[,2])
+			mindelta<-minbeta-minbeta*bias_adj
+			contourpts$Beta<-contourpts$Beta-mindelta
+
+			attr(contourpts,"bias_adj")<-debias
+		}
 	}else{
 		names(contourpts)<- c("Mulog", "Sigmalog")
+			if(debias!="none")  {
+				bias_adj<-rba(sum(N)-Ns, dist="lognormal")
+#				minsig<-min(contourpts[,2])
+#				maxsig<-max(contourpts[,2])
+
+				contourpts$Sigmalog<-contourpts$Sigmalog*bias_adj
+#contourpts$Sigmalog<-sapply(contourpts$Sigmalog,
+#				function(x) {
+				#x*bias_adj
+## eventhough this attempted adjustment created unexpectedly large alteration
+## contours basically agreed with SuperSMITH, but lognormal canvas plot was unchanged
+#				x*bias_adj*(1+((x-minsig)/(maxsig-minsig))*.05)
+#				}
+#				)
+				if(debias!="rba")  {
+					warning("rba has been applied to adjust lognormal")
+					debias="rba"
+				}
+			attr(contourpts,"bias_adj")<-debias
+			}
 	}
 
 	if(show==TRUE)  {

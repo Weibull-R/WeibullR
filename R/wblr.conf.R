@@ -39,14 +39,6 @@ wblr.conf <- function(x,...){
 	xdata<-x$data
 	opadata<-x$options
 
-	#	x$fit[[length(x$fit)]]<- calculateSingleConf(
-	#		x$fit[[length(x$fit)]],
-	#		x$data, opadata=x$options,datarange=dr,...
-	#	)
-
-
-## calculateSingleConf is now inserted here
-    # fit is a single fit
 
 ## validation of the ... arguments
     arg <- list(...)
@@ -380,8 +372,6 @@ DQ<-DescriptiveQuantiles
 	if(tolower(fit$options$dist) %in% c("lnorm","lognormal","lognormal2p")){
 		fit_dist<-"lognormal"
 	}
-
-
 		debias<-"none"
 		if(tolower(opafit$method.fit) == "mle-rba")  debias <- "rba"
 		if(tolower(opafit$method.fit) == "mle-unbias") {
@@ -440,25 +430,17 @@ DQ<-DescriptiveQuantiles
 ## just get the distribution from the fit object, no crossfire
 	fit_dist<-fit$options$dist
 
-
-
-
-
-## bias adjustement is not implemented in LRbounds
 		debias<-"none"
-##		if(tolower(opafit$method.fit) == "mle-rba")  debias <- "rba"
-##		if(tolower(opafit$method.fit) == "mle-unbias") {
-##			if(fit_dist == "weibull") {
-##				debias <- "hirose-ross"
-##			}else{
+		if(tolower(opafit$method.fit) == "mle-rba")  debias <- "rba"
+		if(tolower(opafit$method.fit) == "mle-unbias") {
+			if(fit_dist == "weibull") {
+				debias <- "hirose-ross"
+			}else{
 #mle-unbias taken as mle-rba for lognormal
-##				debias <- "rba"
-##			}
-##		}
-##if(!is.null(debias)) fit$conf[[i]]$debias <- debias
-
-
-
+				debias <- "rba"
+			}
+		}
+if(!is.null(debias)) fit$conf[[i]]$debias <- debias
 
 
 ## usage LRbounds(x,  dist="weibull", CL=0.9, unrel=NULL,  contour=NULL, dof=1, debias="none", show=FALSE)
@@ -466,10 +448,10 @@ DQ<-DescriptiveQuantiles
 			dist=fit$options$dist,
 			CL=opaconf$ci,
 			 unrel=unrel,
+# this specific setting broke the code, just depend on default
 #			contour=NULL,
 			dof=fit$conf[[i]]$dof,
 			debias=debias
-#			applyFF=fit$conf[[i]]$applyFF
 		)
 
 		if(!is.null(ret)){

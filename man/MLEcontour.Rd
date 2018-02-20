@@ -44,15 +44,16 @@ MLEcontour(x,  dist="weibull", CL=0.9,dof=1,MLEfit=NULL, RadLimit=1e-5,
    (log(ML(p1_hat,p2_hat))-log(RL(p1,p2)) - chisquare(CL,DF)/2=0,where ML is Maximum Likelihood for the data,and RL
    is Ratioed Likelihood for the data at selected points for the contour.
    The algorithm for this function (executed in compiled C++ code) uses a quinary search for the root optimization of each radial
-   on a polar coordinate loop. It is believed to be unique from commercial implementatons and appears to have improved stability
+   on a polar coordinate loop. It is believed to be unique from commercial implementations and appears to have improved stability
    for this notoriously challenging calculation.
-   
-  Some commercial softwares apply a modification of the likelihood coontour based on the application of a bias adjustment. Abernethy's "Justified Likelihood Function" has not been demonstrated to be academically accepted, so no attempt has been made to implement similar modification.
-  Contribution of evidence or a method contrary to this position will gladly be reviewed by the package maintainer.
 }
 
 \references{
-    Dr. Robert B. Abernethy, (2008) "The New Weibull Handbook, Fifth Edition"
+  William Q. Meeker and Luis A. Escobar, (1998) "Statistical Methods for Reliability Data", Wiley-Interscience, New York
+
+   Robert B. Abernethy, (2008) "The New Weibull Handbook, Fifth Edition"
+  
+   John I. McCool, (2012) "Using the Weibull Distribution: Reliability, Modeling and Inference"
 }
 
 \examples{
