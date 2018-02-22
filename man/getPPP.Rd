@@ -8,7 +8,7 @@ Determination of plotting positions to be used for linear regression of life dat
 }
 
 \usage{
-getPPP(x, s=NULL, interval=NULL, ppos="beta", aranks="Johnson", ties=NULL)
+getPPP(x, s=NULL, interval=NULL, ppos="beta", aranks="Johnson", ties="none")
 }
 
 \arguments{

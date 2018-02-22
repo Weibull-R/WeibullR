@@ -9,7 +9,7 @@ Determination of plotting positions to be used for linear regression of life dat
 
 \usage{
 getPercentilePlottingPositions(x, s=NULL, interval=NULL, ppos="beta",
- aranks="Johnson", ties=NULL) 
+ aranks="Johnson", ties="none") 
 }
 
 \arguments{

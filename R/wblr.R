@@ -158,22 +158,49 @@ getPlotData<-function(x,opa) {
 ## adjustmets to ppp are made by using options
 ## it is also possible to alter the rank adjustment from "Johnson" to"KMestimator"
 ## it is also possible to adjust the handling of ties as covered by getPercentilePlottingPositions
-	ppos<-switch(opa$pp,
-		median="beta",
-		benard="Benard",
-		hazen="Hazen",
-		mean="mean",
-		kaplan.meier="Kaplan-Meier",
-		blom="Blom"
-		)
-	p<-getPPP(f,s, ppos=ppos)
+		opa$pp<-tolower(opa$pp)
+		if(opa$pp=="median") ppos<-"beta"
+		if(opa$pp=="benard") ppos<-"Benard"
+		if(opa$pp=="hazen") ppos<-"Hazen"
+		if(opa$pp=="mean") ppos<-"mean"
+		if(opa$pp=="kaplan-meier") ppos="Kaplan-Meier"
+		if(opa$pp=="blom")  ppos<-"Blom"
+
+		if(!(any(c("beta", "Benard", "Hazen", "mean","Kaplan-Meier","Blom") %in% ppos))) {
+			stop("pp option not recognized")
+		}
+
+		if(tolower(opa$rank.adj)=="johnson")  {
+			aranks<-"Johnson"
+		}else{
+			if(opa$rank.adj==tolower("kmestimator")) {
+				if(ppos!="Kaplan-Meier") warning("KMestimator applied without Kaplan-Meier plotting positions")
+				aranks<-"KMestimator"
+			}else{
+				stop("rank.adj option not recognized")
+			}
+		}
+
+		if(!(any(c("none", "highest", "lowest", "mean","sequential") %in% opa$ties.handler))) {
+#		if(!(any(c("none", "highest", "lowest", "mean") %in% opa$ties.handler))) {
+			stop("ties.handler option not recognized")
+		}
+
+	p<-getPPP(f,s, ppos=ppos, aranks=aranks, ties=opa$ties.handler)
+## set quantity of duplicated points to 1, so that dpoints and dlines loops below work
+	if(opa$ties.handler!="none") {
+		if(nrow(p)!=nrow(x)) {
+			stop("ties.handler did not function as expected")
+		}
+		x$qty<-rep(1,nrow(x))
+	}
 
 	dpoints<-NULL
 	dlines<-NULL
 	##   dpoints<-data.frame(time=NULL, ppp=NULL)
 	##   dlines<-data.frame(t1=NULL, t2=NULL,, ppp=NULL)
 
-	for(frow in 1: dim(x)[1])  {
+	for(frow in 1: nrow(x))  {
 		if(x$left[frow]==x$right[frow]) {
 			for(q in 1:x$qty[frow])  {
 				prow<-match(x$mean[frow], p$time)

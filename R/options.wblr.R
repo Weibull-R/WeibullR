@@ -35,9 +35,11 @@ options.wblr<- function(...){
         options_wblr <- list(
 ## options specific to initial wblr object creation with data prepared for graphical display
          ## plotting position method
-            pp="median",           ## ("benard","hazen","mean", "kaplan.meier", "blom")
-##  adjustment method for suspension data
+            pp="median",           ## ("benard","hazen","mean", "kaplan-meier", "blom")
+         ##  adjustment method for suspension data
             rank.adj ="johnson",          ## ("KMestimator")
+         ##  handling method for ties in data
+            ties.handler ="none",  ## ("highest", "lowest", "mean", "sequential")
          ## graphical control over data points
             pch=1,
             lwd.points=2,
@@ -53,7 +55,7 @@ options.wblr<- function(...){
 ## thinking of implementing               "principal-components" or "princ-comp" for short
 
 ## options specific to wblr.conf
-            method.conf="mcpivotals",           ## ("bbb","fm", "fmbounds","lrb", "likelihood-ratio")
+            method.conf="mcpivotals",           ## ("bbb","bbb-extra", "fm", "fmbounds","lrb", "likelihood-ratio")
            num_dq=25,
            dq="abrem",
         ##   assigning dq="user" permits defined user_dq to be applied.  minitab dq exampled here:
