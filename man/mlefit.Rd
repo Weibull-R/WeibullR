@@ -22,7 +22,7 @@ mlefit(x, dist="weibull", npar = 2, debias="none", optcontrol=NULL)
   }
   \item{npar}{An optional argument for specifying 3p optimization. Priority is given to any suffix to the distribution name.}
   \item{debias}{An optional string argument indicating the adjustment to be applied to the shape or standard deviation
-  parameter of the fitted data. Adjustments recognized are: "rba" (default), "mean", and "hirose-ross". Any entry for debias
+  parameter of the fitted data. Adjustments recognized are: "rba" (default), "mean", and "hrbu" (for hirose-ross beta unbias). Any entry for debias
   with the lognormal distribution will be processed as "rba" with a warning if it was not clearly specified.
   }
   \item{optcontrol}{An optional list of arguments for control of the MLE optimization.  The strict naming convention for the list items are:

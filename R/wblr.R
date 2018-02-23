@@ -181,6 +181,9 @@ getPlotData<-function(x,opa) {
 			}
 		}
 
+# silently fix use of ties as an option
+		if(!is.null(opa$ties) && opa$ties.handler=="none") opa$ties.handler<-opa$ties
+
 		if(!(any(c("none", "highest", "lowest", "mean","sequential") %in% opa$ties.handler))) {
 #		if(!(any(c("none", "highest", "lowest", "mean") %in% opa$ties.handler))) {
 			stop("ties.handler option not recognized")

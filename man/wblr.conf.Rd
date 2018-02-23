@@ -85,40 +85,33 @@
 ## full dataset ##
 da1 <- wblr(runif(10,100,1e4),label="Complete data")
 da1 <- wblr.fit(da1)
-da1 <- wblr.conf(da1,method.conf.blives="mcpivotals",col="red")
-da1 <- wblr.conf(da1,method.conf.blives="bbb",col="orange")
-da1 <- wblr.conf(da1,method.conf.blives="lrb",col="yellow3")
-print(da1$fit[[1]]$conf$blives[[1]])
+da1 <- wblr.conf(da1,method.conf="pivotal-rr",col="red")
+da1 <- wblr.conf(da1,method.conf="bbb",col="orange")
+da1 <- wblr.fit(da1, method.fit="mle")
+da1 <- wblr.conf(da1,method.conf="lrb",col="yellow3")
+
 ## plot datasets ##
 \dontrun{
-plot(da1,main="Comparison between MC Pivotal bounds and BB Bounds")
+plot(da1,main="Comparison between different bound types.")
 }
 
-## censored dataset: generates a warning for MC Pivotal confidence bounds ##
+## with right-censored data
 da2 <- runif(8,100,1e4)
-da2 <- wblr(fail=da2,susp=rep(max(da2),2),label="Type II censored data")
-    # generate a 'type 2' censored dataset
+da2 <- wblr(fail=da2,susp=rep(max(da2),2),label="Type II right-censored data")
 da2 <- wblr.fit(da2)
-da2 <- wblr.conf(da2,method.conf.blives="mcpivotals",col="blue1")
-da2 <- wblr.conf(da2,method.conf.blives="bbb",col="steelblue")
-da2 <- wblr.conf(da2,method.conf.blives="lrb",col="cyan3")
+da2 <- wblr.conf(da2,method.conf="pivotal-rr",col="blue1")
+da2 <- wblr.conf(da2,method.conf="bbb",col="steelblue")
+da2 <- wblr.fit(da2, method.fit="mle")
+da2 <- wblr.conf(da2,method.conf="lrb",col="cyan3")
 \dontrun{
-plot(da2,main="Comparison between different bound types.")
+plot(da2,main="Comparison between different bound types with right-censored data.")
+}
 }
 
-## show variability in Monte Carlo Pivotal bounds with low S ##
-da3 <- wblr(rweibull(5,3,1000))
-da3 <- wblr.fit(da3)
-for(i in 1:20) da3 <- wblr.conf(da3,S=1000,lwd=1,col="red")
-    # just keep adding bounds to the wblr object...
-\dontrun{
-plot(da3,is.plot.legend=FALSE,
-    main="Variability in MC Pivotal Conf. Bounds for S=1000")
-}
-}
 
 \references{
-  William Q. Meeker and Luis A. Escobar, (1998) "Statistical Methods for Reliability Data", Wiley-Interscience, New York
+  William Q. Meeker and Luis A. Escobar, (1998) "Statistical Methods for Reliability Data", 
+  Wiley-Interscience, New York
 
   Robert B. Abernethy, (2008) "The New Weibull Handbook, Fifth Edition" 
   

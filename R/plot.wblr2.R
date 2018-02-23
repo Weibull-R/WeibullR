@@ -276,7 +276,10 @@ plot.wblr <- function(x,...){
             # TODO: replace with lapply
         }
     }else{
+## need to suppress this warning if argument is.plot.legend was set to FALSE
+		if(opa$is.plot.legend==TRUE) {
         warning("plot.wblr: There is no legend to plot.")
+		}
     }
 
     invisible()

@@ -40,6 +40,7 @@ options.wblr<- function(...){
             rank.adj ="johnson",          ## ("KMestimator")
          ##  handling method for ties in data
             ties.handler ="none",  ## ("highest", "lowest", "mean", "sequential")
+		## use of simply 'ties' as an option will silently be accepted as ties.handler
          ## graphical control over data points
             pch=1,
             lwd.points=2,
@@ -51,11 +52,13 @@ options.wblr<- function(...){
 
 ## options specific to wblr.fit
             dist="weibull",           ##  ("lognormal","lnorm","lognormal2p", "weibull2p","lognormal3p", "weibull3p")
-            method.fit=c("rr","xony"),           ## (c("rr","yonx"),"", "mle","mle-rba", "mle-unbias")
+            method.fit=c("rr-xony"),           ## ("rr","rr-yonx", "mle","mle-rba", "mle-unbias")
+											## c("rr","xony") has been depreciated
 ## thinking of implementing               "principal-components" or "princ-comp" for short
 
 ## options specific to wblr.conf
-            method.conf="mcpivotals",           ## ("bbb","bbb-extra", "fm", "fmbounds","lrb", "likelihood-ratio")
+            method.conf="pivotal-rr",           ## ("bbb","bbb-extra", "fm", "fmbounds","lrb", "likelihood-ratio")
+											## "mcpivotals" has been depreciated
            num_dq=25,
            dq="abrem",
         ##   assigning dq="user" permits defined user_dq to be applied.  minitab dq exampled here:

@@ -165,7 +165,7 @@ mlefit<-function(x, dist="weibull", npar=2, debias="none", optcontrol=NULL)  {
 
 ## here is a good place to validate any debias argument (before more calculations begin)
 	if(debias!="none" && dist_num==1)  {
-		if(tolower(debias)!="rba"&&tolower(debias)!="mean"&&tolower(debias)!="hirose-ross")  {
+		if(tolower(debias)!="rba"&&tolower(debias)!="mean"&&tolower(debias)!="hrbu")  {
 			stop("debias method not resolved")
 		}
 	}
@@ -201,7 +201,7 @@ mlefit<-function(x, dist="weibull", npar=2, debias="none", optcontrol=NULL)  {
 		if(dist_num == 1)  {
 			names(outvec)<-c("Eta","Beta","LL")
 			if(debias!="none")  {
-				if(debias!="rba"&&debias!="mean"&&debias!="hirose-ross")  {
+				if(debias!="rba"&&debias!="mean"&&debias!="hrbu")  {
 					stop("debias method not resolved")
 				}
 				if(debias=="rba")  {
@@ -210,7 +210,7 @@ mlefit<-function(x, dist="weibull", npar=2, debias="none", optcontrol=NULL)  {
 				if(debias=="mean")  {
 					outvec[2]<-outvec[2]*rba(Q[1]-Q[3], dist="weibull",basis="mean")
 				}
-				if(debias=="hirose-ross")  {
+				if(debias=="hrbu")  {
 					outvec[2]<-outvec[2]*hrbu(Q[1]-Q[3], Q[3])
 				}
 			outvec[3]<-.Call("MLEloglike",MLEclassList,c(outvec[2],outvec[1]),dist_num, default_sign, default_tz, package="WeibullR")
@@ -363,7 +363,7 @@ mlefit<-function(x, dist="weibull", npar=2, debias="none", optcontrol=NULL)  {
 				if(debias=="mean")  {
 					outvec[2]<-outvec[2]*rba(Q[1]-Q[3], dist="weibull",basis="mean")
 				}
-				if(debias=="hirose-ross")  {
+				if(debias=="hrbu")  {
 					outvec[2]<-outvec[2]*hrbu(Q[1]-Q[3], Q[3])
 				}
 				outvec[3]<-.Call("MLEloglike",MLEclassList,c(outvec[2],outvec[1]),dist_num, default_sign, X0, package="WeibullR")
