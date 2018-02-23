@@ -59,7 +59,10 @@ if(is.vector(x)) {
 					qty<-rep(1,nrow(failures))
 					failures<-cbind(failures,qty)
 				}else{
-					if(any(!is.integer(x$qty))) stop("non-integers in input object qty column")
+#					if(any(!is.integer(x$qty))) stop("non-integers in input object qty column")
+# is.integer gives unexpected results
+## Just make sure that the qty column contains integers
+					x$qty<-ceiling(x$qty)
 				}
 
 			if(identical(ev_info, c("0","1"))) {
