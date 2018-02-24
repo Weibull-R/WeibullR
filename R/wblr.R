@@ -168,8 +168,11 @@ getPlotData<-function(x,opa) {
 	mod1x<-cbind(x,mean=(x$left+x$right)/2)[x$right!=-1,]
 	trans_time<-mod1x$mean*mult+mod1x$left
 	dataDF<-data.frame(time=trans_time, event=1, qty=mod1x$qty)
+	suspDF<-NULL
+	if(length(x[x$right==-1,][,1])>0) {
 	sx<-x[x$right==-1,]
 	suspDF<-data.frame(time=sx$left*mult, event=0, qty=sx$qty)
+	}
 	p_argx<-rbind(dataDF,suspDF)
 
 	mod2x<-cbind(mod1x[,-4],tmean=dataDF$time)
