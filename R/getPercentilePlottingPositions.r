@@ -64,18 +64,19 @@ if(is.vector(x)) {
 ## Just make sure that the qty column contains integers
 					x$qty<-ceiling(x$qty)
 				}
-
-			if(identical(ev_info, c("0","1"))) {
+			F<-sum(failures$qty)
+			
+			suspensions<-NULL
+			if(any("0" %in% ev_info)) {
 			suspensions<-x[x$event==0,]
 				if(is.null(x$qty)) {
 					qty<-rep(0,nrow(suspensions))
 					suspensions <-cbind(suspensions,qty)
-
 				}
-			}
-
-			F<-sum(failures$qty)
 			N<-F+sum(suspensions$qty)
+			}else{
+				N<-F
+			}
 
 			prep_df<-rbind(failures,suspensions)
 ## now sort the dataframe on data values
