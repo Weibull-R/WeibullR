@@ -191,11 +191,12 @@ wblr.fit <- function(x, modify.by.t0=FALSE,...){
 		}
 
 		## content of fit_vec result depends on fit_dist, and npar
-		try(fit_vec<-lslr(x$data$dpoints, dist=fit_dist, npar=npar, reg_method=regression_order))
+		fit_vec<-lslr(x$data$dpoints, dist=fit_dist, npar=npar, reg_method=regression_order)
 
 		if(!is.null(fit_vec)){
 ## Jurgen's use of super assignment (<<-) appears to have been an error here
 			atleastonefit<-TRUE
+			x$fit[[i]]$fit_vec <- fit_vec
 			if(fit_dist=="weibull") {
 				x$fit[[i]]$beta <- fit_vec[2]
 				x$fit[[i]]$eta <- fit_vec[1]
@@ -259,11 +260,14 @@ wblr.fit <- function(x, modify.by.t0=FALSE,...){
 			}
 		}
 
-		try(fit_vec<-mlefit(x$data$lrq_frame, fit_dist, npar, debias))
+		fit_vec<-mlefit(x$data$lrq_frame, fit_dist, npar, debias)
+## this attribute applied by mlefit is used by LRbounds as a matter of convenience,
+## but never referenced from this fit_vec object entry
+##		attributes(fit_vec)$data_types<-NULL
 
         if(!is.null(fit_vec)){
 			atleastonefit<-TRUE
-			x$fit[[i]]$MLEfit <- fit_vec
+			x$fit[[i]]$fit_vec <- fit_vec
 			if(fit_dist=="weibull") {
 				x$fit[[i]]$beta <- fit_vec[2]
 				x$fit[[i]]$eta <- fit_vec[1]

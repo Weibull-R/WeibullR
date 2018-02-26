@@ -80,6 +80,7 @@ LRbounds<-function(x,  dist="weibull", CL=0.9, unrel=NULL,  contour=NULL, dof=1,
 	P2<-MLEfit[2]
 ## adjust P2 according to debias
 ## needed quantity of type information is provided as "data_types" attribute to MLEfit object
+
 	dt<-unname(attributes(MLEfit)$data_types)
 	Qx<-dt[1]-dt[2]
 	Qs<-dt[2]
