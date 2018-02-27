@@ -94,6 +94,15 @@ wblr.fit <- function(x, modify.by.t0=FALSE,...){
 		stop(paste0(opafit$method.fit," is not a supported fit method."))
 	}
 
+	if(tolower(opafit$dist) %in% c("weibull3p", "lognormal3p")){
+		if(!is.null(x$data$dlines)) {
+			if(any(x$data$dlines$t1==0)) {
+				stop("3p modification not permitted on data with discoveries (left==0)")
+			}#else{
+				#warning("3p modification on interval data is a questionable practice")
+			#}
+		}
+	}
 
 	if(modify.by.t0==TRUE) {
 		if(tolower(opafit$dist) %in% c("weibull3p", "lognormal3p")){
@@ -330,11 +339,13 @@ wblr.fit <- function(x, modify.by.t0=FALSE,...){
 				stop("t0 too large for data modification")
 			}
 			x$data$lrq_frame$left<-x$data$lrq_frame$left - x$fit[[i]]$t0
+			x$data$lrq_frame$right[x$data$lrq_frame$right!=-1]<-x$data$lrq_frame$right[x$data$lrq_frame$right!=-1] - x$fit[[i]]$t0
 			if(!is.null(x$data$dpoints$time)) {
 			x$data$dpoints$time<-x$data$dpoints$time - x$fit[[i]]$t0
 			}
 			if(!is.null(x$data$dlines$t1)) {
-			x$data$dlines$t1<-x$data$dlines$t1e - x$fit[[i]]$t0
+			x$data$dlines$t1<-x$data$dlines$t1 - x$fit[[i]]$t0
+			x$data$dlines$t2<-x$data$dlines$t2 - x$fit[[i]]$t0
 			}
 
 ## needed to control legend and fitted curve

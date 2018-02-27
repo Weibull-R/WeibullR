@@ -1,7 +1,7 @@
 mlefit<-function(x, dist="weibull", npar=2, debias="none", optcontrol=NULL)  {
 ## these warnings only apply to 3p fitting, but the object must be created
-secant_warning<-FALSE
-stable<-TRUE
+#secant_warning<-FALSE
+#stable<-TRUE
 ## tz is required for MLEloglike and MLEsimplex calls now
 		default_tz=0
 ## sign is now required for MLEloglike call
@@ -407,18 +407,22 @@ break
 ## end of 3p code
 }
 
-
+## restored the original secant_warning and added the new stabile warning
+## perhaps using if(exists("secant_warning"))  etc. would be better.
+#if(secant_warning==TRUE) {
+if(exists("secant_warning")) {
+	attr(outvec, "warn")<-"unstable fit 1"
+}
+#if(stable==FALSE) {
+if(exists("stable")) {
+	attr(outvec, "warn")<-"unstable fit 2"
+}
 
 ## the following applies to both 2p and 3p results
 ## it is used by LRbounds to simplify data_type determination for debias adjustment
 ## but often removed for normal use by attributes(fit_vec)$data_types<-NULL
 	attr(outvec,"data_types")<-Q[-2]
-if(secant_warning==TRUE) {
-	attr(outvec, "warn")<-"unstable fit 1"
-}
-if(stable==FALSE) {
-	attr(outvec, "warn")<-"unstable fit 2"
-}
+
 	if(listout==FALSE) {
 		out_object<-outvec
 	}else{
