@@ -33,7 +33,6 @@ wblr.conf <- function(x,...){
 	datarange<- findMaxDataRange(list(x))
 
 	if(!is.null(x$fit)){
-## usage: calculateSingleConf(fit,xdata,opadata,datarange,...)
 ## only acting on the last fit added to the object
 	fit<-x$fit[[length(x$fit)]]
 	xdata<-x$data
@@ -361,7 +360,7 @@ DQ<-DescriptiveQuantiles
 		ret <- NULL
 
 	if(any(c("weibull3p", "lognormal3p") %in% tolower(fit$options$dist))) {
-		stop("3-parameter fits are not handled by FMbounds")
+		stop("confidence bounds are not prepared on 3-parameter fits")
 	}
 ## assure valid dist names for FMbounds and the debias functions
 	if(tolower(fit$options$dist) %in% c("weibull","weibull2p")){
@@ -456,6 +455,7 @@ if(!is.null(debias)) fit$conf[[i]]$debias <- debias
 # this specific setting broke the code, just depend on default
 #			contour=NULL,
 			dof=fit$conf[[i]]$dof,
+			ptDensity=opaconf$ptDensity
 			debias=debias
 		)
 

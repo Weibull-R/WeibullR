@@ -74,7 +74,7 @@ options.wblr<- function(...){
             pivotals=FALSE,
         ## specific control for likelihood ratio contour and bounds
             dof=1,            ## degrees of freedom, dof=1 for conf interval, dof=2 for comparison
-##            applyFF=FALSE,            ## can only be TRUE when method.fit="mle-rba"
+            ptDensity=120 ##  number of points in likelihood ratio contour
 
 ## General graphical options
         ## graphical control for fitted lines, confidence bounds, or contours can be set at

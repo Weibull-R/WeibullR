@@ -1,4 +1,4 @@
-LRbounds<-function(x,  dist="weibull", CL=0.9, unrel=NULL,  contour=NULL, dof=1, debias="none", show=FALSE)  {
+LRbounds<-function(x,  dist="weibull", CL=0.9, unrel=NULL,  contour=NULL, dof=1, ptDensity=120, debias="none", show=FALSE)  {
 
 ## check basic parameters of x
 	if(class(x)!="data.frame") {stop("mlefit takes a structured dataframe input, use mleframe")}
@@ -7,7 +7,7 @@ LRbounds<-function(x,  dist="weibull", CL=0.9, unrel=NULL,  contour=NULL, dof=1,
 	if(xnames[1]!="left" || xnames[2]!="right"||xnames[3]!="qty")  {
 		 stop("mlefit takes a structured dataframe input, use mleframe")  }
 	if(missing(contour))  {
-		contour<-MLEcontour(x, dist, CL, dof=dof, debias=debias)
+		contour<-MLEcontour(x, dist, CL, dof=dof, ptDensity=ptDensity, debias=debias)
 	}
 
 	if(length(unrel)>0)  {

@@ -193,6 +193,14 @@ mleframe<-function(x, s=NULL, interval=NULL)  {
 		suspensions<-data.frame(left=st, right=-1, qty=sq)
 	}
 
+	if(!exists("failures"))  {
+		failures<-NULL
+		if(!is.null("interval"))  {
+			if(nrow(interval)<3) {
+				stop("insufficient failure data in intervals")
+			}
+		}
+	}
 	outDF<-rbind(failures,suspensions,interval)
 
 	outDF
