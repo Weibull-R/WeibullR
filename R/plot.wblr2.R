@@ -452,13 +452,23 @@ plotSingleFit <- function(fit,opadata,dotargs){
 ##            if(opafit$verbosity >= 1)message(
 ##                "plotSingleFit: Adding Lognormal fit ...")
 			x <- NULL; rm(x); # Dummy to trick R CMD check 
-            curve(p2y(plnorm(x-tz,fit$meanlog,fit$sdlog),opafit$log),
+				cret <-curve(p2y(plnorm(x-tz,fit$meanlog,fit$sdlog),opafit$log),
                 add=TRUE,
                 col=opafit$col,lwd=opafit$lwd,lty=opafit$lty,
                 xlim=getPlotRangeX(opafit$log),
                 log=opafit$log)
-                # TODO: deal with Inf and -Inf values in the curve argument zo that the curce always extends to the edges of the plotting regions
-        }
+                # TODO: deal with Inf and -Inf values in the curve argument so that the curve always extends to the edges of the plotting regions
+                cret$y[is.infinite(cret$y)] <- NA
+                    # works for weibull canvas
+                cret$y[cret$y==0] <- NA
+                    # replacing zero's is needed for lognormal canvas.
+                imin <- which.min(cret$y)
+                lines(rep(cret$x[imin],2),
+                    y=c(cret$y[imin],getPlotRangeY(opafit$log)[1]),
+                    col=opafit$col,lwd=opafit$lwd,lty=opafit$lty)
+                    # plot vertical line towards -Inf
+				}
+		
         if(!is.null(fit$rate)){
             ### exponential ###
 ##            if(opafit$verbosity >= 1)message(

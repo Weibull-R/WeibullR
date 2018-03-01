@@ -283,27 +283,28 @@
 
    When arguments were supplied, these are returned in a named list.
 }
-\author{Jurgen Symynck \email{jusy@openreliability.org}}
-\note{
-    Typical usage of \pkg{wblr} involves calling a sequence of functions like:
+%\author{Jurgen Symynck \email{jusy@openreliability.org}}
+%\note{
+%    Typical usage of \pkg{wblr} involves calling a sequence of functions like:
 
-    \code{da <- wblr(c(10,11,27))}\cr
-    \code{da <- wblr.fit(da)}\cr
-    \code{da <- wblr.conf(da)}\cr
-    \code{plot(da)}
+%    \code{da <- wblr(c(10,11,27))}\cr
+%    \code{da <- wblr.fit(da)}\cr
+%    \code{da <- wblr.conf(da)}\cr
+%    \code{plot(da)}
 
-    Do not call \code{options.wblr} in between these functions because some
-    options are locked and cannot be altered further in this chain. This is an
-    implication of the way the \code{wblr} object is structured.
-    
-    The correct time to specify an option is when it is needed for the first
-    time. For example, when the color setting option \code{col = "red"} is
-    passed as an argument of function \code{wblr}, it will be used for
-    datapoints, fits and confidence bounds. If supplied to \code{\link{wblr.conf}},
-    only the confidence bounds will have the specified color, hereby overriding
-    any previously inherited color settings from \code{\link{wblr.fit}}
-    or \code{\link{wblr}}.
-}
+%    Do not call \code{options.wblr} in between these functions because some
+%    options are locked and cannot be altered further in this chain. This is an
+%    implication of the way the \code{wblr} object is structured.
+
+%    The correct time to specify an option is when it is needed for the first
+%    time. For example, when the color setting option \code{col = "red"} is
+%    passed as an argument of function \code{wblr}, it will be used for
+%    datapoints, fits and confidence bounds. If supplied to \code{\link{wblr.conf}},
+%    only the confidence bounds will have the specified color, hereby overriding
+%    any previously inherited color settings from \code{\link{wblr.fit}}
+%    or \code{\link{wblr}}.
+
+%}
 
 \examples{
 ## backup options ##

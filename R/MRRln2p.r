@@ -13,7 +13,7 @@ if(is.logical(s)) {
 	s<-NULL
 }
 
-obj<-wblr.fit(wblr(x,s), dist="lognormal2p" col="blue2")
+obj<-wblr.fit(wblr(x,s), dist="lognormal2p", col="blue2")
 fit<-obj$fit[[1]]$fit_vec
 attributes(fit)$data_types<-NULL
 ## bounds are not prepared for 3p fits, so the bounds argument is simply ignored.

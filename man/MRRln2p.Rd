@@ -8,24 +8,23 @@
 }
 
 \usage{
-MRRln2p(x, s=NULL, bounds=FALSE, CI=0.90, show=FALSE) 
+MRRln2p(x, s=NULL, bounds=FALSE, show=FALSE) 
 }
 
 \arguments{
   \item{x}{A vector of failure data.}
   \item{s}{An optional vector of suspension data.}
   \item{bounds}{A logical argument defining whether confidence interval bounds should be calculated by pivotal analysis.}
-  \item{CI}{A value for the double-sided confidence interval. Applies only if bounds is set to TRUE}  
   \item{show}{A logical argument defining whether a simple graphical output is desired.}
 }
 
 \details{
- This function is intended to provide a simple casual method of standard weibull analysis based on default methods,
+ This function is intended to provide a simple casual method of standard lognormal fitting based on default methods,
  without options.  It also provides an example for handling the pivotal values returned from pivotalMC. 
 }
 
 \value{
- When bounds is set to FALSE this function returns a vector with named elements for Eta, Beta, Rsqr,
+ When bounds is set to FALSE this function returns a vector with named elements for Mulog, Sigmalog, Rsqr,
  AbPval (Abernethy's P-value), and LL (log-likelihood).  When the bounds argument is set to TRUE a list is returned with
  the vector as described and a dataframe of confidence interval bound values at a fixed set of descriptive quantiles,
  dq<-c(.01, .02, .05, .10, .15, .20, .30, .40, .50,  .60, .70, .80, .90, .95, .99), suitable for comparison with other software.

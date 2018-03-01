@@ -9,14 +9,13 @@
 }
 
 \usage{
-MRRln3p(x, s=NULL, bounds=FALSE, CI=0.90, show=FALSE) 
+MRRln3p(x, s=NULL, bounds=FALSE, show=FALSE) 
 }
 
 \arguments{
   \item{x}{A vector of failure data.}
   \item{s}{An optional vector of suspension data.}
   \item{bounds}{A logical argument defining whether confidence interval bounds should be calculated by pivotal analysis.}
-  \item{CI}{A value for the double-sided confidence interval. Applies only if bounds is set to TRUE}  
   \item{show}{A logical argument defining whether a simple graphical output is desired.}
 }
 

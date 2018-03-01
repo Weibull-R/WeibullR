@@ -1,14 +1,14 @@
-\name{MLEw2p}
-\alias{MLEw2p}
+\name{MLEln2p}
+\alias{MLEln2p}
 
-\title{Maximum Likelihood Estimate for 2-parameter weibull distributions}
+\title{Maximum Likelihood Estimate for 2-parameter lognormal distributions}
 
 \description{
- Determination of Weibull fitting parameters, goodness of fit measures and confidence interval bounds with optional graphical display.
+ Determination of lognormal fitting parameters, goodness of fit measures and confidence interval bounds with optional graphical display.
 }
 
 \usage{
-MLEw2p(x, s=NULL, bounds=FALSE, show=FALSE) 
+MLEln2p(x, s=NULL, bounds=FALSE, show=FALSE) 
 }
 
 \arguments{
@@ -19,12 +19,11 @@ MLEw2p(x, s=NULL, bounds=FALSE, show=FALSE)
 }
 
 \details{
- This function is intended to provide a simple casual method of standard weibull analysis based on default methods, without options.
- 
+ This function is intended to provide a simple casual method of standard lognormal fitting based on default methods, without options. 
 }
 
 \value{
- When the bounds argument is set to FALSE this function returns a vector with named elements for Eta, Beta,
+ When the bounds argument is set to FALSE this function returns a vector with named elements for Mulog, Sigmalog,
  and LL (log-likelihood).  When the bounds argument is set to TRUE a list is returned 
  containing the vector as described and a dataframe of confidence interval bound values at a fixed set of descriptive quantiles,
  suitable for comparison with other software.
@@ -41,7 +40,7 @@ MLEw2p(x, s=NULL, bounds=FALSE, show=FALSE)
 \examples{
 failures<-c(90,96,30,49,82)
 suspensions<-c(100,45,10)
-fit<-MLEw2p(failures, suspensions)
+fit<-MLEln2p(failures, suspensions)
 }
 
 \keyword{ regression reliability }

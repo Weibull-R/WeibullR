@@ -8,7 +8,7 @@
 
 \usage{
 LRbounds(x,  dist="weibull", CL=0.9, unrel=NULL,  contour=NULL, dof=1,
-                debias="none", show=FALSE)
+                ptDensity=120, debias="none", show=FALSE)
 }
 
 \arguments{
@@ -29,6 +29,7 @@ LRbounds(x,  dist="weibull", CL=0.9, unrel=NULL,  contour=NULL, dof=1,
   \item{dof}{An integer value indicating degrees of freedom to apply to the Chi square test, which defaults to dof=1 for
   confidence interval bound use. Should be set to 2 for comparison of two models each with 2 parameters.
   }
+  \item{ptDensity}{an integer value for the number of points to be plotted around the circumference of the contour.}
   \item{debias}{A place holder for an optional string argument indicating the adjustment to be applied to the shape or standard deviation
   parameter of the fitted data. NOT YET IMPLEMEMENTED - see details.
   }
