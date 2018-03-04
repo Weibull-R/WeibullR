@@ -1,4 +1,4 @@
-## plot_contour2.r
+## plot_contour.r
 
 ## inspired by contour.abrem originally authored by Jurgen Symynck, April 2014
 ## Extensive re-write by David J. Silkworth removes the S3 functionality that never applied

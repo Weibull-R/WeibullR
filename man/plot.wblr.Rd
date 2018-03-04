@@ -60,6 +60,8 @@ da3 <- wblr.conf(wblr.fit(wblr(rweibull(5,2,1000),col="green4",pch=3)))
 da4 <- wblr.conf(wblr.fit(wblr(rlnorm(5,log(500),log(2)),col="blue3",pch=8),
     dist="lognormal"))
 % not run due to device dependence
-%plot.wblr(list(da2,da3,da4),xlim=c(1,1e6),
-%    main="Uniformly distributed observations")
+\dontrun{
+plot.wblr(list(da2,da3,da4),xlim=c(1,1e6),
+    main="Uniformly distributed observations")
+}
 }

@@ -303,7 +303,6 @@
 %    only the confidence bounds will have the specified color, hereby overriding
 %    any previously inherited color settings from \code{\link{wblr.fit}}
 %    or \code{\link{wblr}}.
-
 %}
 
 \examples{

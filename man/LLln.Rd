@@ -19,7 +19,7 @@ LLln(x, s=NULL, Mulog, Sigmalog)
 }
 
 \details{
- Function LLln can only handle datasets with failure and suspension data. For data including intervals \code{wblrLikelihood} must be used.
+ Function LLln can only handle datasets with failure and suspension data. For data including intervals \code{wblrLikelihood} can be used.
  This function is somewhat unique among likelihood functions in that it will scan the suspension data for
  removal of negative values. Such negative values are likely to be entered as data is provided
  for a 3-parameter fit by explicitly providing the original data with vector subtraction by the optimized t0.
@@ -31,7 +31,7 @@ Returns a log-likelihood value.
 }
 
 \references{
-  Dr. Robert B. Abernethy, (2008) "The New Weibull Handbook, Fifth Edition"  
+  Robert B. Abernethy, (2008) "The New Weibull Handbook, Fifth Edition"  
 }
 
 \examples{
