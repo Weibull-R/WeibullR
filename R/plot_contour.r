@@ -216,7 +216,7 @@ findContourRanges <- function(cplist) {
 	do.call("rbind",lapply(cplist,findrange))
 }
 
-ExtractContourParamsFromObject<-function(wblr) {
+ExtractContourParamsFromObject<-function(wblr, calc=FALSE) {
 	str_eval=function(x) {return(eval(parse(text=x)))}
 	getParam<-function(par_name) {
 		val<-NULL
@@ -230,6 +230,27 @@ ExtractContourParamsFromObject<-function(wblr) {
 					val<-str_eval(paste0('wblr$options$',par_name))
 				}
 			}
+		}
+		val
+	}
+# a fit exists, so start param search there
+	getParam2<-function(par_name) {
+		val<-NULL
+		if( !is.null(str_eval(paste0('fit$options$',par_name))) )  {
+			val<-str_eval(paste0('fit$options$',par_name))
+		}else{
+			if( !is.null(str_eval(paste0('wblr$options$',par_name))) )  {
+
+			}
+		}
+		val
+	}
+
+# no fit exists, so get param from object options only
+	getParam3<-function(par_name) {
+		val<-NULL
+		if( !is.null(str_eval(paste0('wblr$options$',par_name))) )  {
+			val<-str_eval(paste0('wblr$options$',par_name))
 		}
 		val
 	}
@@ -252,9 +273,28 @@ ExtractContourParamsFromObject<-function(wblr) {
 						lwd<-getParam("lwd")
 					}
 				}
+			}else{
+				if(calc==TRUE) {
+# a fit exists, but get the params from base object options
+# for some reason extraction getParam2 did not work here, did not want to debug further
+					dist<-getParam3("dist")
+					dof<-getParam3("dof")
+					col<-getParam3("col")
+					lty<-getParam3("lty")
+					lwd<-getParam3("lwd")
+				}
 			}
 		}
+	}else{
+		if(calc==TRUE) {
+			dist<-getParam3("dist")
+			dof<-getParam3("dof")
+			col<-getParam3("col")
+			lty<-getParam3("lty")
+			lwd<-getParam3("lwd")
+		}
 	}
+
 	outlist<-NULL
 	if(exists("dist")) {
 		outlist<-list(dist=dist,dof=dof,col=col,lty=lty,lwd=lwd)
@@ -267,7 +307,7 @@ CalculateContours<-function(x, CL)  {
 	wblr_num<-0
 	while(wblr_num < length(x))  {
 		wblr_num<-wblr_num+1
-		params<-ExtractContourParamsFromObject(x[[wblr_num]])
+		params<-ExtractContourParamsFromObject(x[[wblr_num]], calc=TRUE)
 		fit<-unname(mlefit(x[[wblr_num]]$data$lrq_frame, dist=params$dist))
 
 		for(cl_num in 1:length(CL))  {
