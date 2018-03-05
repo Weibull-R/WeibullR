@@ -216,7 +216,7 @@ findContourRanges <- function(cplist) {
 	do.call("rbind",lapply(cplist,findrange))
 }
 
-ExtractContourParamsFromObject<-function(wblr, calc=FALSE) {
+ExtractContourParamsFromObject<-function(wblr) {
 	str_eval=function(x) {return(eval(parse(text=x)))}
 	getParam<-function(par_name) {
 		val<-NULL
@@ -233,20 +233,21 @@ ExtractContourParamsFromObject<-function(wblr, calc=FALSE) {
 		}
 		val
 	}
-# a fit exists, so start param search there
-	getParam2<-function(par_name) {
-		val<-NULL
-		if( !is.null(str_eval(paste0('fit$options$',par_name))) )  {
-			val<-str_eval(paste0('fit$options$',par_name))
-		}else{
-			if( !is.null(str_eval(paste0('wblr$options$',par_name))) )  {
 
-			}
-		}
-		val
-	}
+# don't really want to get parameter modifications from potentially multiple fits
+# so this function is abandoned
+#	getParam2<-function(par_name) {
+#		val<-NULL
+#		if( !is.null(str_eval(paste0('fit$options$',par_name))) )  {
+#			val<-str_eval(paste0('fit$options$',par_name))
+#		}else{
+#			if( !is.null(str_eval(paste0('wblr$options$',par_name))) )  {
+#			}
+#		}
+#		val
+#	}
 
-# no fit exists, so get param from object options only
+# no fit exists, so get param from base object options only, perhaps defaults
 	getParam3<-function(par_name) {
 		val<-NULL
 		if( !is.null(str_eval(paste0('wblr$options$',par_name))) )  {
@@ -258,14 +259,14 @@ ExtractContourParamsFromObject<-function(wblr, calc=FALSE) {
 
 	if(!is.null(wblr$fit)) {
 ## a fit list exists
-
 		for(fit_num in 1:length(wblr$fit)) {
 			fit<-wblr$fit[[fit_num]]
 			if(!is.null(fit$conf)) {
 				for(conf_num in 1:length(fit$conf)) {
 					conf<-fit$conf[[conf_num]]
 					if(!is.null(conf$contour)) {
-	## Yeah!, we found a contour
+## Yeah!, we found a contour, get parameters from here seeking back toward
+## base object options list if necessary.
 						dist<-getParam("dist")
 						dof<-getParam("dof")
 						col<-getParam("col")
@@ -274,7 +275,6 @@ ExtractContourParamsFromObject<-function(wblr, calc=FALSE) {
 					}
 				}
 			}else{
-				if(calc==TRUE) {
 # a fit exists, but get the params from base object options
 # for some reason extraction getParam2 did not work here, did not want to debug further
 					dist<-getParam3("dist")
@@ -282,17 +282,15 @@ ExtractContourParamsFromObject<-function(wblr, calc=FALSE) {
 					col<-getParam3("col")
 					lty<-getParam3("lty")
 					lwd<-getParam3("lwd")
-				}
 			}
 		}
 	}else{
-		if(calc==TRUE) {
+# no fit exists, get the params from base object options
 			dist<-getParam3("dist")
 			dof<-getParam3("dof")
 			col<-getParam3("col")
 			lty<-getParam3("lty")
 			lwd<-getParam3("lwd")
-		}
 	}
 
 	outlist<-NULL
@@ -307,7 +305,7 @@ CalculateContours<-function(x, CL)  {
 	wblr_num<-0
 	while(wblr_num < length(x))  {
 		wblr_num<-wblr_num+1
-		params<-ExtractContourParamsFromObject(x[[wblr_num]], calc=TRUE)
+		params<-ExtractContourParamsFromObject(x[[wblr_num]])
 		fit<-unname(mlefit(x[[wblr_num]]$data$lrq_frame, dist=params$dist))
 
 		for(cl_num in 1:length(CL))  {
