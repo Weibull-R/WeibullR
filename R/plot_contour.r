@@ -90,12 +90,13 @@ if(class(CL)=="wblr") stop("multiple wblr objects must be entered as a list")
 
 	for(cntr in 1:length(C2P) )  {
 
-	# plot MLE points same options as data points in first object
+	# plot MLE points always a black 'x' symbol
 		points(x=C2P[[cntr]]$MLEpt[1],y=C2P[[cntr]]$MLEpt[2],
 #			pch=opa$options$pch,
-			pch=opa$pch,
+			pch=4,
 			#col=C2P[[cntr]]$color,
-			col=opa$col,
+			#col=opa$col,
+			col="black",
 			lwd=opa$lwd.points,
 			cex=opa$cex.points)
 #browser()
@@ -144,6 +145,7 @@ FOUND=FALSE
 						}
 
 						CP[[j]]$contour<-conf$contour
+						CP[[j]]$dist<-wblr$options$dist
 						CP[[j]]$MLEpt<-fit$MLEfit[-3]
 						if(!is.null(conf$options$lty)) {
 							CP[[j]]$lty<-conf$options$lty
@@ -176,6 +178,9 @@ FOUND=FALSE
 				}
 			}
 		}
+	}
+	if(!exists("CP")) {
+		stop("no contour found in listed object, try adding CL argument to calculate")
 	}
 	CP
 }
@@ -272,6 +277,14 @@ ExtractContourParamsFromObject<-function(wblr) {
 						col<-getParam("col")
 						lty<-getParam("lty")
 						lwd<-getParam("lwd")
+					}else{
+# a conf exists, but not a contour, so get the params from base object options
+# for some reason extraction getParam2 did not work here, did not want to debug further
+							dist<-getParam3("dist")
+							dof<-getParam3("dof")
+							col<-getParam3("col")
+							lty<-getParam3("lty")
+							lwd<-getParam3("lwd")
 					}
 				}
 			}else{
@@ -306,6 +319,12 @@ CalculateContours<-function(x, CL)  {
 	while(wblr_num < length(x))  {
 		wblr_num<-wblr_num+1
 		params<-ExtractContourParamsFromObject(x[[wblr_num]])
+# test for dist mismatch here
+		if(wblr_num > 1) {
+			if(c2p[[length(c2p)]]$dist!=params$dist) {
+				stop("dist mismatch in entered objects")
+			}
+		}
 		fit<-unname(mlefit(x[[wblr_num]]$data$lrq_frame, dist=params$dist))
 
 		for(cl_num in 1:length(CL))  {
@@ -329,6 +348,7 @@ CalculateContours<-function(x, CL)  {
 					MLEfit=fit,
 					ptDensity=dens
 					)
+			c2p[[c2p_num]]$dist<-params$dist
 			c2p[[c2p_num]]$MLEpt<-fit
 			c2p[[c2p_num]]$color<-params$col
 # check implementation of ExtractParamsFromObject here

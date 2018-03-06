@@ -1,6 +1,10 @@
 ## plot.wblr.R
 ## refactored from code originally authored by Jurgen Symynck, April 2014
 ## Copyright 2014-2017 OpenReliability.org
+
+# plot.wblr provides S3 object functionality for plotting any ingle wblr object
+# with just the plot function.  In order to plot multiple objects in a single plotting canvas
+# it is necessary to call plot.wblr specifically with a list of wblr objects as primary argument.
 #
 # For more info, visit http://www.openreliability.org/
 #
