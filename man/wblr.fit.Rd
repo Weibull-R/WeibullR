@@ -51,7 +51,7 @@
         \item{\code{method.fit}}{
             A vector of class \code{"character"} with fitting options.
             
-            Defaults to \code{c("rr","xony")}.
+            Defaults to \code{"rr-xony"}.
             
             
             \itemize{

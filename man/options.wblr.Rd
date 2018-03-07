@@ -2,7 +2,7 @@
 \alias{options.wblr}
 
 \title{
-    Options for wblr Objects
+    Options for \code{wblr} Objects
 }
 \description{
     This function handles the various calculation, printing and plotting options
@@ -11,15 +11,44 @@
 \usage{options.wblr(\dots)}
 \arguments{
     \item{\dots}{
-        Options for calculating, printing and plotting with the \pkg{wblr}
+        Options for calculating, printing and plotting \code{wblr} objects using the \pkg{WeibullR}
         package.
     }
 }
 
+
+\value{
+   Executing \code{options.wblr} without arguments returns a named list
+   containing the currently active global options of the \code{wblr} object.\cr
+   When arguments are supplied, these are returned in a named list.
+}
+
 \details{
-    This function borrows its internal structure from
+    Typical usage of \code{wblr} objects involves calling a sequence of functions each forming
+	the object, then modifying it in this typical manner:
+
+    \code{da <- wblr(c(10,11,27), col="red")}\cr
+    \code{da <- wblr.fit(da, col="darkgreen")}\cr
+    \code{da <- wblr.conf(da), col="blue"}\cr
+    \code{plot(da)}
+
+    The correct time to specify an option is when it is needed for the first
+    time. For example, when the color setting option \code{col = "red"} is
+    passed as an argument of function \code{wblr}, it will be used for
+    data points, fitted lines and confidence interval bounds. If supplied to \code{\link{wblr.conf}},
+    only the confidence bounds will have the re-specified color, hereby overriding
+    any previously inherited color settings from \code{\link{wblr.fit}}
+    or \code{\link{wblr}}.
+
+    Do not call \code{options.wblr} in between these functions because some
+    options are locked and cannot be altered further in this chain. This is an
+    implication of the way the \code{wblr} object is structured.
+
+    As a function, options.wblr, borrows its internal structure from
     the \code{\link[graphics]{par}} function of package \pkg{graphics}.
-    It can be used in different ways:
+    It can be used independently of the typical wblr, wblr.fit, wblr.conf sequence,
+    but this is discouraged. However, when used independently the following guidance is
+    provided:
 
         \code{options.wblr()}
 
@@ -51,259 +80,200 @@
 }
 
 \section{wblr options}{
-
+Options specific to initial \code{\link{wblr}} object creation with data prepared for graphical display
     \describe{
-        \item{\code{cex.points}}{
-            A number describing the relative size of the datapoint glyphs.
+        \item{\code{dist}}{
+            A character string defining the distribution target. When used to establish the basis for
+			contour mapping (without using wblr.conf with method.conf="lrb") only "weibull" (default)
+			and "lognormal" are recognized.\cr
+			Also used with \code{\link{wblr.fit}} for specific fitting control.
+        }
+        \item{\code{pp}}{
+            Plotting position method, it is a character string describing the method of determining
+            vertical plot positions. Implemented methods are "median" (default), "benard","hazen","mean", "kaplan-meier", and "blom".
+        }
+        \item{\code{rank.adj}}{
+		    The method employed for determining rank of failures when suspensions (right censored data)
+			are present in the data set. Implemented methods are "johnson" (default) and "KMestimator".
+		}
+        \item{\code{ties.handler}}{
+		    The method employed for handling duplicate values in the data set.\cr
+			Implemented methods are "none" (default) "highest", "lowest", "mean", and "sequential".\cr
+			It is expected that ties handling will be applied to large data sets that will be fitted
+			using the maximum likelihood estimation method, where the effect is only on the graphical
+			presentation. Employing a ties handler on a rank regression model will effectively remove data
+			from the data set, which is likely not intended.\cr
+			Use of simply \code{ties} as an argument to function \code{wblr} will silently be accepted as \code{ties.handler}.
+		}
+		\item{Options for graphical control over data points see \code{\link[graphics]{par}}}{
+			\itemize{
+				\item{\code{pch}}{ Point choice defaults to \code{1}. For more info, see
+					\code{\link[graphics]{points}}.
+				}
+				\item{\code{cex.points}}{ Point size defaults to \code{1}.
+				}
+				\item{\code{lwd.points}}{ Line width defaults to \code{2}.
+				}
+			}
+		}
+		\item{Independent graphical control over interval lines}{
+			\itemize{
+				\item{\code{interval.col}}{ Color defaults to \code{"black"}.
+				}
+				\item{\code{interval.lty}}{ Line type, defaults to \code{"dashed"}.
+				}
+				\item{\code{interval.lwd}}{ Line width defaults to \code{1}.
+				}
+			}
+		}
+	}
+Options specific to \code{\link{wblr.fit}}
+    \describe{
+        \item{\code{dist}}{
+            A character string defining the distribution target. Recognized values are
+			"weibull" (default), "lognormal","lnorm","lognormal2p", "weibull2p","lognormal3p", and "weibull3p".
+			}
+        \item{\code{method.fit}}{
+            A vector of class \code{"character"} with fitting options. Recognized values are "rr-xony" (default),
+			"rr","rr-yonx", "mle","mle-rba", and "mle-unbias".
+        }
+	}
 
-            Defaults to \code{1}.
+Options specific to \code{\link{wblr.conf}}
+	\describe{
+        \item{\code{method.conf}}{
+            A character string describing the techniques used for calculating confidence interval bounds.
+            Implemented methods are "pivotal-rr" (default), "bbb", "fm" "fmbounds", and "lrb".
+			Methods must conform to the method.fit in the wblr.fit call immediately preceding the wblr.conf call.
+			Method "pivotal-rr" requires a rank regression fit method. Methods "fm", "fmbounds, and "lrb" require a mle based fit.
+        }
+        \item{\code{dq}}{
+			A named series of quantiles at which confidence interval bounds will be calculated.
+			\itemize{
+				\item{\code{"abrem"}} {
+					Default. This is the original default by Jurgen Symynck for predecessor package abrem
+					it produces evenly spaced points across the y limits of a weibull canvas
+					attempting to hold a constant number of points (see \code{num_dq} below).
+				}
+				\item{\code{"minitab"}} {
+					Quantiles matching Minitab(TM) unchangeable defaults (27 values).
+				}
+				\item{\code{"supersmith"}} {
+					Quantiles for comparison with SuperSMITH(TM) (limit of 15 values)
+				}
+				\item{\code{"user"}} {
+					Provides for a user defined series of quantiles. (see \code{user_dq} below).
+				}
+			}
+		}
+        \item{\code{num_dq}}{
+            The number of points used for the \code{"abrem"} dq determination.
+        }
+        \item{\code{user_dq}}{
+            A vector of quantiles set by user. Default \code{c(seq(.01,.09,by=.01),seq(.10,.90,by=.10),seq(.91,.99, by=.01))}.
         }
         \item{\code{ci}}{
-            Confidence interval: A single number from the interval \code{[0,[1}
-            specifying the double-sided confidence for various confidence calculations.
-
-            Defaults to \code{0.9}.
-        }
-        \item{\code{col}}{
-            An integer or character string describing the color of a
-            graphical entity.
-            See function \code{\link[grDevices]{colors}} for available colors.
-
-            Defaults to \code{"black"}.
-        }
-        \item{\code{col.grid}}{
-            An integer or character string describing the color of the grid
-
-            Defaults to \code{"gray"}.
-        }
-
-        \item{\code{coordinate.text.size}}{
-            A number determining the relative coordinate text label size.
-
-            Defaults to \code{0.7}.
-        }
-        \item{\code{dist}}{
-            A character string with the distribution target for fitting.
-            See \code{\link{wblr.fit}} for in-depth discussion of the settings.
-
-            Defaults to \code{"weibull"}.
-        }
-        \item{\code{in.legend}}{
-            Logical value controlling the inclusion of various elements in
-            the legend. See \code{\link{wblr.fit}} and \code{\link{wblr.conf}}
-            for more details.
-
-            Defaults to \code{TRUE}.
-        }
-        \item{\code{in.legend.blives}}{
-            Logical value controlling the inclusion of B-life levels
-            in the legend.
-
-            Defaults to \code{TRUE}.
-        }
-        \item{\code{in.legend.gof}}{
-            Logical value controlling the inclusion of goodness-of-fit
-            indicators in the legend. Note that this does \emph{not} prohibit
-            calculation of sometimes time consuming \code{prr} values, it only
-            prevents inclusion in the legend.
-
-            Defaults to \code{TRUE}.
-        }
-        \item{\code{is.plot.cb}}{
-            Logical value controlling the plotting of various types of
-            confidence bounds (if any present in the \code{wblr} object).
-
-            Defaults to \code{TRUE}.
-        }
-        \item{\code{is.plot.fit}}{
-            Logical value controlling the plotting of the fitted line.
-
-            Defaults to \code{TRUE}.
-        }
-        \item{\code{is.plot.grid}}{
-            Logical value controlling the plotting of the grid.
-
-            Defaults to \code{TRUE}.
-        }
-        \item{\code{is.plot.legend}}{
-            Logical value controlling the plotting of the legend.
-
-            Defaults to \code{TRUE}.
-        }
-        \item{\code{is.plot.pp}}{
-            Logical value controlling the plotting of the
-            (life-)time observations' probability plot positions.
-
-            Defaults to \code{TRUE}.
-        }
-
-        \item{\code{label}}{
-            A character string with the title of the legend box, can be used to
-            label a dataset or fit.
-
-            Defaults to \code{NULL}.
-        }
-        \item{\code{legend.text.size}}{
-            A number determining the relative legend text size.
-
-            Defaults to \code{0.7}.
-        }
-        \item{\code{canvas}}{
-            A character string describing the type of plotting canvas to use.
-            Only \code{"weibull"} (default), and \code{"lognormal"} are implemented.
-        }
-        \item{\code{lty}}{
-            An integer describing the line type of both the fitted
-            line and the confidence bounds, if any.
-            See function \code{\link[graphics]{par}} for available line types.
-
-            Defaults to \code{1}.
-        }
-        \item{\code{lwd}}{
-            An integer describing the line width of both the fitted
-            line and the confidence bounds, if any.
-
-            Defaults to \code{2}.
-        }
-        \item{\code{lwd.points}}{
-            An integer describing the thickness of the datapoint glyphs.
-
-            Defaults to \code{2}.
-        }
-        \item{\code{main}, \code{main.contour}}{
-            A character string; the main title of the plot or contour plot.
-
-            Defaults to \code{"Probability Plot"} or \code{"Contour Plot"} .
-        }
-        \item{\code{mar}}{
-            A numerical vector of the form \code{c(bottom, left, top, right)}
-            which gives the number of lines of margin to be specified on
-            the four sides of the plot.
-            See function \code{\link[graphics]{par}} for more info.
-
-            Defaults to \code{c(5.1,4.1,5.1,2.1)}.
-        }
-        \item{\code{method.conf}}{
-            A vector of class \code{"character"} describing the techniques used
-            for calculating confidence interval bounds.
-            See \code{\link{wblr.conf}} for in-depth discussion of the settings.
-
-            Defaults to \code{"mcpivotals"} for rank regression fitted models, 
-			but will be silently changed to \code{"fm"} for mle fitted models.
-        }
-        \item{\code{method.fit}}{
-            A vector of class \code{"character"} with fitting options.
-            See \code{\link{wblr.fit}} for in-depth discussion of the settings.
-
-            Defaults to \code{c("rr","xony")}, but will be silently changed
-			to \code{"mle"} when input data includes intervals.
-        }
-        \item{\code{pch}}{
-            An integer or single character describing the plotting symbol, used for
-            plotting the datapoints.  For more info, see
-            \code{\link[graphics]{points}}.
-
-            Defaults to \code{1}.
-        }
-
-        \item{\code{pp}}{
-            \code{pp} is short for "probability plot positions", it is a vector of
-            class \code{"character"} describing the method of determining plot positions.
-            Possible values are \code{"median"} (exact median plot postions
-            calculated using the Incomplete Beta function) and  \code{"benard"}
-            (a good approximation to the median plot positions). Both options
-            can be supplied at the same time but currently, only the first
-            element in the \code{pp} vector will be used for
-            further fitting by \code{\link{wblr.fit}}
-
-            Defaults to \code{c("median")}.
-        }
-        \item{\code{S}}{
-            An integer describing the number of Monte Carlo simulations on
-            which the Monte Carlo pivotal confidence bounds and calculation
-            of the "prr" goodness-of-fit indicator are based (See
-            \code{\link[pivotals]{prrVal}} of package \pkg{pivotals} for more
-            details).
-
-            Defaults to \code{10000}.
-        }
-        \item{\code{signif}}{
-            An integer describing the significant digits of various numbers
-            that are displayed in the legend.
-
-            Defaults to \code{4}.
-        }
-        \item{\code{sub}, \code{sub.contour}}{
-            A character string; the subtitle of the plot or contour plot.
-
-            Defaults to \code{""}.
+            The double-sided confidence interval, also chi sq confidence level for likelihood ratio.
+			Must be in a range <1 && >0, default is \code{0.9}.
         }
         \item{\code{blife.pts}}{
-            An unordered numeric vector with unreliability levels for which
-            B-life values will be presented.
-
-            Defaults to \code{c(0.1,0.05,0.01)}.
+            The probability points at which to report Blife on legend.
         }
-
-        \item{\code{xlab}, \code{ylab}}{
-            Character strings with the labels for the X and Y axis.
-
-            Default to \code{"Time To Failure"} and
-            \code{"Unreliability [\%]"} respectively.
-            For contour plots, Default to \code{"Eta"} and \code{"Beta"} respectively.
-        }
-        \item{\code{xlim}}{
-            A numeric vector with two values determining the plotting range
-            of the horizontal axis of the plot.
-            \code{plot.wblr} calculates horizontal limits automatically
-            from its data argument.
-
-            Defaults to \code{NULL}.
-        }
-        \item{\code{ylim}}{
-            A numeric vector with two values determining the plotting range
-            of the vertical axis of the plot.  Allowed values come
-            from the interval \code{]0,1[}. \code{plot.wblr} calculates
-            vertical limits automatically from its data argument; if vertical
-            plotting positions do not exceed the standard range of
-            \code{c(0.01,0.99)}, then the latter is used.
-            Otherwise, the standard range is expanded to include the
-            extreme plot positions.
-
-            The standard vertical range is currently hardcoded to \code{c(0.01,0.99)}.
-
-            Defaults to \code{NULL}.
-        }
-    }
+		\item{Specific controls for pivotal analysis only}{
+			\itemize{
+				\item{\code{seed}}{
+					The RNG seed integer such that results are duplicated between runs, default is \code{1234}.
+				}
+				\item{\code{S}}{
+					The number of samples to be run during pivotal analysis, default is \code{1e4}.
+				}
+				\item{\code{pivotals}}{
+					Not sure this is used, but default is \code{FALSE}.
+				}
+			}
+		}
+		\item{Specific controls for likelihood ratio contour and bounds only}{
+			\itemize{
+				\item{\code{dof}}{
+					 The degrees of freedom, \code{dof=1} (default) for confidence interval, \code{dof=2} for comparison.
+				}
+				\item{\code{ptDensity}}{
+					 The number of points calculated to form the contour outline, default is \code{120}.
+				}
+			}
+		}
+	}
+General graphical options
+	\describe{
+		\item{Graphical control for fitted lines, confidence bounds, or contours can be set at
+		 wblr, wblr.fit, or wblr.conf functions for individual object control. See \code{\link[graphics]{par}}}{
+			\itemize{
+				\item{\code{col}}{ Color defaults to \code{"black"}.
+				}
+				\item{\code{lty}}{ Line type, defaults to \code{"solid"}.
+				}
+				\item{\code{lwd}}{ Line width defaults to \code{2}.
+				}
+			}
+		}
+		\item{Graphical controls typically used with \code{plot} or \code{\link{plot.wblr}}}{
+			\itemize{
+				\item{\code{canvas}}{
+					 The plotting canvas to be used. This does not necessarily have to match the fit distribution.
+					Only \code{"weibull"} (default) or \code{"lognormal"} are recognized.
+				}
+				\item{\code{mar}}{ Margins defaults to \code{c(5.1,4.1,5.1,2.1),}.
+				}
+				\item{\code{main}}{ Title, defaults to \code{"Probability Plot"}.
+				}
+				\item{\code{main.contour}}{ Contour plot title defaults to \code{"Contour Plot"}.
+				}
+				\item{\code{sub}}{ Subtitle defaults to \code{NULL}.
+				}
+				\item{\code{sub.contour}}{ Contour subtitle defaults to \code{NULL}.
+				}
+				\item{\code{xlim}}{ Plot x limits override to be presented as a vector c(lo,hi), default \code{NULL}.
+				}
+				\item{\code{ylim}}{ Plot y limits override to be presented as a vector c(lo,hi), default \code{NULL}.
+				}
+				\item{\code{xlab}}{ X axis label defaults to \code{"Time To Failure"}.
+				}
+				\item{\code{ylab}}{ Y axis label defaults to \code{"Unreliability [\%]"}.
+				}
+				\item{\code{coordinate.text.size}}{ default \code{0.7}.
+				}
+				\item{\code{signif}}{ Used to control display of numbers in Legend, default \code{4}.
+				}
+				\item{\code{col.grid}}{ Color for chart gridlines defaults \code{"grey"}.
+				}
+				\item{\code{is.plot.grid}}{ default \code{TRUE}.
+				}
+				\item{\code{is.plot.fit}}{ default \code{TRUE}.
+				}
+				\item{\code{is.plot.pp}}{ default \code{TRUE}.
+				}
+				\item{\code{is.plot.ppcoordinates}}{ default \code{FALSE}.
+				}
+				\item{\code{is.plot.legend}}{ default \code{TRUE}.
+				}
+				\item{\code{legend.text.size}}{ default \code{0.7}.
+				}
+				\item{\code{label}}{ defaults to \code{""}.
+				}
+				\item{\code{in.legend}}{ default \code{TRUE}.
+				}
+				\item{\code{in.legend.blives}}{ default \code{TRUE}.
+				}
+				\item{\code{in.legend.gof}}{ default \code{TRUE}.
+				}
+				\item{\code{is.plot.cb}}{ default \code{TRUE}.
+				}
+				\item{\code{persistent}}{ default \code{TRUE}.
+				}
+			}
+		}
+	}
 }
-
-\value{
-   Executing \code{options.wblr} without arguments returns a named list
-   containing the currently active global options of the \code{wblr} object.
-
-   When arguments were supplied, these are returned in a named list.
-}
-%\author{Jurgen Symynck \email{jusy@openreliability.org}}
-%\note{
-%    Typical usage of \pkg{wblr} involves calling a sequence of functions like:
-
-%    \code{da <- wblr(c(10,11,27))}\cr
-%    \code{da <- wblr.fit(da)}\cr
-%    \code{da <- wblr.conf(da)}\cr
-%    \code{plot(da)}
-
-%    Do not call \code{options.wblr} in between these functions because some
-%    options are locked and cannot be altered further in this chain. This is an
-%    implication of the way the \code{wblr} object is structured.
-
-%    The correct time to specify an option is when it is needed for the first
-%    time. For example, when the color setting option \code{col = "red"} is
-%    passed as an argument of function \code{wblr}, it will be used for
-%    datapoints, fits and confidence bounds. If supplied to \code{\link{wblr.conf}},
-%    only the confidence bounds will have the specified color, hereby overriding
-%    any previously inherited color settings from \code{\link{wblr.fit}}
-%    or \code{\link{wblr}}.
-%}
 
 \examples{
 ## backup options ##

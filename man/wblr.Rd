@@ -51,16 +51,57 @@
 			it is treated as a vector of right-censored (life-)time observations 
             (also called suspended observations or suspensions).
     }
-
-    \code{wblr} always generates (probability) plot positions for graphically
+\code{wblr} always generates (probability) plot positions for graphically
     displaying the (life-)time observations and for (possible) later usage
-    by \code{\link{wblr.fit}}. The type of plot positions is
-    controlled with the \code{pp} argument.
-    See \code{\link{options.wblr}} for more details.
+    by \code{\link{wblr.fit}}. The following optiona arguments are most appropriate for
+	passing in with \code{wblr}:
+    \describe{
+        \item{\code{dist}}{
+            A character string defining the distribution target. When used to establish the basis for
+			contour mapping (without using \code{\link{wblr.conf}} with method.conf="lrb") only "weibull" (default)
+			and "lognormal" are recognized.\cr
+			Also used with \code{\link{wblr.fit}} for specific fitting control.
+        }
+        \item{\code{pp}}{
+            Plotting position method, it is a character string describing the method of determining
+            vertical plot positions. Implemented methods are "median" (default), "benard","hazen","mean", "kaplan-meier", and "blom".
+        }
+        \item{\code{rank.adj}}{
+		    The method employed for determining rank of failures when suspensions (right censored data)
+			are present in the data set. Implemented methods are "johnson" (default) and "KMestimator".
+		}
+        \item{\code{ties.handler}}{
+		    The method employed for handling duplicate values in the data set.\cr
+			Implemented methods are "none" (default) "highest", "lowest", "mean", and "sequential".\cr
+			It is expected that ties handling will be applied to large data sets that will be fitted
+			using the maximum likelihood estimation method, where the effect is only on the graphical
+			presentation. Employing a ties handler on a rank regression model will effectively remove data
+			from the data set, which is likely not intended.\cr
+			Use of simply \code{ties} as an argument to function \code{wblr} will silently be accepted as \code{ties.handler}.
+		}
+		\item{Options for graphical control over data points see \code{\link[graphics]{par}}}{
+			\itemize{
+				\item{\code{pch}}{ Point choice defaults to \code{1}. For more info, see
+					\code{\link[graphics]{points}}.
+				}
+				\item{\code{cex.points}}{ Point size defaults to \code{1}.
+				}
+				\item{\code{lwd.points}}{ Line width defaults to \code{2}.
+				}
+			}
+		}
+		\item{Independent graphical control over interval lines}{
+			\itemize{
+				\item{\code{interval.col}}{ Color defaults to \code{"black"}.
+				}
+				\item{\code{interval.lty}}{ Line type, defaults to \code{"dashed"}.
+				}
+				\item{\code{interval.lwd}}{ Line width defaults to \code{1}.
+				}
+			}
+		}
+	}
 
-    Additionally, one can supply any options available from \code{options.wblr},
-    such as \code{col} or \code{is.plot.legend}. Some of these options
-    will be used when plotting the (life-)time observations using \code{plot.wblr}.
     Subsequent calls to \code{wblr.fit} and \code{wblr.conf} will inherit these options.
 }
 
@@ -77,7 +118,7 @@
         }
         \item{\code{$data$dlines}}{
             If interval data has been provided this dataframe will contain the graphical data for display 
-			similar to {\code{$data$dpoints}}, but with endpoints /code{t1} and /code{t2} for the interval.
+			similar to {\code{$data$dpoints}}, but with endpoints t1 and t2 for the interval.
         }
     }
 }
