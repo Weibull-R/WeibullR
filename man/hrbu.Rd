@@ -23,7 +23,7 @@
 }
 
 \details{
-  This as many references discuss the bias reduction in terms of mean.
+  This, as many references, discuss the bias reduction in terms of mean.
 }
 
 \references{

@@ -22,6 +22,10 @@ export(
 	LLw,
 	LRbounds,
 	MLEcontour,
+	MLEln2p,
+	MLEln3p,
+	MLEw2p,
+	MLEw3p,
 	MRRln2p,
 	MRRln3p,
 	MRRw2p,
@@ -36,6 +40,8 @@ export(
 	options.wblr,
 	pivotal.rr,
 	plot_contour,
-	plot.wblr
+	plot.wblr,
+	contour.wblr
 )
 S3method(plot, wblr) 
+S3method(contour, wblr) 

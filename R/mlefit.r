@@ -1,4 +1,7 @@
 mlefit<-function(x, dist="weibull", npar=2, debias="none", optcontrol=NULL)  {
+## these warnings only apply to 3p fitting, but the object must be created
+#secant_warning<-FALSE
+#stable<-TRUE
 ## tz is required for MLEloglike and MLEsimplex calls now
 		default_tz=0
 ## sign is now required for MLEloglike call
@@ -60,7 +63,7 @@ mlefit<-function(x, dist="weibull", npar=2, debias="none", optcontrol=NULL)  {
 	intervalsNDX<-which(interval$left>0)
 	Ni_rows<-length(intervalsNDX)
 	if(Ni_rows>0) {
-		Ni<-sum(x[intervalsNDX,3])
+		Ni<-sum(interval[intervalsNDX,3])
 	}
 
 
@@ -100,7 +103,9 @@ mlefit<-function(x, dist="weibull", npar=2, debias="none", optcontrol=NULL)  {
 ## establish distribution number and start parameters
 	if(fit_dist=="weibull"){
 		dist_num=1
-		mrr_fit<-MRRw2p(mrr_fail_data, mrr_susp_data)
+# use of quick fit could have been circular here
+#		mrr_fit<-MRRw2p(mrr_fail_data, mrr_susp_data)
+		mrr_fit<-lslr(getPPP(mrr_fail_data, mrr_susp_data))
 		shape<-mrr_fit[2]
 		scale<- mrr_fit[1]
 		vstart <- c(shape, scale)
@@ -108,7 +113,9 @@ mlefit<-function(x, dist="weibull", npar=2, debias="none", optcontrol=NULL)  {
 	}else{
 		if(fit_dist=="lnorm"){
 			dist_num=2
-			mrr_fit<-MRRln2p(mrr_fail_data, mrr_susp_data)
+# use of quick fit could have been circular here
+#			mrr_fit<-MRRln2p(mrr_fail_data, mrr_susp_data)
+			mrr_fit<-lslr(getPPP(mrr_fail_data, mrr_susp_data), dist="lognormal")
 			ml<- mrr_fit[1]
 			sdl<- mrr_fit[2]
 #			ml <- mean(log(data_est))
@@ -165,7 +172,7 @@ mlefit<-function(x, dist="weibull", npar=2, debias="none", optcontrol=NULL)  {
 
 ## here is a good place to validate any debias argument (before more calculations begin)
 	if(debias!="none" && dist_num==1)  {
-		if(tolower(debias)!="rba"&&tolower(debias)!="mean"&&tolower(debias)!="hirose-ross")  {
+		if(tolower(debias)!="rba"&&tolower(debias)!="mean"&&tolower(debias)!="hrbu")  {
 			stop("debias method not resolved")
 		}
 	}
@@ -201,7 +208,7 @@ mlefit<-function(x, dist="weibull", npar=2, debias="none", optcontrol=NULL)  {
 		if(dist_num == 1)  {
 			names(outvec)<-c("Eta","Beta","LL")
 			if(debias!="none")  {
-				if(debias!="rba"&&debias!="mean"&&debias!="hirose-ross")  {
+				if(debias!="rba"&&debias!="mean"&&debias!="hrbu")  {
 					stop("debias method not resolved")
 				}
 				if(debias=="rba")  {
@@ -210,7 +217,7 @@ mlefit<-function(x, dist="weibull", npar=2, debias="none", optcontrol=NULL)  {
 				if(debias=="mean")  {
 					outvec[2]<-outvec[2]*rba(Q[1]-Q[3], dist="weibull",basis="mean")
 				}
-				if(debias=="hirose-ross")  {
+				if(debias=="hrbu")  {
 					outvec[2]<-outvec[2]*hrbu(Q[1]-Q[3], Q[3])
 				}
 			outvec[3]<-.Call("MLEloglike",MLEclassList,c(outvec[2],outvec[1]),dist_num, default_sign, default_tz, package="WeibullR")
@@ -255,7 +262,6 @@ mlefit<-function(x, dist="weibull", npar=2, debias="none", optcontrol=NULL)  {
 ## listout argument has different meaning for 3p models
 		listout_int<-0
 
-
 ## for now enter a default tz=0
 			result_of_simplex_call<-.Call("MLEsimplex",MLEclassList, ControlList, vstart, default_tz, listout_int, package="WeibullR")
 			if(result_of_simplex_call[4]>0)  {
@@ -276,11 +282,14 @@ mlefit<-function(x, dist="weibull", npar=2, debias="none", optcontrol=NULL)  {
 				DL<-ControlList$limit
 ## Introduce constraints for tz
 ## need to create the vector of potential minimums
+#				fdr<-NULL
+#				if(Nf>0) {fdr<-fsdi[1:Nf]}
+#				if(Nd>0) {fdr<-c(fdr,fsdi[(Nf+Ns+1):(Nf+Ns+Nd)])}
+#				if(Ni>0)  {fdr<-c(fdr, fsdi[(Nf+Ns+Nd+Ni+1):(Nf+Ns+Nd+2*Ni)])}
 				fdr<-NULL
-				if(Nf>0) {fdr<-fsdi[1:Nf]}
-				if(Nd>0) {fdr<-c(fdr,fsdi[(Nf+Ns+1):(Nf+Ns+Nd)])}
-				if(Ni>0)  {fdr<-c(fdr, fsdi[(Nf+Ns+Nd+Ni+1):(Nf+Ns+Nd+2*Ni)])}
-
+				if(Nf_rows>0) {fdr<-fsdi[1:Nf_rows]}
+				if(Nd_rows>0) {fdr<-c(fdr,fsdi[(Nf_rows+Ns_rows+1):(Nf_rows+Ns_rows+Nd_rows)])}
+				if(Ni_rows>0)  {fdr<-c(fdr, fsdi[(Nf_rows+Ns_rows+Nd_rows+Ni_rows+1):(Nf_rows+Ns_rows+Nd_rows+2*Ni_rows)])}
 				C1<-min(fdr)
 				maxit<-100
 
@@ -290,7 +299,6 @@ mlefit<-function(x, dist="weibull", npar=2, debias="none", optcontrol=NULL)  {
 				istep<-0
 				X1<-X0+DX
 				if(X1>C1) {X1<-X0+0.9*(C1-X0)}
-
 				tz=0
 				FX0vec<-.Call("MLEdMaxLLdx", MLEclassList, ControlList, vstart, tz, package="WeibullR")
 				FX0<-FX0vec[1]
@@ -337,7 +345,17 @@ mlefit<-function(x, dist="weibull", npar=2, debias="none", optcontrol=NULL)  {
 
 				X0<-X1
 				X1<-X2
+## setting up to test for instability
+last_abs_DX<-abs(DX)
 				DX<-X1-X0
+
+## Don't understand this instability, but it happened on example testing with interval data
+## The multiplier of 2 here might be too tight, but worked well on example
+if(abs(DX) > last_abs_DX*2) {
+stable<-FALSE
+##browser()
+break
+}
 				istep<-istep+1
 
 				DFline<-data.frame(steps=istep,root=X0,error=DX,deriv=FX1)
@@ -346,6 +364,7 @@ mlefit<-function(x, dist="weibull", npar=2, debias="none", optcontrol=NULL)  {
 		}
 ## provide a last good vstart in case FX1vec indicated nan
 		vstart<-FX0vec[-1]
+		
 ## Can X0 be first trial, but ultimately subject to convergence problems??
 		listout_int<-0
 		result_of_simplex_call<-.Call("MLEsimplex",MLEclassList, ControlList, vstart, X0, listout_int, package="WeibullR")
@@ -363,7 +382,7 @@ mlefit<-function(x, dist="weibull", npar=2, debias="none", optcontrol=NULL)  {
 				if(debias=="mean")  {
 					outvec[2]<-outvec[2]*rba(Q[1]-Q[3], dist="weibull",basis="mean")
 				}
-				if(debias=="hirose-ross")  {
+				if(debias=="hrbu")  {
 					outvec[2]<-outvec[2]*hrbu(Q[1]-Q[3], Q[3])
 				}
 				outvec[3]<-.Call("MLEloglike",MLEclassList,c(outvec[2],outvec[1]),dist_num, default_sign, X0, package="WeibullR")
@@ -388,10 +407,22 @@ mlefit<-function(x, dist="weibull", npar=2, debias="none", optcontrol=NULL)  {
 ## end of 3p code
 }
 
-
+## restored the original secant_warning and added the new stabile warning
+## perhaps using if(exists("secant_warning"))  etc. would be better.
+#if(secant_warning==TRUE) {
+if(exists("secant_warning")) {
+	attr(outvec, "warn")<-"unstable fit 1"
+}
+#if(stable==FALSE) {
+if(exists("stable")) {
+	attr(outvec, "warn")<-"unstable fit 2"
+}
 
 ## the following applies to both 2p and 3p results
+## it is used by LRbounds to simplify data_type determination for debias adjustment
+## but often removed for normal use by attributes(fit_vec)$data_types<-NULL
 	attr(outvec,"data_types")<-Q[-2]
+
 	if(listout==FALSE) {
 		out_object<-outvec
 	}else{

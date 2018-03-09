@@ -49,5 +49,7 @@ ctest2<-wblr(fail2, susp)
 ctest2<-wblr.fit(ctest2, method.fit="mle")
 ctest2<-wblr.conf(ctest2, method.conf="lrb",col="blue")
 % not run due to device dependence
-% plot_contour(list(ctest, ctest2))
+\dontrun{
+ plot_contour(list(ctest, ctest2))
+}
 }

@@ -1,6 +1,10 @@
 ## plot.wblr.R
 ## refactored from code originally authored by Jurgen Symynck, April 2014
 ## Copyright 2014-2017 OpenReliability.org
+
+# plot.wblr provides S3 object functionality for plotting any ingle wblr object
+# with just the plot function.  In order to plot multiple objects in a single plotting canvas
+# it is necessary to call plot.wblr specifically with a list of wblr objects as primary argument.
 #
 # For more info, visit http://www.openreliability.org/
 #
@@ -276,7 +280,10 @@ plot.wblr <- function(x,...){
             # TODO: replace with lapply
         }
     }else{
+## need to suppress this warning if argument is.plot.legend was set to FALSE
+		if(opa$is.plot.legend==TRUE) {
         warning("plot.wblr: There is no legend to plot.")
+		}
     }
 
     invisible()
@@ -449,13 +456,23 @@ plotSingleFit <- function(fit,opadata,dotargs){
 ##            if(opafit$verbosity >= 1)message(
 ##                "plotSingleFit: Adding Lognormal fit ...")
 			x <- NULL; rm(x); # Dummy to trick R CMD check 
-            curve(p2y(plnorm(x-tz,fit$meanlog,fit$sdlog),opafit$log),
+				cret <-curve(p2y(plnorm(x-tz,fit$meanlog,fit$sdlog),opafit$log),
                 add=TRUE,
                 col=opafit$col,lwd=opafit$lwd,lty=opafit$lty,
                 xlim=getPlotRangeX(opafit$log),
                 log=opafit$log)
-                # TODO: deal with Inf and -Inf values in the curve argument zo that the curce always extends to the edges of the plotting regions
-        }
+                # TODO: deal with Inf and -Inf values in the curve argument so that the curve always extends to the edges of the plotting regions
+                cret$y[is.infinite(cret$y)] <- NA
+                    # works for weibull canvas
+                cret$y[cret$y==0] <- NA
+                    # replacing zero's is needed for lognormal canvas.
+                imin <- which.min(cret$y)
+                lines(rep(cret$x[imin],2),
+                    y=c(cret$y[imin],getPlotRangeY(opafit$log)[1]),
+                    col=opafit$col,lwd=opafit$lwd,lty=opafit$lty)
+                    # plot vertical line towards -Inf
+				}
+		
         if(!is.null(fit$rate)){
             ### exponential ###
 ##            if(opafit$verbosity >= 1)message(

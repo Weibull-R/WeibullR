@@ -18,11 +18,15 @@ legendConf <- function(fit,conftype,opadata,...){
                             ifelse(is.null(blicon$type),"NA",
                             paste0("\"",blicon$type,"\""))),
                             col=opaconf$col,lwd=opaconf$lwd,lty=opaconf$lty)
+
                         li[[2]] <- bsll(legend=paste0("  CI = ",
                             ifelse(is.null(blicon$ci),"NA",
                                 paste0(signif(blicon$ci*100,4)," [%]")),
+                            ifelse(is.null(blicon$dof),"",
+                                paste0(", dof = ",blicon$dof)),
                             ifelse(is.null(blicon$S),"",
                                 paste0(", S = ",blicon$S))))
+
                         if(opaconf$in.legend.blives){
 							ssCL<- signif((1-(1-blicon$ci)/2)*100,4)
 							li[[3]] <- bsll(legend=paste0("B-life ssCL = ",

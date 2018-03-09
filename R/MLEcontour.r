@@ -127,7 +127,8 @@ if(dist_num==1)  {
 	if(dist_num==1) {
 		names(contourpts)<- c("Eta", "Beta")
 		if(debias!="none")  {
-			if(debias!="rba"&&debias!="mean"&&debias!="hirose-ross")  {
+
+			if(!(debias=="rba" || debias=="mean" || debias=="hrbu"))  {
 				stop("debias method not resolved")
 			}
 			if(debias=="rba")  {
@@ -136,7 +137,7 @@ if(dist_num==1)  {
 			if(debias=="mean")  {
 				bias_adj<-rba(sum(N)-Ns, dist="weibull",basis="mean")
 			}
-			if(debias=="hirose-ross")  {
+			if(debias=="hrbu")  {
 				bias_adj<-hrbu(sum(N)-Ns, Ns)
 			}
 

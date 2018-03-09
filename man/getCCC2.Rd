@@ -26,6 +26,12 @@ Returns a single valued vector for the square of CCC (for comparison with R squa
 
 \references{
   Robert B. Abernethy, (2008) "The New Weibull Handbook, Fifth Edition"
+  
+  Wes Fulton, (2005) "Improved Goodness of Fit: P-value of the Correlation Coefficient"
+%                            \url{http://www.barringer1.com/jun05prb.htm}
+
+  Chi-Chao Lui, (1997) "A Comparison Between The Weibull And Lognormal Models Used To Analyse Reliability Data"
+  (dissertation from University of Nottingham)
 }
 
 \examples{

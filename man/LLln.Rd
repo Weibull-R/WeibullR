@@ -1,7 +1,7 @@
 \name{LLln}
 \alias{LLln}
 
-\title{Log Likelihood for log-normal fitted data}
+\title{Log Likelihood for log-normal fitted data, failures and suspensions only}
 
 \description{
  Determination of log-likelihood values for the basic distributions covered by R should be ubiquitous, but an implementation is provided here to enable likelihood ratio testing particularly for comparison of 3-parameter optimized models with their 2-parameter counterpart.
@@ -19,7 +19,7 @@ LLln(x, s=NULL, Mulog, Sigmalog)
 }
 
 \details{
- Function LLln can only handle datasets with failure and suspension data. For data including intervals \code{wblrLikelihood} must be used.
+ Function LLln can only handle datasets with failure and suspension data. For data including intervals \code{wblrLikelihood} can be used.
  This function is somewhat unique among likelihood functions in that it will scan the suspension data for
  removal of negative values. Such negative values are likely to be entered as data is provided
  for a 3-parameter fit by explicitly providing the original data with vector subtraction by the optimized t0.
@@ -31,7 +31,10 @@ Returns a log-likelihood value.
 }
 
 \references{
-  Dr. Robert B. Abernethy, (2008) "The New Weibull Handbook, Fifth Edition"  
+  Robert B. Abernethy, (2008) "The New Weibull Handbook, Fifth Edition"
+  
+  Marie Laure Delignette-Muller, Christophe Dutang (2015). "fitdistrplus: An R Package for Fitting Distributions".
+  Journal of Statistical Software, 64(4), 1-34. URL http://www.jstatsoft.org/v64/i04/.
 }
 
 \examples{

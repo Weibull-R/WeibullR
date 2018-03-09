@@ -1,7 +1,7 @@
 \name{mlefit}
 \alias{mlefit}
 
-\title{Maximum likelihood regression on weibull and lognormal distributions}
+\title{Maximum likelihood regression on Weibull and Lognormal distributions}
 
 \description{
  Maximum likelihood regression on weibull and lognormal distributions
@@ -22,7 +22,7 @@ mlefit(x, dist="weibull", npar = 2, debias="none", optcontrol=NULL)
   }
   \item{npar}{An optional argument for specifying 3p optimization. Priority is given to any suffix to the distribution name.}
   \item{debias}{An optional string argument indicating the adjustment to be applied to the shape or standard deviation
-  parameter of the fitted data. Adjustments recognized are: "rba" (default), "mean", and "hirose-ross". Any entry for debias
+  parameter of the fitted data. Adjustments recognized are: "rba" (default), "mean", and "hrbu" (for hirose-ross beta unbias). Any entry for debias
   with the lognormal distribution will be processed as "rba" with a warning if it was not clearly specified.
   }
   \item{optcontrol}{An optional list of arguments for control of the MLE optimization.  The strict naming convention for the list items are:
@@ -48,6 +48,9 @@ the optcontrol argument has been provided to give debug developers a means of al
   Robert B. Abernethy, (2008) "The New Weibull Handbook, Fifth Edition" 
   
   John I. McCool, (2012) "Using the Weibull Distribution: Reliability, Modeling and Inference"
+  
+  Marie Laure Delignette-Muller, Christophe Dutang (2015). "fitdistrplus: An R Package for Fitting Distributions".
+  Journal of Statistical Software, 64(4), 1-34. URL http://www.jstatsoft.org/v64/i04/.
 }
 
 \examples{

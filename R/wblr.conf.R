@@ -33,7 +33,6 @@ wblr.conf <- function(x,...){
 	datarange<- findMaxDataRange(list(x))
 
 	if(!is.null(x$fit)){
-## usage: calculateSingleConf(fit,xdata,opadata,datarange,...)
 ## only acting on the last fit added to the object
 	fit<-x$fit[[length(x$fit)]]
 	xdata<-x$data
@@ -54,6 +53,13 @@ wblr.conf <- function(x,...){
 	if(!is.null(c(arg$log,arg$canvas))) stop("cannot set log or canvas option in wblr.conf")
 	if(!is.null(arg$dist)) stop("cannot set the fit distribution in wblr.conf")
 	if(!is.null(arg$method.fit)) stop("cannot set the fit method in wblr.conf")
+
+if(!is.null(arg$method.conf)) {
+	if(substr(tolower(arg$method.conf),1,2) == "mc") {
+		warning("'mcpivotal' has been depreciated for method.conf, use 'pivotal-rr'")
+		arg$method.conf<-"pivotal-rr"
+	}
+}
 
 #	if(!is.null(fit$options))  {
 ## it should be okay if fit$options is null anyway
@@ -121,19 +127,6 @@ DQ<-DescriptiveQuantiles
 		fit$conf[[i]]<- list()
 	}
 
-## I am not convinced that the second layer list fit$conf$blives is needed
-## certainly for now, plot.wblr is looking for this though.
-
-## removing fit$conf$blives
-#	if(is.null(fit$conf$blives)){
-##Creating the first B-life confidence calculation in the fit
-#		i <- 1
-#		fit$conf$blives <- list()
-#	}else{
-## Appending a new B-life confidence calculation to the fit
-#		i <- length(fit$conf$blives)+1
-#	}
-#	fit$conf$blives[[i]] <- list()
 
 	atLeastOneBLifeConf <- FALSE
 
@@ -192,7 +185,7 @@ DQ<-DescriptiveQuantiles
 		up <- approxfun(log(sx$ppp),log(Upper))
 		bl <- log(unrel)
 		da <- data.frame(unrel=unrel,Lower=exp(lo(bl)),Upper=exp(up(bl)))
-## Add in only the two extreame data points for graphing
+## Add in only the two extreme data points for graphing
 		da <- rbind(da,data.frame(unrel=min(sx$ppp), Lower=min(Lower), Upper=min(Upper)))
 		da <- rbind(da,data.frame(unrel=max(sx$ppp), Lower=max(Lower), Upper=max(Upper)))
 		da <- da[order(da$unrel),]
@@ -212,13 +205,9 @@ DQ<-DescriptiveQuantiles
 	}
 
 
-	if("lrb" %in% tolower(opaconf$method.conf)){
-		#  Likelihood Ratio Bounds to be added back in when appropriate
 
-	}
-
-
-	if(any(c("mcpivotals","mcpivotal") %in% tolower(opaconf$method.conf))){
+#	if(any(c("pivotal-rr","pivotal","mcpivotals","mcpivotal") %in% tolower(opaconf$method.conf))){
+	if(substr(tolower(opaconf$method.conf),1,7)=="pivotal"){
 		#                       _            _        _
 		#  _ __ ___   ___ _ __ (_)_   _____ | |_ __ _| |___
 		# | '_ ` _ \ / __| '_ \| \ \ / / _ \| __/ _` | / __|
@@ -229,13 +218,17 @@ DQ<-DescriptiveQuantiles
 	if(any(c("weibull3p", "lognormal3p") %in% tolower(fit$options$dist))) {
 		stop("confidence bounds are not prepared on 3-parameter fits")
 	}
+	if(substr(tolower(fit$options$method.fit),1,2)!= "rr") {
+		stop("pivotal bounds are only applied on rank regression fits")
+	}
+	
 		if(!is.integer(opaconf$seed))  {
 			##warning(paste0("opaconf$seed: ",opaconf$seed,"is not an integer"))
 			opaconf$seed<-1234
 		}
 
 		fit$conf[[i]]        <- list()
-		fit$conf[[i]]$type   <- "mcpivotals"
+		fit$conf[[i]]$type   <- "pivotal-rr"
 		fit$conf[[i]]$S      <- 10^4
 		fit$conf[[i]]$seed   <- opaconf$seed
 ##		fit$conf[[i]]$rgen   <- opaconf$rgen
@@ -275,10 +268,9 @@ DQ<-DescriptiveQuantiles
 			}
 		}
 
-
-		regression_order<-"XonY" #default for anything other than "yonx" that might be at method.fit[2]
-		if(length(opafit$method.fit)>1){
-		if(tolower(opafit$method.fit[2])=="yonx") {
+		regression_order<-"XonY" #default for anything other than "yonx" that might be an rr method.fit
+		if(nchar(opafit$method.fit)>2){
+		if(substr(tolower(opafit$method.fit),4,7)=="yonx") {
 			regression_order<-"YonX"
 		}
 		}
@@ -352,7 +344,12 @@ DQ<-DescriptiveQuantiles
 				}
 
 
-	}  ## end mcpivotals
+	}  ## end pivotal-rr
+
+
+#############################################################################
+############   FM bounds ####################################################
+#############################################################################
 
 	if(any(c("fm","fmbounds") %in% tolower(opaconf$method.conf))) {
 		fit$conf[[i]]        <- list()
@@ -363,7 +360,7 @@ DQ<-DescriptiveQuantiles
 		ret <- NULL
 
 	if(any(c("weibull3p", "lognormal3p") %in% tolower(fit$options$dist))) {
-		stop("3-parameter fits are not handled by FMbounds")
+		stop("confidence bounds are not prepared on 3-parameter fits")
 	}
 ## assure valid dist names for FMbounds and the debias functions
 	if(tolower(fit$options$dist) %in% c("weibull","weibull2p")){
@@ -411,13 +408,18 @@ DQ<-DescriptiveQuantiles
 
 	}  # end FM bounds
 
+
+#############################################################################
+############   Likelihood Ratio bounds ######################################
+#############################################################################
+
 	if(any(c("lrb","lrbounds") %in% tolower(opaconf$method.conf))) {
 		fit$conf[[i]]        <- list()
 		fit$conf[[i]]$type   <- "lrb"
 		fit$conf[[i]]$ci     <- opaconf$ci
 	## It is likely desirable to list input characteristics of the contour
 		fit$conf[[i]]$dof <- opaconf$dof
-		fit$conf[[i]]$applyFF     <- opaconf$applyFF
+##		fit$conf[[i]]$applyFF     <- opaconf$applyFF
 
 		fit$conf[[i]]$blife.pts <- opaconf$blife.pts
 		ret <- NULL
@@ -425,7 +427,9 @@ DQ<-DescriptiveQuantiles
 		if(any(c("weibull3p", "lognormal3p") %in% tolower(fit$options$dist))) {
 			stop("confidence bounds are not prepared on 3-parameter fits")
 		}
-
+	if(substr(tolower(fit$options$method.fit),1,3)!= "mle") {
+		stop("likelihood ratio bounds are only applied on mle fits")
+	}
 
 ## just get the distribution from the fit object, no crossfire
 	fit_dist<-fit$options$dist
@@ -434,7 +438,7 @@ DQ<-DescriptiveQuantiles
 		if(tolower(opafit$method.fit) == "mle-rba")  debias <- "rba"
 		if(tolower(opafit$method.fit) == "mle-unbias") {
 			if(fit_dist == "weibull") {
-				debias <- "hirose-ross"
+				debias <- "hrbu"
 			}else{
 #mle-unbias taken as mle-rba for lognormal
 				debias <- "rba"
@@ -451,6 +455,7 @@ if(!is.null(debias)) fit$conf[[i]]$debias <- debias
 # this specific setting broke the code, just depend on default
 #			contour=NULL,
 			dof=fit$conf[[i]]$dof,
+			ptDensity=opaconf$ptDensity,
 			debias=debias
 		)
 

@@ -1,4 +1,4 @@
-## plot_contour2.r
+## plot_contour.r
 
 ## inspired by contour.abrem originally authored by Jurgen Symynck, April 2014
 ## Extensive re-write by David J. Silkworth removes the S3 functionality that never applied
@@ -90,12 +90,13 @@ if(class(CL)=="wblr") stop("multiple wblr objects must be entered as a list")
 
 	for(cntr in 1:length(C2P) )  {
 
-	# plot MLE points same options as data points in first object
+	# plot MLE points always a black 'x' symbol
 		points(x=C2P[[cntr]]$MLEpt[1],y=C2P[[cntr]]$MLEpt[2],
 #			pch=opa$options$pch,
-			pch=opa$pch,
+			pch=4,
 			#col=C2P[[cntr]]$color,
-			col=opa$col,
+			#col=opa$col,
+			col="black",
 			lwd=opa$lwd.points,
 			cex=opa$cex.points)
 #browser()
@@ -144,6 +145,7 @@ FOUND=FALSE
 						}
 
 						CP[[j]]$contour<-conf$contour
+						CP[[j]]$dist<-wblr$options$dist
 						CP[[j]]$MLEpt<-fit$MLEfit[-3]
 						if(!is.null(conf$options$lty)) {
 							CP[[j]]$lty<-conf$options$lty
@@ -176,6 +178,9 @@ FOUND=FALSE
 				}
 			}
 		}
+	}
+	if(!exists("CP")) {
+		stop("no contour found in listed object, try adding CL argument to calculate")
 	}
 	CP
 }
@@ -234,27 +239,73 @@ ExtractContourParamsFromObject<-function(wblr) {
 		val
 	}
 
+# don't really want to get parameter modifications from potentially multiple fits
+# so this function is abandoned
+#	getParam2<-function(par_name) {
+#		val<-NULL
+#		if( !is.null(str_eval(paste0('fit$options$',par_name))) )  {
+#			val<-str_eval(paste0('fit$options$',par_name))
+#		}else{
+#			if( !is.null(str_eval(paste0('wblr$options$',par_name))) )  {
+#			}
+#		}
+#		val
+#	}
+
+# no fit exists, so get param from base object options only, perhaps defaults
+	getParam3<-function(par_name) {
+		val<-NULL
+		if( !is.null(str_eval(paste0('wblr$options$',par_name))) )  {
+			val<-str_eval(paste0('wblr$options$',par_name))
+		}
+		val
+	}
+
 
 	if(!is.null(wblr$fit)) {
 ## a fit list exists
-
 		for(fit_num in 1:length(wblr$fit)) {
 			fit<-wblr$fit[[fit_num]]
 			if(!is.null(fit$conf)) {
 				for(conf_num in 1:length(fit$conf)) {
 					conf<-fit$conf[[conf_num]]
 					if(!is.null(conf$contour)) {
-	## Yeah!, we found a contour
+## Yeah!, we found a contour, get parameters from here seeking back toward
+## base object options list if necessary.
 						dist<-getParam("dist")
 						dof<-getParam("dof")
 						col<-getParam("col")
 						lty<-getParam("lty")
 						lwd<-getParam("lwd")
+					}else{
+# a conf exists, but not a contour, so get the params from base object options
+# for some reason extraction getParam2 did not work here, did not want to debug further
+							dist<-getParam3("dist")
+							dof<-getParam3("dof")
+							col<-getParam3("col")
+							lty<-getParam3("lty")
+							lwd<-getParam3("lwd")
 					}
 				}
+			}else{
+# a fit exists, but get the params from base object options
+# for some reason extraction getParam2 did not work here, did not want to debug further
+					dist<-getParam3("dist")
+					dof<-getParam3("dof")
+					col<-getParam3("col")
+					lty<-getParam3("lty")
+					lwd<-getParam3("lwd")
 			}
 		}
+	}else{
+# no fit exists, get the params from base object options
+			dist<-getParam3("dist")
+			dof<-getParam3("dof")
+			col<-getParam3("col")
+			lty<-getParam3("lty")
+			lwd<-getParam3("lwd")
 	}
+
 	outlist<-NULL
 	if(exists("dist")) {
 		outlist<-list(dist=dist,dof=dof,col=col,lty=lty,lwd=lwd)
@@ -268,6 +319,21 @@ CalculateContours<-function(x, CL)  {
 	while(wblr_num < length(x))  {
 		wblr_num<-wblr_num+1
 		params<-ExtractContourParamsFromObject(x[[wblr_num]])
+# warn and drop any 3p suffix from params$dist
+# this should never happen because 3p distribution specification should only appear in wblr.fit, not wblr
+# there would be no conf in the 3p fit, so only base wblr dist option would be returned here
+# but lets just avoid this strange case.
+		if(substr(params$dist,nchar(params$dist)-1,nchar(params$dist))=="3p"){
+		params$dist<-substr(params$dist,1,nchar(params$dist)-2)
+		warning("3p dist modification specified in wblr has been ignored")
+		}
+
+# test for dist mismatch here
+		if(wblr_num > 1) {
+			if(c2p[[length(c2p)]]$dist!=params$dist) {
+				stop("dist mismatch in entered objects")
+			}
+		}
 		fit<-unname(mlefit(x[[wblr_num]]$data$lrq_frame, dist=params$dist))
 
 		for(cl_num in 1:length(CL))  {
@@ -291,6 +357,7 @@ CalculateContours<-function(x, CL)  {
 					MLEfit=fit,
 					ptDensity=dens
 					)
+			c2p[[c2p_num]]$dist<-params$dist
 			c2p[[c2p_num]]$MLEpt<-fit
 			c2p[[c2p_num]]$color<-params$col
 # check implementation of ExtractParamsFromObject here
