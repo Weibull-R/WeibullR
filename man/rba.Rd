@@ -2,7 +2,7 @@
 
 \alias{rba}
 
-\title{Reduced Bias Adjustment for Weibull and log normal MLE} 
+\title{Reduced Bias Adjustment for Weibull and Lognormal MLE} 
 
 \description{
 \code{rba} This function generates reduction factors based on the median bias of the Weibull Beta parameter MLE (C4^3.5),

@@ -1,7 +1,7 @@
 \name{MRRw3p}
 \alias{MRRw3p}
 
-\title{Median rank regression for weibull distribution in 3-parameters }
+\title{Quick Fit, Median rank regression for weibull distribution in 3-parameters }
 
 \description{
  Determination of Weibull fitting parameters with third, translation parameter optimization. Result provided with goodness
@@ -33,6 +33,7 @@ MRRw3p(x, s=NULL, bounds=FALSE, show=FALSE)
 
 \references{
   Robert B. Abernethy, (2008) "The New Weibull Handbook, Fifth Edition"
+  Leonard C. Johnson (1964) "The Statistical Treatment of Fatigue Experiments"  
 }
 
 \examples{

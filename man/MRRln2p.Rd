@@ -1,7 +1,7 @@
 \name{MRRln2p}
 \alias{MRRln2p}
 
-\title{Median rank regression for 2-parameter log-normal distributions}
+\title{Quick Fit, Median rank regression for 2-parameter log-normal distributions}
 
 \description{
  Determination of fitting parameters, goodness of fit measures and confidence interval bounds with optional graphical display.
@@ -32,6 +32,7 @@ MRRln2p(x, s=NULL, bounds=FALSE, show=FALSE)
 
 \references{
   Robert B. Abernethy, (2008) "The New Weibull Handbook, Fifth Edition"
+  Leonard C. Johnson (1964) "The Statistical Treatment of Fatigue Experiments"  
 }
 
 \examples{

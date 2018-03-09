@@ -1,7 +1,7 @@
 \name{MRRln3p}
 \alias{MRRln3p}
 
-\title{Median rank regression for log-normal distribution with third parameter optimization}
+\title{Quick Fit, Median rank regression for log-normal distribution with third parameter optimization}
 
 \description{
  Determination of log-normal fitting parameterswith third parameter optimization.
@@ -33,6 +33,7 @@ MRRln3p(x, s=NULL, bounds=FALSE, show=FALSE)
 
 \references{
   Robert B. Abernethy, (2008) "The New Weibull Handbook, Fifth Edition"
+  Leonard C. Johnson (1964) "The Statistical Treatment of Fatigue Experiments"  
 }
 
 \examples{

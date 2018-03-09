@@ -1,7 +1,7 @@
 \name{LLln}
 \alias{LLln}
 
-\title{Log Likelihood for log-normal fitted data}
+\title{Log Likelihood for log-normal fitted data, failures and suspensions only}
 
 \description{
  Determination of log-likelihood values for the basic distributions covered by R should be ubiquitous, but an implementation is provided here to enable likelihood ratio testing particularly for comparison of 3-parameter optimized models with their 2-parameter counterpart.
@@ -31,7 +31,10 @@ Returns a log-likelihood value.
 }
 
 \references{
-  Robert B. Abernethy, (2008) "The New Weibull Handbook, Fifth Edition"  
+  Robert B. Abernethy, (2008) "The New Weibull Handbook, Fifth Edition"
+  
+  Marie Laure Delignette-Muller, Christophe Dutang (2015). "fitdistrplus: An R Package for Fitting Distributions".
+  Journal of Statistical Software, 64(4), 1-34. URL http://www.jstatsoft.org/v64/i04/.
 }
 
 \examples{

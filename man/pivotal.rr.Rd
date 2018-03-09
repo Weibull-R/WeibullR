@@ -1,7 +1,7 @@
 \name{pivotal.rr}
 \alias{pivotal.rr}
 
-\title{Pivotal 'Monte Carlo' re sampling of least squares linear regression models}
+\title{Pivotal 'Monte Carlo' re-sampling of least squares linear regression models}
 
 \description{
 This function implements a fast pivotal engine enabling a wide assortment of options for linear regression models  for the Abernethy Reliability Methods project. Pivotal analysis is used to determine a goodness of fit measure and confidence interval bounds.
@@ -38,9 +38,14 @@ Returns an appropriate object for the input R2 and CI values.  There are 8 outpu
 
 \references{
   Robert B. Abernethy, (2008) "The New Weibull Handbook, Fifth Edition"
+  
   Jerald F. Lawless, (2003) "Statistical Models and Methods for Lifelime Data, Second Edition" 
+  
   John I. McCool, (2012) "Using the Weibull Distribution: Reliability, Modeling and Inference"
-}
+  
+  Chi-Chao Lui, "A Comparison Between The Weibull And Lognormal Models Used To Analyse Reliability Data"
+ (dissertation from University of Nottingham, 1997)
+  }
 
 \examples{
 failures<-c(90,96,30,49,82)

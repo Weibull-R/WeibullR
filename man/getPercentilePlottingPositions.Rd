@@ -4,7 +4,8 @@
 \title{ Determination of percentile plotting positions for linear regression with many optional methods}
 
 \description{
-Determination of plotting positions to be used for linear regression of life data analysis is a highly debated topic.  This function implements a wide assortment of options for the Abernethy Reliability Methods project.
+Determination of plotting positions to be used for linear regression of life data analysis is a highly debated topic.
+  This function implements a wide assortment of options for the Weibull-R project.
 }
 
 \usage{
@@ -32,6 +33,7 @@ Returns a dataframe with the failure data (as potentially reduced by ties argume
 
 \references{
   Robert B. Abernethy, (2008) "The New Weibull Handbook, Fifth Edition"
+
   Leonard C. Johnson (1964) "The Statistical Treatment of Fatigue Experiments"  
 }
 

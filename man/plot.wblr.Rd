@@ -2,7 +2,7 @@
 \alias{plot.wblr}
 
 \title{
-    \code{wblr} Object Plotting
+    S3 \code{wblr} Object Plotting on pretty canvax
 }
 \description{
     This function adds the \code{.wblr} method to \code{\link[graphics]{plot}}
@@ -103,6 +103,12 @@
 
 \value{
     Currently, the function returns no value.
+}
+
+\references{
+Jurgen Symynck, Filip De Bal, Weibull analysis using R, in a nutshell (New Technologies and Products in Machine Manufacturing Technology, Stefan cel Mare University of Suceava, 2010).
+
+Jurgen Symynck, Filip De Bal, Monte Carlo pivotal confidence bounds for Weibull analysis, with implementations in R (New Technologies and Products in Machine Manufacturing Technology, Stefan cel Mare University of Suceava, 2011).
 }
 
 \examples{

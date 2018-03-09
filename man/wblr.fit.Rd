@@ -2,7 +2,7 @@
 \alias{wblr.fit}
 
 \title{
-    Fit Distributions to \code{wblr} Objects
+    Add Fit Distributions to \code{wblr} Objects
 }
 \description{
    This function fits probability distributions to \code{wblr} objects.
@@ -105,4 +105,7 @@
   Robert B. Abernethy, (2008) "The New Weibull Handbook, Fifth Edition" 
   
   John I. McCool, (2012) "Using the Weibull Distribution: Reliability, Modeling and Inference"
+
+  Marie Laure Delignette-Muller, Christophe Dutang (2015). "fitdistrplus: An R Package for Fitting Distributions".
+  Journal of Statistical Software, 64(4), 1-34. URL http://www.jstatsoft.org/v64/i04/.
 }

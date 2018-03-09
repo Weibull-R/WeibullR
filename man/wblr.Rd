@@ -129,6 +129,8 @@
   Robert B. Abernethy, (2008) "The New Weibull Handbook, Fifth Edition" 
   
   John I. McCool, (2012) "Using the Weibull Distribution: Reliability, Modeling and Inference"
+  
+  Jurgen Symynck, Filip De Bal, Weibull analysis using R, in a nutshell (New Technologies and Products in Machine Manufacturing Technology, Stefan cel Mare University of Suceava, 2010).
 }
 
 \examples{

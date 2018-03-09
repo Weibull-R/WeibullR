@@ -31,8 +31,13 @@ Returns a dataframe of the life[time] data in columns named 'left', 'right', and
 
 \references{
   William Q. Meeker and Luis A. Escobar, (1998) "Statistical Methods for Reliability Data", Wiley-Interscience, New York
-  Robert B. Abernethy, (2008) "The New Weibull Handbook, Fifth Edition" 
+  
+  Robert B. Abernethy, (2008) "The New Weibull Handbook, Fifth Edition"
+  
   John I. McCool, (2012) "Using the Weibull Distribution: Reliability, Modeling and Inference"
+  
+  Marie Laure Delignette-Muller, Christophe Dutang (2015). "fitdistrplus: An R Package for Fitting Distributions".
+  Journal of Statistical Software, 64(4), 1-34. URL http://www.jstatsoft.org/v64/i04/.
 }
 
 \examples{

@@ -1,7 +1,7 @@
 \name{MLEln3p}
 \alias{MLEln3p}
 
-\title{Maximum Likelihood Estimate for 3-parameter lognormal distributions}
+\title{Quick Fit, Maximum Likelihood Estimate for 3-parameter lognormal distributions}
 
 \description{
  Determination of lognormal fitting parameters with third, translation parameter optimization.}

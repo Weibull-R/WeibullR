@@ -98,7 +98,13 @@ Additionally, graphical control options for the confidence interval bounds can b
     as passed to the function.
 }
 
+\references{
+  William Q. Meeker and Luis A. Escobar, (1998) "Statistical Methods for Reliability Data", Wiley-Interscience, New York
 
+  Robert B. Abernethy, (2008) "The New Weibull Handbook, Fifth Edition" 
+  
+  John I. McCool, (2012) "Using the Weibull Distribution: Reliability, Modeling and Inference"
+}
 
 \examples{
 ## full dataset ##

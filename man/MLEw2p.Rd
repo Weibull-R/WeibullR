@@ -1,7 +1,7 @@
 \name{MLEw2p}
 \alias{MLEw2p}
 
-\title{Maximum Likelihood Estimate for 2-parameter weibull distributions}
+\title{Quick Fit, Maximum Likelihood Estimate for 2-parameter weibull distributions}
 
 \description{
  Determination of Weibull fitting parameters, goodness of fit measures and confidence interval bounds with optional graphical display.

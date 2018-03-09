@@ -1,7 +1,7 @@
 \name{MLEln2p}
 \alias{MLEln2p}
 
-\title{Maximum Likelihood Estimate for 2-parameter lognormal distributions}
+\title{Quick Fit, Maximum Likelihood Estimate for 2-parameter lognormal distributions}
 
 \description{
  Determination of lognormal fitting parameters, goodness of fit measures and confidence interval bounds with optional graphical display.

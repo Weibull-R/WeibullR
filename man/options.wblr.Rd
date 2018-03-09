@@ -2,7 +2,7 @@
 \alias{options.wblr}
 
 \title{
-    Options for \code{wblr} Objects
+    Options list for \code{wblr} Objects
 }
 \description{
     This function handles the various calculation, printing and plotting options

@@ -1,10 +1,11 @@
 \name{getPPP}
 \alias{getPPP}
 
-\title{Determination of percentile plotting positions for linear regression with many optional methods}
+\title{Alias for \code{getPercentilePlottingPositions}, sets data into the format required by lslr.}
 
 \description{
-Determination of plotting positions to be used for linear regression of life data analysis is a highly debated topic.  This function implements a wide assortment of options for the Abernethy Reliability Methods project.
+Determination of plotting positions to be used for linear regression of life data analysis is a highly debated topic.
+  This function implements a wide assortment of options for the Weibull-R project.
 }
 
 \usage{

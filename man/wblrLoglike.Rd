@@ -1,7 +1,7 @@
 \name{wblrLoglike}
 \alias{wblrLoglike}
 
-\title{Log likelihood for Weibull and lognormal distributions}
+\title{Log likelihood for Weibull and Lognormal fitted data including intervals}
 
 \description{This function generates the Log likelihood for Wiebull and lognormal distributions from life(-time)
  data containing fixed time occurrences, and suspensions (progressive right-censored data), discoveries (left-censored data),
@@ -39,6 +39,9 @@ wblrLoglike(par, x, dist="weibull", sign=1, tz=0 )
   William Q. Meeker and Luis A. Escobar, (1998) "Statistical Methods for Reliability Data", Wiley-Interscience, New York
 
   Robert B. Abernethy, (2008) "The New Weibull Handbook, Fifth Edition" 
+
+  Marie Laure Delignette-Muller, Christophe Dutang (2015). "fitdistrplus: An R Package for Fitting Distributions".
+  Journal of Statistical Software, 64(4), 1-34. URL http://www.jstatsoft.org/v64/i04/.
 }
 
 \examples{

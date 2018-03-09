@@ -2,7 +2,7 @@
 \alias{contour.wblr}
 
 \title{
-    Likelihood Ratio Contour Maps From \code{wblr} Objects
+    S3 Likelihood Ratio Contour Maps From \code{wblr} Objects
 }
 \description{
     This function adds the \code{.wblr} method to \code{\link[graphics]{contour}}

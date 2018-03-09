@@ -1,7 +1,7 @@
 \name{MLEw3p}
 \alias{MLEw3p}
 
-\title{Maximum Likelihood Estimation for weibull distribution in 3-parameters }
+\title{Quick Fit, Maximum Likelihood Estimation for weibull distribution in 3-parameters }
 
 \description{
  Determination of Weibull fitting parameters with third, translation parameter optimization. 

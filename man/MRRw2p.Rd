@@ -1,7 +1,7 @@
 \name{MRRw2p}
 \alias{MRRw2p}
 
-\title{Median rank regression for 2-parameter weibull distributions}
+\title{Quick Fit, Median rank regression for 2-parameter weibull distributions}
 
 \description{
  Determination of Weibull fitting parameters, goodness of fit measures and confidence interval bounds with optional graphical display.
@@ -31,10 +31,8 @@ MRRw2p(x, s=NULL, bounds=FALSE, show=FALSE)
 
 \references{
   William Q. Meeker and Luis A. Escobar, (1998) "Statistical Methods for Reliability Data", Wiley-Interscience, New York
-
   Robert B. Abernethy, (2008) "The New Weibull Handbook, Fifth Edition" 
-  
-  John I. McCool, (2012) "Using the Weibull Distribution: Reliability, Modeling and Inference"
+  Leonard C. Johnson (1964) "The Statistical Treatment of Fatigue Experiments"  
 }
 
 \examples{
