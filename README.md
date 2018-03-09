@@ -1,6 +1,5 @@
----
-title: WeibullR
----
+WeibullR
+========
 
 An R package for Life Data Analysis
 -----------------------------------
@@ -44,8 +43,8 @@ Fine control over many aspects of fit, confidence, and display are made possible
 using a flexible options mechanism.
 
 Display for single object models is via S3 methods `plot` or `contour`, while
-multiple objects\* (provided as a list) \*can be displayed on a single plot
-using`plot.wblr`, `plot_contour`, or `contour.wblr`.
+multiple objects *(provided as a list)* can be displayed on a single plot using
+`plot.wblr`, `plot_contour`, or `contour.wblr`.
 
  
 

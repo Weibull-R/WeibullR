@@ -15,7 +15,7 @@ The WeibullR package provides a flexible data entry capability with three levels
 		\item{\emph{Quick Fit} Functions}{Functions with intuitive names \code{\link{MLEw2p}} through \code{\link{MRRln3p}} for preparing simple fits, bounds, and displays using default options. Only data sets with exact failure times and/or suspensions are processed.
 		The quick fit functions return a simple named vector of the fitted parameters with appropriate goodness of fit measure(s).
 		 Optional preparation of appropriate interval bounds (at 90\% confidence), or a display of fit and bounds are controlled by two final arguments taking logical entry,
-		 Such that  a function call like \code{MLEw2p(input_data, T, T)} will generate a plot the fitted data with confidence interval bounds.
+		 Such that  a function call like \code{MLEw2p(input_data, T, T)} will generate a plot with the fitted data and confidence interval bounds.
 		 When the first logical for bounds is set to TRUE, the returned object will be a list with the fitted parameter vector first and dataframe of bounds values second.
 		}
 		\item{wblr Object Model}{Construction of a wblr object is initiated by providing a data set through function \code{\link{wblr}}.

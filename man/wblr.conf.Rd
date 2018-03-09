@@ -132,13 +132,3 @@ da2 <- wblr.conf(da2,method.conf="lrb",col="cyan3")
 plot(da2,main="Comparison between different bound types with right-censored data.")
 }
 }
-
-
-\references{
-  William Q. Meeker and Luis A. Escobar, (1998) "Statistical Methods for Reliability Data", 
-  Wiley-Interscience, New York
-
-  Robert B. Abernethy, (2008) "The New Weibull Handbook, Fifth Edition" 
-  
-  John I. McCool, (2012) "Using the Weibull Distribution: Reliability, Modeling and Inference"
-}

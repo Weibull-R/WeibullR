@@ -319,6 +319,15 @@ CalculateContours<-function(x, CL)  {
 	while(wblr_num < length(x))  {
 		wblr_num<-wblr_num+1
 		params<-ExtractContourParamsFromObject(x[[wblr_num]])
+# warn and drop any 3p suffix from params$dist
+# this should never happen because 3p distribution specification should only appear in wblr.fit, not wblr
+# there would be no conf in the 3p fit, so only base wblr dist option would be returned here
+# but lets just avoid this strange case.
+		if(substr(params$dist,nchar(params$dist)-1,nchar(params$dist))=="3p"){
+		params$dist<-substr(params$dist,1,nchar(params$dist)-2)
+		warning("3p dist modification specified in wblr has been ignored")
+		}
+
 # test for dist mismatch here
 		if(wblr_num > 1) {
 			if(c2p[[length(c2p)]]$dist!=params$dist) {
