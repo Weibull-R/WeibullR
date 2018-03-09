@@ -71,7 +71,7 @@ options.wblr<- function(...){
              seed= 1234,
 ##        rgen=FALSE,
             S=1e4,
-            pivotals=FALSE,
+##            pivotals=FALSE,
         ## specific control for likelihood ratio contour and bounds
             dof=1,            ## degrees of freedom, dof=1 for conf interval, dof=2 for comparison
             ptDensity=120, ##  number of points in likelihood ratio contour

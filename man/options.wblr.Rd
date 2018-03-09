@@ -187,9 +187,6 @@ Options specific to \code{\link{wblr.conf}}
 				\item{\code{S}}{
 					The number of samples to be run during pivotal analysis, default is \code{1e4}.
 				}
-				\item{\code{pivotals}}{
-					Not sure this is used, but default is \code{FALSE}.
-				}
 			}
 		}
 		\item{Specific controls for likelihood ratio contour and bounds only}{
