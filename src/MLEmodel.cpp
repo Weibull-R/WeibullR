@@ -197,9 +197,16 @@ double MLEmodel::tryLL(arma::colvec par, int dist_num)  {
 		}
 		
 		value = failcomp+suscomp+discomp+intcomp;
-		if(!std::isfinite(value)) {
-			value=0.0;
-		}
+// removing this important stability feature, which is the only C++11 dependency in package
+// due to a bug in mingw64 that prevented compiling of CallgetCCC2.cpp or CallgetPvalue.cppdue to 
+// cc1plus.exe: out of memory allocating 65536 bytes
+//https://sourceforge.net/p/mingw-w64/mailman/message/33182613/
+//See if http://gcc.gnu.org/bugzilla/show_bug.cgi?id=56746 applies to your
+//case. If the answer is affirmative, passing -ftrack-macro-expansion=0
+//will reduce memory usage.
+//		if(!std::isfinite(value)) {
+//			value=0.0;
+//		}
 	}
 	return value;
 }
