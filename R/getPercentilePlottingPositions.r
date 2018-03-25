@@ -103,21 +103,27 @@ if(is.vector(x)) {
 
 
 	if(aranks=="Johnson")  {
-		## adjust ranks using Drew Auth's simplification of Leonard Johnson's method
-		## start with extra element to reference zero as previous rank to first
-		adj_rank<-0
-		for(k in 1:N)  {
-			rr=N-k+1
-			if(prep_df$event[k]>0)  {
-			this_rank<-(rr*adj_rank[k]+N+1)/(rr+1)
-			adj_rank<-c(adj_rank, this_rank)
-			}else{
-			adj_rank<-c(adj_rank,adj_rank[k])
-			}
-		}
-		prep_df<-cbind(prep_df,adj_rank=adj_rank[-1])
-		## now eliminate the suspension data
-		prep_df<-prep_df[sapply(prep_df$event, function(x) x>0),c(1,3)]
+		## adjust ranks using Leonard Johnson's method
+		 adj_rank<-.Call("adjustedRank", prep_df$event, package="WeibullR")
+		##	eliminate suspensions and the event column	
+		ftime<-prep_df$time[prep_df$event==1]
+		## combine ftime and adj_rank  as columns in re-defined prep_df
+		 prep_df<-data.frame(time=ftime, adj_rank=adj_rank)
+## following code has been replaced by code above due to severe bottleneck with large data sets.
+#		## start with extra element to reference zero as previous rank to first
+#		adj_rank<-0
+#		for(k in 1:N)  {
+#			rr=N-k+1
+#			if(prep_df$event[k]>0)  {
+#			this_rank<-(rr*adj_rank[k]+N+1)/(rr+1)
+#			adj_rank<-c(adj_rank, this_rank)
+#			}else{
+#			adj_rank<-c(adj_rank,adj_rank[k])
+#			}
+#		}
+#		prep_df<-cbind(prep_df,adj_rank=adj_rank[-1])
+#		## now eliminate the suspension data
+#		prep_df<-prep_df[sapply(prep_df$event, function(x) x>0),c(1,3)]
 	}else{
 		if(aranks=="KMestimator")  {
 		## adjust ranks using David Silkworth's adaptation of the modified

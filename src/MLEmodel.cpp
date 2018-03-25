@@ -207,6 +207,11 @@ double MLEmodel::tryLL(arma::colvec par, int dist_num)  {
 //		if(!std::isfinite(value)) {
 //			value=0.0;
 //		}
+// The following code restores stability should NaN be encountered
+// NaN has the property of reporting false for any equality comparison
+		if(value!=value) {
+			value=0.0;
+		}
 	}
 	return value;
 }

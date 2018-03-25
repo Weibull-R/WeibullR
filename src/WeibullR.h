@@ -29,6 +29,9 @@ extern "C" double getCCC2( int F, int model);
 extern "C" struct AbPval getPvalue(int F, double R2, int model);
 // end abremPivotals
 
+// Johnson rank adjustment code
+RcppExport SEXP adjustedRank (SEXP arg1);
+
 // contour code
 RcppExport SEXP getContour(SEXP arg1, SEXP arg2, SEXP arg3, SEXP arg4, SEXP arg5, SEXP arg6, SEXP arg7);
 
