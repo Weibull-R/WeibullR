@@ -1,9 +1,10 @@
 #ifndef _WeibullR_H
 #define _WeibullR_H
 
-struct AbPval{
-	double Pval,CCC2;
-};
+//This struct was originally used as a return object for C function AbPval
+//struct AbPval{
+//	double Pval,CCC2;
+//};
 
 
 #ifdef __cplusplus
@@ -25,8 +26,8 @@ RcppExport SEXP pivotalMC(SEXP arg1, SEXP arg2, SEXP arg3, SEXP arg4, SEXP arg5,
 RcppExport SEXP CallgetCCC2(SEXP arg1, SEXP model);
 RcppExport SEXP CallgetPvalue(SEXP arg1, SEXP arg2, SEXP arg3);
 
-extern "C" double getCCC2( int F, int model);
-extern "C" struct AbPval getPvalue(int F, double R2, int model);
+//extern "C" double getCCC2( int F, int model);
+//extern "C" struct AbPval getPvalue(int F, double R2, int model);
 // end abremPivotals
 
 // Johnson rank adjustment code

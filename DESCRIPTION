@@ -1,6 +1,6 @@
 Package: WeibullR
 Version: 1.0.1
-Date: 2018-3-25
+Date: 2018-3-29
 Title: Weibull Analysis for Reliability Engineering
 Authors@R: c(person("David", "Silkworth", email = "djsilk@openreliability.org", role = "aut"), person("Jurgen", "Symynck", role = "aut"), person("Jacob", "Ormerod", email = "jake@openreliability.org", role = "cre"), person("OpenReliability.org", role = "cph"))
 Author: David Silkworth [aut], Jurgen Symynck [aut], Jacob Ormerod [cre]
