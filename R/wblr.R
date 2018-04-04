@@ -61,8 +61,8 @@ arg <- splitargs(...)
 ## it is necessary to process the input data using arg$opa$pp
 ## to permit method.fit and method.conf validations in arg$opa
 ##############################################################
-## additional features yet to be implemented could include
-## handling of ties and rank adjustment method (i.e. "johnson" or "kmestimator")
+
+
 opa <- modifyList(options.wblr(), arg$opa)
 
 
@@ -108,10 +108,12 @@ plot_data<-getPlotData(lrq_frame,opa)
 	obj$data$dpoints<-plot_data[[1]]
 	obj$data$dlines<-plot_data[[2]]
 
+## here was source of bug found in Legend upon ties handling
+## previous use of the length of dpoints and dlines columns was not accurate
+## now using the sum of weight values this is correct for all cases
 
-	obj$fail <- length(obj$data$dpoints$time)
-##    obj$cens <- length(s)
-	obj$interval <- length(obj$data$dlines$t1)
+	obj$fail <- sum(obj$data$dpoints$weight)
+	obj$interval <- sum(obj$data$dlines$weight)
 	obj$n    <- sum(lrq_frame$qty)
 	obj$cens <- obj$n - obj$fail - obj$interval
 	obj$discovery <-sum(lrq_frame$qty[lrq_frame$left==0])
@@ -177,20 +179,33 @@ getPlotData<-function(x,opa) {
 
 	mod2x<-cbind(mod1x[,-4],tmean=dataDF$time)
 
-
 	p<-getPPP(p_argx, ppos=ppos, aranks=aranks, ties=opa$ties.handler)
 
-## set quantity of handled tie points to 1, so that the dpoints and dlines loops below work
-	if(opa$ties.handler!="none") {
-		if(nrow(p)!=nrow(mod2x)) {
-			stop("ties.handler did not function as expected")
-		}
-		mod2x$qty<-rep(1,nrow(mod2x))
+if( nrow(mod2x)==nrow(p) )  {
+## this is the R-efficient method when ties have been handled, 
+## or there were no duplicates at all
+	NDX<-order(mod2x[,4])
+	mod3x<-mod2x[NDX,]
+	lrdiv <-mod3x$left/mod3x$right
+	mod3x<-cbind(mod3x, p$ppp, p$adj_rank, lrdiv)
+	dpoints<-mod3x[mod3x$lrdiv==1, c(2,5,6,3)]
+	if(nrow(dpoints)==0) {
+		dpoints<-NULL
+	}else{
+		names(dpoints)<-c("time", "ppp", "adj_rank", "weight")
+	}
+	dlines<-mod3x[mod3x$lrdiv!=1, c(1,2,5,6,3)]
+	if(nrow(dlines)==0)  {
+		dlines<-NULL
+	}else{
+		names(dlines)<-c("t1", "t2", "ppp", "adj_rank", "weight")
 	}
 
+}else{
+## This is the complex loop with un-handled duplicates
 	dpoints<-NULL
 	dlines<-NULL
-
+#if(opa$ties.handler=="none") {
 	for(frow in 1: nrow(mod2x))  {
 		if(mod2x$left[frow]==mod2x$right[frow]) {
 			for(q in 1:mod2x$qty[frow])  {
@@ -198,11 +213,11 @@ getPlotData<-function(x,opa) {
 				point_row<-data.frame(
 					time=mod2x$left[frow], 
 					ppp=p$ppp[prow], 
-					adj_rank=p$adj_rank[prow])
+					adj_rank=p$adj_rank[prow],
+					weight=1)
 				dpoints<-rbind(dpoints, point_row)
 				p<-p[-prow,]
 			}
-
 		}else{
 			for(q in 1:mod2x$qty[frow])  {
 				prow<-match(mod2x$tmean[frow], p$time)
@@ -210,13 +225,45 @@ getPlotData<-function(x,opa) {
 					t1=mod2x$left[frow], 
 					t2=mod2x$right[frow], 
 					ppp=p$ppp[prow], 
-					adj_rank=p$adj_rank[prow])
+					adj_rank=p$adj_rank[prow],
+					weight=1)
 				dlines<-rbind(dlines, line_row)
 				p<-p[-prow,]
 			}
 		}
 	}
-
+}
+## This is the loop for the case where tie handling has taken place.
+## Since the p vector should be same length and order of mod2x, there is 
+## likely an efficient R method for handling this, no prow match required
+#}else{
+#	for(frow in 1: nrow(mod2x))  {
+#		if(mod2x$left[frow]==mod2x$right[frow]) {
+#			#for(q in 1:mod2x$qty[frow])  {
+#				prow<-match(mod2x$tmean[frow], p$time)
+#				point_row<-data.frame(
+#					time=mod2x$left[frow], 
+#					ppp=p$ppp[prow], 
+#					adj_rank=p$adj_rank[prow],
+#					weight=mod2x$qty[frow])
+#				dpoints<-rbind(dpoints, point_row)
+#				p<-p[-prow,]
+#			#}
+#		}else{
+#			#for(q in 1:mod2x$qty[frow])  {
+#				prow<-match(mod2x$tmean[frow], p$time)
+#				line_row<-data.frame(
+#					t1=mod2x$left[frow], 
+#					t2=mod2x$right[frow], 
+#					ppp=p$ppp[prow], 
+#					adj_rank=p$adj_rank[prow],
+#					weight=mod2x$qty[frow])
+#				dlines<-rbind(dlines, line_row)
+#				p<-p[-prow,]
+#			#}
+#		}
+#	}
+#}
 
 outlist<-list(dpoints,dlines)
 outlist

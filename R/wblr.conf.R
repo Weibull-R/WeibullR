@@ -154,10 +154,10 @@ DQ<-DescriptiveQuantiles
 ## Need to combine ppp and adjusted ranks for points and lines.
 		sx<-NULL
 		if(!is.null(xdata$dpoints)) {
-		sx<-xdata$dpoints[,2:3]
+		sx<-xdata$dpoints[,2:4]
 		}
 		if(!is.null(xdata$dlines)) {
-		sx<-rbind(sx,xdata$dlines[,3:4])
+		sx<-rbind(sx,xdata$dlines[,3:5])
 		sx<-sx[order(sx$adj_rank),]
 		}
 
