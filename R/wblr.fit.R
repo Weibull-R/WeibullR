@@ -34,6 +34,7 @@ wblr.fit <- function(x, modify.by.t0=FALSE,...){
 ## It will probably be better to splitfitargs(...) for more comprehensive validations
 	arg <- list(...)
 	if(!is.null(c(arg$log,arg$canvas))) stop("cannot set log or canvas option in wblr.fit")
+	if(!is.null(c(arg$ties.handler, arg$ties))) warning("handling of ties is only performed on object creation in function wblr.")
 
 ## new validations for method.fit args
 	if(!is.null(arg$method.fit)) {
@@ -157,7 +158,8 @@ wblr.fit <- function(x, modify.by.t0=FALSE,...){
 
 
 ## why the heck this duplication?
-##(These are most likely used for the Legend which might be generated for each fit)
+## These are most used for the Legend entry which is generated for each fit
+## They also have a prominent role in BBB conf intervals
     x$fit[[i]]$n    <- x$n
     x$fit[[i]]$fail <- x$fail
     x$fit[[i]]$cens <- x$cens
@@ -198,9 +200,24 @@ wblr.fit <- function(x, modify.by.t0=FALSE,...){
 			regression_order<-"YonX"
 		}
 		}
+## It is necessary to re-construct a time-event(-qty) dataframe here to use in the lslr call
+## x$data$dpoints may have been altered by a ties.handler
+		if(any(x$data$dpoints$weight!=1)) {
+			lrdiv<-x$data$lrq_frame$left/x$data$lrq_frame$right
+			lrqframe2<-data.frame(x$data$lrq_frame, lrdiv)
+			#fail_df<-lrqframe2[which(lrqframe2$lrdiv==1),c(1,3,4)]
 
+			fail_df<-lrqframe2[lrqframe2$lrdiv==1,c(1,4,3)]
+			susp_df<-lrqframe2[lrqframe2$lrdiv<0,c(1,4,3)]
+			susp_df$lrdiv<-rep(0, nrow(susp_df))
+
+			teqframe<-rbind(fail_df, susp_df)
+			names(teqframe)<-c("time", "event", "qty")
+			fit_vec<-lslr(getPPP(teqframe), dist=fit_dist, npar=npar, reg_method=regression_order)
+		}else{
 		## content of fit_vec result depends on fit_dist, and npar
-		fit_vec<-lslr(x$data$dpoints, dist=fit_dist, npar=npar, reg_method=regression_order)
+			fit_vec<-lslr(x$data$dpoints, dist=fit_dist, npar=npar, reg_method=regression_order)
+		}
 
 		if(!is.null(fit_vec)){
 ## Jurgen's use of super assignment (<<-) appears to have been an error here
@@ -222,20 +239,11 @@ wblr.fit <- function(x, modify.by.t0=FALSE,...){
 			}else{  ## only other option is 3p
 				x$fit[[i]]$t0 <- fit_vec[3]
 				x$fit[[i]]$gof$r2 <- fit_vec[[4]]
-## removing effects of threshold option
-##				if(!is.null(opafit$threshold)){
-##					if(is.logical(opafit$threshold) && opafit$threshold)
-##						 x$options$threshold <- fit_vec[[3]]
-##				}
-					# this overwrites any threshold setting at the data level with a number
-					# TODO: Jurgen notes this is not the way to go when trying to implement support for
-					# threshold with plot.wblr()
 			}
 		}else{
 			##vm(0,"calculateSingleFit: Fitting failed.")
 			x$fit[i] <<- list(NULL)
 				# note that is.null(x$fit[[i]]) will exit with an error
-				# TODO: replace with x$fit[[i]] <<- list(NULL)
 
 		}
 	} ## close rank regression block

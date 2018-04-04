@@ -123,6 +123,9 @@ buildSingleFitLegend <- function(fit,opadata,...){
 		if(fit$modified) modstr<- "*t0 mod* "
             li[[10]]    <- bsll(legend=paste0(modstr,"ranks = ",opafit$pp[1]),
                 col=opadata$col,pch=opadata$pch,lwd=opadata$lwd.points)
+## I don't understand why this becomes necessary with a fit
+## Data types should be defined on entry with wblr object creation
+## This is one reason for the redundant placement of data types in each fit
 		if((fit$discovery+fit$interval)==0) {
 			li[[15]]    <- bsll(legend=paste0("n (fail | cens.) = ",fit$n,
 				" (",fit$fail," | ",fit$cens,")"))
