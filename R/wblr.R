@@ -202,68 +202,44 @@ if( nrow(mod2x)==nrow(p) )  {
 	}
 
 }else{
-## This is the complex loop with un-handled duplicates
 	dpoints<-NULL
 	dlines<-NULL
-#if(opa$ties.handler=="none") {
-	for(frow in 1: nrow(mod2x))  {
-		if(mod2x$left[frow]==mod2x$right[frow]) {
-			for(q in 1:mod2x$qty[frow])  {
-				prow<-match(mod2x$tmean[frow], p$time)
-				point_row<-data.frame(
-					time=mod2x$left[frow], 
-					ppp=p$ppp[prow], 
-					adj_rank=p$adj_rank[prow],
-					weight=1)
-				dpoints<-rbind(dpoints, point_row)
-				p<-p[-prow,]
-			}
-		}else{
-			for(q in 1:mod2x$qty[frow])  {
-				prow<-match(mod2x$tmean[frow], p$time)
-				line_row<-data.frame(
-					t1=mod2x$left[frow], 
-					t2=mod2x$right[frow], 
-					ppp=p$ppp[prow], 
-					adj_rank=p$adj_rank[prow],
-					weight=1)
-				dlines<-rbind(dlines, line_row)
-				p<-p[-prow,]
-			}
-		}
-	}
-}
-## This is the loop for the case where tie handling has taken place.
-## Since the p vector should be same length and order of mod2x, there is 
-## likely an efficient R method for handling this, no prow match required
-#}else{
-#	for(frow in 1: nrow(mod2x))  {
-#		if(mod2x$left[frow]==mod2x$right[frow]) {
-#			#for(q in 1:mod2x$qty[frow])  {
-#				prow<-match(mod2x$tmean[frow], p$time)
-#				point_row<-data.frame(
-#					time=mod2x$left[frow], 
-#					ppp=p$ppp[prow], 
-#					adj_rank=p$adj_rank[prow],
-#					weight=mod2x$qty[frow])
-#				dpoints<-rbind(dpoints, point_row)
-#				p<-p[-prow,]
-#			#}
-#		}else{
-#			#for(q in 1:mod2x$qty[frow])  {
-#				prow<-match(mod2x$tmean[frow], p$time)
-#				line_row<-data.frame(
-#					t1=mod2x$left[frow], 
-#					t2=mod2x$right[frow], 
-#					ppp=p$ppp[prow], 
-#					adj_rank=p$adj_rank[prow],
-#					weight=mod2x$qty[frow])
-#				dlines<-rbind(dlines, line_row)
-#				p<-p[-prow,]
-#			#}
+## This is the complex loop implemented in C++ for un-handled duplicates
+	ret<-.Call("plotData", mod2x$left, mod2x$right, mod2x$qty, mod2x$tmean, p$time, p$ppp, p$adj_rank, package="WeibullR")
+	if(nrow(ret$dpoints)>0) dpoints<-ret$dpoints
+	if(nrow(ret$dlines)>0) dlines<-ret$dlines
+
+## This is the complex loop in R for un-handled duplicates
+#	if(opa$ties.handler=="none") {
+#		for(frow in 1: nrow(mod2x))  {
+#			if(mod2x$left[frow]==mod2x$right[frow]) {
+#				for(q in 1:mod2x$qty[frow])  {
+#					prow<-match(mod2x$tmean[frow], p$time)
+#					point_row<-data.frame(
+#						time=mod2x$left[frow], 
+#						ppp=p$ppp[prow], 
+#						adj_rank=p$adj_rank[prow],
+#						weight=1)
+#					dpoints<-rbind(dpoints, point_row)
+#					p<-p[-prow,]
+#				}
+#			}else{
+#				for(q in 1:mod2x$qty[frow])  {
+#					prow<-match(mod2x$tmean[frow], p$time)
+#					line_row<-data.frame(
+#						t1=mod2x$left[frow], 
+#						t2=mod2x$right[frow], 
+#						ppp=p$ppp[prow], 
+#						adj_rank=p$adj_rank[prow],
+#						weight=1)
+#					dlines<-rbind(dlines, line_row)
+#					p<-p[-prow,]
+#				}
+#			}
 #		}
 #	}
-#}
+
+}
 
 outlist<-list(dpoints,dlines)
 outlist

@@ -32,7 +32,8 @@ RcppExport SEXP CallgetPvalue(SEXP arg1, SEXP arg2, SEXP arg3);
 
 // Johnson rank adjustment code
 RcppExport SEXP adjustedRank (SEXP arg1);
-
+// dpoints and dlines loop
+RcppExport SEXP plotData(SEXP arg1, SEXP arg2, SEXP arg3, SEXP arg4, SEXP arg5, SEXP arg6, SEXP arg7);
 // contour code
 RcppExport SEXP getContour(SEXP arg1, SEXP arg2, SEXP arg3, SEXP arg4, SEXP arg5, SEXP arg6, SEXP arg7);
 
