@@ -41,7 +41,8 @@ export(
 	pivotal.rr,
 	plot_contour,
 	plot.wblr,
-	contour.wblr
+	contour.wblr,
+	weibayes
 )
 S3method(plot, wblr) 
 S3method(contour, wblr) 

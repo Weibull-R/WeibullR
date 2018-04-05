@@ -103,12 +103,19 @@ mlefit<-function(x, dist="weibull", npar=2, debias="none", optcontrol=NULL)  {
 ## establish distribution number and start parameters
 	if(fit_dist=="weibull"){
 		dist_num=1
+## single failure data set with suspensions (only) uses simplistic weibayes for vstart
+		if(Nf==1 && Nd+Ni==0) {
+		weibayes_scale <-x[failNDX,1]+sum(x[suspNDX,1])
+		vstart<- c(1, weibayes_scale)
+		}else{
 # use of quick fit could have been circular here
 #		mrr_fit<-MRRw2p(mrr_fail_data, mrr_susp_data)
-		mrr_fit<-lslr(getPPP(mrr_fail_data, mrr_susp_data))
-		shape<-mrr_fit[2]
-		scale<- mrr_fit[1]
-		vstart <- c(shape, scale)
+			mrr_fit<-lslr(getPPP(mrr_fail_data, mrr_susp_data))
+			shape<-mrr_fit[2]
+			scale<- mrr_fit[1]
+			vstart <- c(shape, scale)
+			warning("single failure data set may be candidate for weibayes fitting")
+		}
 
 	}else{
 		if(fit_dist=="lnorm"){
