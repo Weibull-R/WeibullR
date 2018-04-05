@@ -8,17 +8,17 @@
 MRRln3p<-function(x, s=NULL, bounds=FALSE, show=FALSE)  {
 # permit one to forget that second argument was reserved for a suspensions vector
 if(is.logical(s)) {
-	bounds<-s
 	show<-bounds
+	bounds<-s
 	s<-NULL
 }
 
-obj<-wblr.fit(wblr(x,s), dist="lognormal3p", modify.by.t0=T, col="blue2")
+obj<-wblr.fit(wblr(x,s), dist="lognormal3p", modify.by.t0=T, col="red2")
 fit<-obj$fit[[1]]$fit_vec
 attributes(fit)$data_types<-NULL
 ## bounds are not prepared for 3p fits, so the bounds argument is simply ignored.
 #if(bounds==TRUE) {
-#obj<-wblr.conf(obj, dq="minitab", col="deepskyblue3")
+#obj<-wblr.conf(obj, dq="minitab", col="pink2")
 #bnds<-obj$fit[[1]]$conf[[1]]$bounds
 #ret<-list(fit,bnds)
 #stitle<-"MRR fit with 90% double-sided pivotal bounds"

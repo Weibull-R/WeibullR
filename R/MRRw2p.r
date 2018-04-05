@@ -6,8 +6,8 @@ MRRw2p<-function(x,s=NULL, bounds=FALSE, show=FALSE) {
 
 # permit one to forget that second argument was reserved for a suspensions vector
 if(is.logical(s)) {
-	bounds<-s
 	show<-bounds
+	bounds<-s
 	s<-NULL
 }
 
