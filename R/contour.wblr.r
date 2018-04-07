@@ -10,9 +10,9 @@
 # contour parameters are drawn from a contour existing in the object(s) passed in, or 
 # from the base object (sometimes just defaults) if no contour exists in the object.
 
-contour.wblr<-function(x,...)  {
+contour.wblr<-function(x, ...)  {
 
-plot_contour(x,CL=seq(.1,.9,by=.1))
+plot_contour(x,CL=seq(.1,.9,by=.1), ...)
 
 
 }
