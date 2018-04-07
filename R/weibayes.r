@@ -34,19 +34,19 @@ weibayes<-function(x, s=NULL, beta) {
 
 ## could x be a dataframe with time and event columns??
 	suspensions<-NULL
-	if(is.vector(x))  {
+	if(is.vector(x) || length(x)==0)  {
+	if(length(x)>0) {
 		if(anyNA(x))  {
 		stop("NA in failure data")
 		}
-		if(any(x<=0))  {
+		if(any(x<-0))  {
 		stop("non-positive values in failure/occurrence data")
 		}
 
 
 ## I'm not convinced this needs to be sorted here, but it doesn't hurt
 		fail_vec<-sort(x)
-
-
+	}else fail_vec<-NULL
 
 		if(length(s)>0)  {
 		if(anyNA(s))  {
@@ -61,6 +61,7 @@ weibayes<-function(x, s=NULL, beta) {
 ## end pure vector argument processing
 	times<-c(fail_vec, susp_vec)
 	nfail<-length(fail_vec)
+
 
 	}else{
 ## here a time-event dataframe can be evaluated, if provided as x
@@ -82,7 +83,7 @@ weibayes<-function(x, s=NULL, beta) {
 ## verify 1's and 0's only in event
 ## using Jurgen's validation code
 			ev_info <- levels(factor(x$event))
-			if(identical(ev_info,c("0","1")) || identical(ev_info,"1")){
+			if(identical(ev_info,c("0","1")) || identical(ev_info,"1")|| identical(ev_info,"0")){
 			# okay x$event is indeed holding event indicators
 			}else{
 			stop("event column not '1' or '0' ")
@@ -108,6 +109,9 @@ weibayes<-function(x, s=NULL, beta) {
 		}  ## close dataframe processing
 	}  ## close input argument processing
 
+## handling the zero failure case
+	if(!exists("nfail")) nfail<-1
+	if(nfail==0) nfail<-1
 ## after all that data input manipulation
 ## here is the simple 1-parameter, weibayes method
 	 t_eta<-(times^beta)/nfail

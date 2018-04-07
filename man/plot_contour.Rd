@@ -10,7 +10,7 @@
 }
 
 \usage{
-plot_contour(x, CL=NULL, AL=TRUE, main="", sub="")
+plot_contour(x, CL=NULL, AL=TRUE, ...)
 }
 
 \arguments{
@@ -21,10 +21,9 @@ plot_contour(x, CL=NULL, AL=TRUE, main="", sub="")
     }
     \item{AL}{A Logical defining whether parameters of lognormal contours should be presented as AntiLog values.
     }
-    \item{main}{A string override for the the plot title that would otherwise be drawn from the contour.main option in the first \code{"wblr"} object provided.
-	}
-    \item{sub}{A string override for the the plot subtitle that would otherwise be drawn from the contour.sub option in the first \code{"wblr"} object provided.
-	}
+    \item{\dots}{
+        Entry for a limited set of graphic parameters (col, lty, lwd, xlim, ylim, main and sub)
+    }
 }
 
 \value{
