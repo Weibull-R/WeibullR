@@ -52,8 +52,9 @@ options.wblr<- function(...){
 
 ## options specific to wblr.fit
             dist="weibull",           ##  ("lognormal","lnorm","lognormal2p", "weibull2p","lognormal3p", "weibull3p")
-            method.fit=c("rr-xony"),           ## ("rr","rr-yonx", "mle","mle-rba", "mle-unbias")
+            method.fit=c("rr-xony"),           ## ("rr","rr-yonx", "mle","mle-rba", "mle-unbias", "weibayes"
 											## c("rr","xony") has been depreciated
+			weibayes.beta=1,
 ## thinking of implementing               "principal-components" or "princ-comp" for short
 
 ## options specific to wblr.conf

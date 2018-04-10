@@ -43,6 +43,9 @@ wblr.fit <- function(x, modify.by.t0=FALSE,...){
 			if(tolower(arg$method.fit[2])=="xony") arg$method.fit<-"rr-xony"
 			if(tolower(arg$method.fit[2])=="yonx") arg$method.fit<-"rr-yonx"
 		}
+	if(tolower(arg$method.fit) == "weibayes" && is.null(arg$weibayes.beta)) {
+		warning("weibayes.beta not provided, using default")
+	}
 
 	}
 
@@ -84,7 +87,7 @@ wblr.fit <- function(x, modify.by.t0=FALSE,...){
     supported_dist <- c(
         "weibull","weibull2p","weibull3p",
         "lognormal","lognormal2p","lognormal3p")
-    supported_fit <-  c("rr", "rr-xony", "rr-yonx", "mle","mle-rba","mle-unbias")
+    supported_fit <-  c("rr", "rr-xony", "rr-yonx", "mle","mle-rba","mle-unbias", "weibayes")
 	if(is.null(opafit$dist)){
 			opafit$dist <- "weibull2p"
 	}
@@ -103,6 +106,10 @@ wblr.fit <- function(x, modify.by.t0=FALSE,...){
 				#warning("3p modification on interval data is a questionable practice")
 			#}
 		}
+	}
+	
+	if(tolower(opafit$method.fit)== "weibayes" && !any(tolower(opafit$dist) %in% c("weibull","weibull2p"))) {
+		stop("weibayes fitting only applies to 2 parameter weibull")
 	}
 
 	if(modify.by.t0==TRUE) {
@@ -314,6 +321,48 @@ wblr.fit <- function(x, modify.by.t0=FALSE,...){
 		}
 
 	} ## close mle block
+	
+	
+##########################################################################
+############          WeiBayes                ###########################
+##########################################################################
+	if(tolower(opafit$method.fit) == "weibayes") {
+	
+## cannot process discovery and interval data sets with weibayes
+	if(!is.null(x$dlines)) stop("weibayes processing not implemented for interval data")
+	
+## It is necessary to re-construct a time-event-qty dataframe here to use in the weibayes call
+## x$data$dpoints may have been altered by a ties.handler
+
+			lrdiv<-x$data$lrq_frame$left/x$data$lrq_frame$right
+			lrqframe2<-data.frame(x$data$lrq_frame, lrdiv)
+
+			fail_df<-lrqframe2[lrqframe2$lrdiv==1,c(1,4,3)]
+			susp_df<-lrqframe2[lrqframe2$lrdiv<0,c(1,4,3)]
+			susp_df$lrdiv<-rep(0, nrow(susp_df))
+
+			teqframe<-rbind(fail_df, susp_df)
+			names(teqframe)<-c("time", "event", "qty")
+
+			weibayes_eta<-weibayes(teqframe, beta=opafit$weibayes.beta)
+			atleastonefit<-TRUE
+			fit_vec<-c(weibayes_eta, opafit$weibayes.beta)
+			names(fit_vec)<-c("Eta", "Beta")
+			x$fit[[i]]$fit_vec <- fit_vec
+			x$fit[[i]]$beta <- opafit$weibayes.beta
+			x$fit[[i]]$eta <- weibayes_eta
+			
+## ToDo provide loglikelihood gof?
+## Do something to help data range calculation in plot.wblr
+## Assure no confidence bound has been called for, or use conf interval calc from Abernethy as a default
+
+} # end of weibayes fitting
+
+
+
+
+
+
 
     if(!atleastonefit){
         warning("*** calculateSingleFit: Nothing has been fitted.  ***\n",

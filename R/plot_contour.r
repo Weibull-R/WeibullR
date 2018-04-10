@@ -9,7 +9,7 @@
 
 
 
-plot_contour <- function(x ,CL=NULL, AL=TRUE, main="", sub=""){
+plot_contour <- function(x ,CL=NULL, AL=TRUE,...){
 if(!is.null(CL)) {
 if(class(CL)=="wblr") stop("multiple wblr objects must be entered as a list")
 }
@@ -19,6 +19,8 @@ if(class(CL)=="wblr") stop("multiple wblr objects must be entered as a list")
 	        "a list of \"wblr\" objects.")
 	    }
 	    # as of this point, x is always a list of one or more wblr objects
+		
+	arg <- list(...)
 
     # get options list from first object
 ## opa options appear to set main.contour and sub.contour, which could have better been added directly as arguments to plot_contour
@@ -57,22 +59,20 @@ if(class(CL)=="wblr") stop("multiple wblr objects must be entered as a list")
 	  opa[opanames %in% plot_default_args()])
 	        plotargs$xlim <- xlimits
 	        plotargs$ylim <- ylimits
-			if(main=="")  {
-				plotargs$main <- opa$main.contour
-			}else{
-				plotargs$main<-main
-			}
-			if(sub=="")  {
-				plotargs$sub <- opa$sub.contour
-			}else{
-				plotargs$sub<-sub
-			}
-#	        plotargs$main <- opa$main.contour
-#	        plotargs$sub  <- opa$sub.contour
+
+	        plotargs$main <- opa$main.contour
+	        plotargs$sub  <- opa$sub.contour
 	        plotargs$log <- ""
 	        plotargs$xlab <- names(C2P[[1]]$contour)[1]
 	        plotargs$ylab <- names(C2P[[1]]$contour)[2]
-
+			plotargs$main <- opa$main.contour
+## overrides from the dots
+			if(!is.null(arg$xlim)) plotargs$xlim<-arg$xlim
+			if(!is.null(arg$ylim)) plotargs$ylim<-arg$ylim
+			if(is.null(arg$main)) plotargs$main<-arg$main
+			if(is.null(arg$sub)) plotargs$sub<-arg$sub
+			
+			
 	        do.call("plot.default",plotargs)
 	        if(opa$is.plot.grid){
 	            abline(
@@ -100,13 +100,19 @@ if(class(CL)=="wblr") stop("multiple wblr objects must be entered as a list")
 			lwd=opa$lwd.points,
 			cex=opa$cex.points)
 #browser()
+			lwd=C2P[[cntr]]$lwd
+			lty=C2P[[cntr]]$lty
+			col=C2P[[cntr]]$color
+## overrides from the dots
+			if(!is.null(arg$lwd)) lwd<-arg$lwd
+			if(!is.null(arg$lty)) lty<-arg$lty
+			if(!is.null(arg$col)) col<-arg$col
+#browser()
 	# plot the contours
-		points(C2P[[cntr]]$contour,type="l",
-			lwd=C2P[[cntr]]$lwd,
-			lty=C2P[[cntr]]$lty,
-			col=C2P[[cntr]]$color)
+		points(C2P[[cntr]]$contour,type="l", lwd=lwd, lty=lty, col=col)
 
 	}
+
 return(C2P)
 }
 

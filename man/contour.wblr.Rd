@@ -14,9 +14,7 @@
         Object of class \code{"wblr"} or a list of \code{wblr} objects.
     }
     \item{\dots}{
-        A placeholder required for S3 method conistency intended for setting graphic parameters
-        (like col, lty, lwd) but NOT IMPLEMENTED. Such graphic parameters are to be added in the
-        \code{.wblr} objects themselves.
+        Entry for a limited set of graphic parameters (col, lty, lwd, xlim, ylim, main and sub)
     }
 }
 \details{
