@@ -42,7 +42,8 @@ export(
 	plot_contour,
 	plot.wblr,
 	contour.wblr,
-	weibayes
+	weibayes,
+	weibayes.mle
 )
 S3method(plot, wblr) 
 S3method(contour, wblr) 
