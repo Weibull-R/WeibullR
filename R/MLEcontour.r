@@ -94,9 +94,9 @@ MLEcontour<-function(x,  dist="weibull", CL=0.9,dof=1,MLEfit=NULL, RadLimit=1e-5
 ##		require(WeibullR)
 ## in this case the x argument is already an mleframe
 		if(dist_num==1) {
-			MLEfit<-unname(mlefit(x))
+			MLEfit<-unname(suppressWarnings(mlefit(x)))
 		}else{
-			MLEfit<-unname(mlefit(x, dist="lognormal"))
+			MLEfit<-unname(suppressWarnings(mlefit(x, dist="lognormal")))
 		}
 	}else{
 		unname(MLEfit)

@@ -107,6 +107,7 @@ mlefit<-function(x, dist="weibull", npar=2, debias="none", optcontrol=NULL)  {
 		if(Nf==1 && Nd+Ni==0) {
 		weibayes_scale <-x[failNDX,1]+sum(x[suspNDX,1])
 		vstart<- c(1, weibayes_scale)
+		warning("single failure data set may be candidate for weibayes fitting")
 		}else{
 # use of quick fit could have been circular here
 #		mrr_fit<-MRRw2p(mrr_fail_data, mrr_susp_data)
@@ -114,7 +115,7 @@ mlefit<-function(x, dist="weibull", npar=2, debias="none", optcontrol=NULL)  {
 			shape<-mrr_fit[2]
 			scale<- mrr_fit[1]
 			vstart <- c(shape, scale)
-			warning("single failure data set may be candidate for weibayes fitting")
+
 		}
 
 	}else{

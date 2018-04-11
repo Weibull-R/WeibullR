@@ -45,7 +45,7 @@ weibayes.mle<-function(x, beta=NULL, eta=NULL, incr=1e-7, listout=FALSE)  {
 			eta2<-cntr$Eta[max(lower_pos)]-eta2delta *bratio2
 		}
 
-		return(c(eta1, eta2))
+		return(sort(c(eta1, eta2)))
 	}
 
 	beta_bounds<-function(x, eta) {
@@ -66,7 +66,7 @@ weibayes.mle<-function(x, beta=NULL, eta=NULL, incr=1e-7, listout=FALSE)  {
 		if(length(lower_pos)>length(upper_pos))  {
 	## interpolate the beta bounds per upper_pos
 			eratio1<-(cntr$Eta[min(upper_pos)]-eta)/(cntr$Eta[min(upper_pos)]-cntr$Eta[min(upper_pos)-1])
-			beta1delta<-cntr$Eta[min(upper_pos)]-cntr$Eta[min(upper_pos)-1]
+			beta1delta<-cntr$Beta[min(upper_pos)]-cntr$Beta[min(upper_pos)-1]
 			beta1<-cntr$Beta[min(upper_pos)]-beta1delta *eratio1
 			eratio2<-(cntr$Eta[max(upper_pos)]-eta)/(cntr$Eta[max(upper_pos)]-cntr$Eta[max(upper_pos)+1])
 			beta2delta<-cntr$Beta[max(upper_pos)]-cntr$Beta[max(upper_pos)+1]
@@ -81,7 +81,7 @@ weibayes.mle<-function(x, beta=NULL, eta=NULL, incr=1e-7, listout=FALSE)  {
 			beta2<-cntr$Beta[max(lower_pos)]-beta2delta *eratio2
 		}
 
-		return(c(beta1, beta2))
+		return(sort(c(beta1, beta2)))
 	}
 
 ## Main Function in two parts, known beta, or known eta
