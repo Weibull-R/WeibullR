@@ -69,7 +69,9 @@ else   {
      qwl=T2[Fbl/i-5];
      qwu=T2[Fbu/i-5];
 /* Then interpolate using log(F) and log(Fbounds) */
-     qwccc2=qwl+((log(F)-log(Fbl))/(log(Fbu)-log(Fbl))*(qwu-qwl));
+/* casting integers to double for arguments to the log function */
+/* for complieance using platform: i386-pc-solaris2.10 (32-bit) */
+     qwccc2=qwl+((log((double) F)-log((double) Fbl))/(log((double) Fbu)-log((double) Fbl))*(qwu-qwl));
      CCC2=1-1/exp(qwccc2);
     }
    }else{
