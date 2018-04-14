@@ -29,7 +29,7 @@ The WeibullR package provides a flexible data entry capability with three levels
 	}
 Data entry is made through the Quick Fit functions, \code{\link{wblr}}, or on the backend through \code{\link{getPPP}} for rank regression, \code{\link{mleframe}} for mle processing.
  In all cases the primary argument \code{x} can be a vector of exact time failures or a dataframe with \code{time}, and \code{event} columns as a minimum. An additional column \code{qty} may optionally be used to record duplicated data.
- If the dataframe entry is not used (in favor of an exact time failure vector), a second argument \code{s} can be used to enter a vector of last observed success times for right censored data (suspensions).\cr
+ If the dataframe entry is not used (in favor of an exact time failure vector), a second argument, \code{s}, can be used to enter a vector of last observed success times for right censored data (suspensions).\cr
  Beyond the entry of the first two data types, interval data (including discoveries with last known success time=0) are entered via argument \code{interval} as a dataframe with columns \code{left}, and \code{right} as a minimum.
  As with the primary argument dataframe entry, an additional column \code{qty} may optionally be used to record duplicated interval data.
  Such interval data entry is not supported with the Quick Fit functions.
