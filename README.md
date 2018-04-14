@@ -69,14 +69,12 @@ a dataframe with `time`, and `event`columns as a minimum. An additional column
 `qty` may optionally be used to record duplicated data.
 
 If the dataframe entry is not used (in favor of an exact time failure vector), a
-second argument `s`can be used to enter a vector of last observed success times
-for right censored data (suspensions).
+second argument, `s,` can be used to enter a vector of last observed success
+times for right censored data (suspensions).
 
 Beyond the entry of the first two data types, interval data (including
 discoveries with last known success time=0) are entered via argument `interval`
-as a dataframe with columns`left`, and `right` as a miniumum.
-
-As with the primary argument dataframe entry, an additional column `qty` may
-optionally be used to record duplicated interval data.
-
-Such interval data entry is not supported with the Quick Fit functions.
+as a dataframe with columns`left`, and `right` as a miniumum. As with the
+primary argument dataframe entry, an additional column `qty` may optionally be
+used to record duplicated interval data. Such interval data entry is not
+supported with the Quick Fit functions.
