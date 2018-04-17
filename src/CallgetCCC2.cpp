@@ -91,7 +91,7 @@ else   {
       qwl=T3[Fbl/i-3];
       qwu=T3[Fbu/i-3];
 /* Then interpolate using log(F) and log(Fbounds) */
-      qwccc2=qwl+((log(F)-log(Fbl))/(log(Fbu)-log(Fbl))*(qwu-qwl));
+      qwccc2=qwl+((log((double) F)-log((double) Fbl))/(log((double) Fbu)-log((double) Fbl))*(qwu-qwl));
       CCC2=1-1/exp(qwccc2);
      }
     }
