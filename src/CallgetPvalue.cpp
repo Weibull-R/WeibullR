@@ -546,7 +546,7 @@ else
 	{
 		if(Aitken_pts[j]<14)
 		{
-			Aitken_Pvals[j]=M2[Aitken_pts[j]][0]+log(F)*M2[Aitken_pts[j]][1]+pow(log(F),2)*M2[Aitken_pts[j]][2]+pow(log(F),3)*M2[Aitken_pts[j]][3];
+			Aitken_Pvals[j]=M2[Aitken_pts[j]][0]+log((double) F)*M2[Aitken_pts[j]][1]+pow(log((double) F),2)*M2[Aitken_pts[j]][2]+pow(log((double) F),3)*M2[Aitken_pts[j]][3];
 		}
 		else if(Aitken_pts[j]==14)
 		{
@@ -555,18 +555,18 @@ else
 		else if(Aitken_pts[j]<20)
 		{
 
-			Aitken_Pvals[j]=M2[Aitken_pts[j]-1][0]+log(F)*M2[Aitken_pts[j]-1][1]+pow(log(F),2)*M2[Aitken_pts[j]-1][2]+pow(log(F),3)*M2[Aitken_pts[j-1]][3];
+			Aitken_Pvals[j]=M2[Aitken_pts[j]-1][0]+log((double) F)*M2[Aitken_pts[j]-1][1]+pow(log((double) F),2)*M2[Aitken_pts[j]-1][2]+pow(log((double) F),3)*M2[Aitken_pts[j-1]][3];
 		}
 		else if(Aitken_pts[j]<43)
 		{
 			if(F<91) 
 			{
 
-				Aitken_Pvals[j]=M3a[Aitken_pts[j]-20][0]+log(F)*M3a[Aitken_pts[j]-20][1]+pow(log(F),2)*M3a[Aitken_pts[j]-20][2]+pow(log(F),3)*M3a[Aitken_pts[j]-20][3];
+				Aitken_Pvals[j]=M3a[Aitken_pts[j]-20][0]+log((double) F)*M3a[Aitken_pts[j]-20][1]+pow(log((double) F),2)*M3a[Aitken_pts[j]-20][2]+pow(log((double) F),3)*M3a[Aitken_pts[j]-20][3];
 			}
 			else
 			{
-				Aitken_Pvals[j]=M3b[Aitken_pts[j]-20][0]+log(F)*M3b[Aitken_pts[j]-20][1]+pow(log(F),2)*M3b[Aitken_pts[j]-20][2]+pow(log(F),3)*M3b[Aitken_pts[j]-20][3];
+				Aitken_Pvals[j]=M3b[Aitken_pts[j]-20][0]+log((double) F)*M3b[Aitken_pts[j]-20][1]+pow(log((double) F),2)*M3b[Aitken_pts[j]-20][2]+pow(log((double) F),3)*M3b[Aitken_pts[j]-20][3];
 			}
 		}
 		else
