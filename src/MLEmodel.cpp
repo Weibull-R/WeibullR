@@ -259,7 +259,7 @@ SEXP MLEmodel::MLE_Simplex(SEXP arg1, arma::colvec vstart, double tz, int listou
 		int vg=(int) ndx(2);
  // generate the initial error measure
 		double P2avg=arma::as_scalar(mean(v.row(1)));
-		double error=arma::as_scalar(sum(pow((v.row(1)-P2avg),2.0)/npar));
+		double error=arma::as_scalar(sum(pow((v.row(1)-P2avg), 2.0)/npar));
  // initialize the output dataframe for construction as a matrix
 		arma::rowvec DFrow(4);
 		DFrow(0)=v(0,vs);
@@ -329,7 +329,7 @@ SEXP MLEmodel::MLE_Simplex(SEXP arg1, arma::colvec vstart, double tz, int listou
 		vg=(int) ndx(2);
 
 		P2avg=arma::as_scalar(mean(v.row(1)));
-		error=arma::as_scalar(sum(pow((v.row(1)-P2avg),2.0)/npar));
+		error=arma::as_scalar(sum(pow((v.row(1)-P2avg), 2.0)/npar));
 		DFrow(0)=v(0,vs);
 		DFrow(1)=v(1,vs);
 		DFrow(2)=funval(vs);
