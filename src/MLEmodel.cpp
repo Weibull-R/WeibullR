@@ -236,125 +236,323 @@ SEXP MLEmodel::MLE_Simplex(SEXP arg1, arma::colvec vstart, double tz, int listou
 		double ALPHA=1.0, BETA=0.5, GAMMA=2.0;
  // set the sign for minimization of negative LogLikelihood
 		int sign= -1;
-
- // construct the initial simplex
-		arma::mat v(2,3);
-		for(int i=0;i<k;i++)  {
-		v.col(i)=vstart;
-		}
-		v(0,1)=v(0,1)*1.2;
-		v(1,2)=v(1,2)*1.2;
-
-		arma::colvec funval(3);
-		for(int i=0;i<k;i++)  {
-		funval(i)=LogLike(v.col(i), sign, dist_num, tz );
-		}
-
-
-
- // assign vertex order variables
-		arma::uvec ndx=sort_index(funval);
-		int vs=(int) ndx(0);
-		int vh=(int) ndx(1);
-		int vg=(int) ndx(2);
- // generate the initial error measure
-		double P2avg=arma::as_scalar(mean(v.row(1)));
-		double error=arma::as_scalar(sum(pow((v.row(1)-P2avg), 2.0)/npar));
- // initialize the output dataframe for construction as a matrix
-		arma::rowvec DFrow(4);
-		DFrow(0)=v(0,vs);
-		DFrow(1)=v(1,vs);
-		DFrow(2)=funval(vs);
-		DFrow(3)=error;
-		arma::mat DF=DFrow;
-
- // initialization of variables used in the loop
-		arma::colvec vm, vr, ve, vc;
-		double fr, fe, fc;
-		int loopcount=1;
-		int warn=0;
-
- // This is the main loop for the minimization
-	while(error>limit)  {
- // calculate the centroid
-		vm=(v.col(vs)+v.col(vh))/2.0;
- // reflect vg to new vertex vr
-		vr=(vm+ALPHA*(vm-v.col(vg)));
-		fr=LogLike(vr, sign, dist_num, tz );
- // depending on success, save reflected vertex in place of vg
-		if (fr < funval(vh) && fr >= funval(vs)) {
-		v.col(vg)=vr;
-		funval(vg)=fr;
-		}else{
-			if(funval(vs)<fr)  {
-
- // test for an outside contraction
-			if (fr < funval(vg) && fr >= funval(vh))   {
-				vc=vm+BETA*(vr-vm);
-				}else{
- // this is an inside contraction
-					vc=vm-BETA*(vr-vm);
-				}
-				fc=LogLike(vc, sign, dist_num, tz );
- // upon acceptance replace vg with contracton
-				if (fc < funval(vg)) {
-					v.col(vg) = vc;
-					funval(vg)=fc;
-				}else{
- // upon rare-to-never case shrink the simplex
-					v.col(vh)=v.col(vs)+(v.col(vh)-v.col(vs))/2.0;
-					v.col(vg)=v.col(vs)+(v.col(vg)-v.col(vs))/2.0;
- // This case results in two function calculations and simply replacing vh and vg points
-					funval(vh)=LogLike(v.col(vh), sign, dist_num, tz );
-					funval(vg)=LogLike(v.col(vg), sign, dist_num, tz );
-				}
-			}else{
-// now we make an expansion
-				ve=vm+GAMMA*(vr-vm);
-				fe=LogLike(ve, sign, dist_num, tz );
- // store the better of reflection or expansion in place of vg
-				if (fe < fr) {
-					v.col(vg) =ve;
-					funval(vg)=fe;
-				}else{
-					v.col(vg) = vr;
-					funval(vg)=fr;
-				}
-			}
-		}
- //re-assign vertex order variables
-		ndx=sort_index(funval);
-		vs=(int) ndx(0);
-		vh=(int) ndx(1);
-		vg=(int) ndx(2);
-
-		P2avg=arma::as_scalar(mean(v.row(1)));
-		error=arma::as_scalar(sum(pow((v.row(1)-P2avg), 2.0)/npar));
-		DFrow(0)=v(0,vs);
-		DFrow(1)=v(1,vs);
-		DFrow(2)=funval(vs);
-		DFrow(3)=error;
-		DF=join_cols(DF,DFrow);
-
-		loopcount=loopcount+1;
-		if(loopcount>maxit)  {
-			warn=1;
-			break;
-		}
-
-
-// then close main iteration loop
-	}
-
-
-		Rcpp::NumericVector outvec(4);
-		if(dist_num==1) {
-		outvec[0]=v(1,vs);
-		outvec[1]=v(0,vs);
-		}else{
-		outvec[0]=v(0,vs);
-		outvec[1]=v(1,vs);
-		}
+// declare objects that must exist beyond dist_num if blocks		
+		Rcpp::NumericVector outvec(4);	
+		arma::colvec funval(3);	
+		int vs = 0;	
+		arma::mat DF;
+		int warn=0;	
+			
+// separate weibull from lognormal treatment here						
+// starting with weibull						
+if(dist_num == 1)  {						
+						
+ // construct the initial simplex						
+		arma::colvec transvstart(2);				
+		arma::colvec expv1(2);				
+		transvstart(0) = vstart(0);				
+		transvstart(1) = log(vstart(1));				
+		arma::mat v(2,3);				
+		for(int i=0;i<k;i++)  {				
+		v.col(i)=transvstart;				
+		}				
+		v(0,1)=v(0,1)*1.2;				
+		v(1,2)=v(1,2)*1.2;				
+						
+//		arma::colvec funval(3);				
+		for(int i=0;i<k;i++)  {				
+//		funval(i)=LogLike(v.col(i), sign, dist_num, tz );				
+		expv1(0) = v(0,i);				
+		expv1(1) = exp(v(1,i));				
+		funval(i)=LogLike(expv1, sign, dist_num, tz );				
+		}				
+						
+						
+						
+ // assign vertex order variables						
+		arma::uvec ndx=sort_index(funval);				
+		vs=(int) ndx(0);				
+		int vh=(int) ndx(1);				
+		int vg=(int) ndx(2);				
+ // generate the initial error measure						
+		double P2avg=arma::as_scalar(mean(v.row(1)));				
+		double error=arma::as_scalar(sum(pow((v.row(1)-P2avg), 2.0)/npar));				
+ // initialize the output dataframe for construction as a matrix						
+	arma::rowvec DFrow(4);				
+		DFrow(0)=v(0,vs);				
+		DFrow(1)=v(1,vs);				
+		DFrow(2)=funval(vs);				
+		DFrow(3)=error;				
+		DF=DFrow;				
+						
+ // initialization of variables used in the loop						
+		arma::colvec vm, vr, ve, vc;				
+		double fr, fe, fc;				
+		int loopcount=1;				
+//		int warn=0;				
+						
+ // This is the main loop for the minimization						
+	while(error>limit)  {					
+ // calculate the centroid						
+		vm=(v.col(vs)+v.col(vh))/2.0;				
+ // reflect vg to new vertex vr						
+		vr=(vm+ALPHA*(vm-v.col(vg)));				
+//		fr=LogLike(vr, sign, dist_num, tz );				
+//		fr=sign*tryLL(vr, dist_num);				
+		expv1(0) = vr(0);				
+		expv1(1) = exp(vr(1));				
+		fr=sign*tryLL(expv1, dist_num);				
+		if(fr==0) {				
+			warn=2;			
+			break;			
+		}				
+ // depending on success, save reflected vertex in place of vg						
+		if (fr < funval(vh) && fr >= funval(vs)) {				
+		v.col(vg)=vr;				
+		funval(vg)=fr;				
+		}else{				
+			if(funval(vs)<fr)  {			
+						
+ // test for an outside contraction						
+			if (fr < funval(vg) && fr >= funval(vh))   {			
+				vc=vm+BETA*(vr-vm);		
+				}else{		
+ // this is an inside contraction						
+					vc=vm-BETA*(vr-vm);	
+				}		
+//				fc=LogLike(vc, sign, dist_num, tz );		
+				expv1(0) = vc(0);		
+				expv1(1) = exp(vc(1));		
+				fc=LogLike(expv1, sign, dist_num, tz );		
+ // upon acceptance replace vg with contracton						
+				if (fc < funval(vg)) {		
+					v.col(vg) = vc;	
+					funval(vg)=fc;	
+				}else{		
+ // upon rare-to-never case shrink the simplex						
+					v.col(vh)=v.col(vs)+(v.col(vh)-v.col(vs))/2.0;	
+					v.col(vg)=v.col(vs)+(v.col(vg)-v.col(vs))/2.0;	
+ // This case results in two function calculations and simply replacing vh and vg points						
+//					funval(vh)=LogLike(v.col(vh), sign, dist_num, tz );	
+					expv1(0) = v(0,vh);	
+					expv1(1) = exp(v(1,vh));	
+					funval(vh)=LogLike(expv1, sign, dist_num, tz );	
+//					funval(vg)=LogLike(v.col(vg), sign, dist_num, tz );	
+					expv1(0) = v(0,vg);	
+					expv1(1) = exp(v(1,vg));	
+					funval(vg)=LogLike(expv1, sign, dist_num, tz );	
+				}		
+			}else{			
+// now we make an expansion						
+				ve=vm+GAMMA*(vr-vm);		
+//				fe=LogLike(ve, sign, dist_num, tz );		
+				expv1(0) = ve(0);		
+				expv1(1) = exp(ve(1));		
+				fe=sign*tryLL(expv1, dist_num);		
+				if(fe==0) {		
+					warn=3;	
+					break;	
+				}		
+ // store the better of reflection or expansion in place of vg						
+				if (fe < fr) {		
+					v.col(vg) =ve;	
+					funval(vg)=fe;	
+				}else{		
+					v.col(vg) = vr;	
+					funval(vg)=fr;	
+				}		
+			}			
+		}				
+ //re-assign vertex order variables						
+		ndx=sort_index(funval);				
+		vs=(int) ndx(0);				
+		vh=(int) ndx(1);				
+		vg=(int) ndx(2);				
+						
+		P2avg=arma::as_scalar(mean(v.row(1)));				
+		error=arma::as_scalar(sum(pow((v.row(1)-P2avg), 2.0)/npar));				
+		DFrow(0)=v(0,vs);				
+		DFrow(1)=v(1,vs);				
+		DFrow(2)=funval(vs);				
+		DFrow(3)=error;				
+		DF=join_cols(DF,DFrow);				
+						
+		loopcount=loopcount+1;				
+		if(loopcount>maxit)  {				
+			warn=1;			
+			break;			
+		}				
+						
+						
+// then close main iteration loop						
+	}					
+						
+						
+//		Rcpp::NumericVector outvec(4);				
+//		if(dist_num==1) {				
+		outvec[0]=exp(v(1,vs));				
+		outvec[1]=v(0,vs);				
+//		}else{				
+//		outvec[0]=v(0,vs);				
+//		outvec[1]=v(1,vs);				
+//		}				
+// end of weibull						
+						
+}else{						
+// start the lognormal treatment						
+						
+ // construct the initial simplex						
+//		arma::colvec transvstart;				
+//		arma::colvec expv1;				
+//		transvstart(0) = vstart(0);				
+//		transvstart(1) = log(vstart(1));				
+		arma::mat v(2,3);				
+		for(int i=0;i<k;i++)  {				
+		v.col(i)=vstart;				
+		}				
+		v(0,1)=v(0,1)*1.2;				
+		v(1,2)=v(1,2)*1.2;				
+						
+//		arma::colvec funval(3);				
+		for(int i=0;i<k;i++)  {				
+		funval(i)=LogLike(v.col(i), sign, dist_num, tz );				
+//		expv1(0) = v(0,i);				
+//		expv1(1) = exp(v(1,i));				
+//		funval(i)=LogLike(expv1, sign, dist_num, tz );				
+		}				
+						
+						
+						
+ // assign vertex order variables						
+		arma::uvec ndx=sort_index(funval);				
+		vs=(int) ndx(0);				
+		int vh=(int) ndx(1);				
+		int vg=(int) ndx(2);				
+ // generate the initial error measure						
+		double P2avg=arma::as_scalar(mean(v.row(1)));				
+		double error=arma::as_scalar(sum(pow((v.row(1)-P2avg), 2.0)/npar));				
+ // initialize the output dataframe for construction as a matrix						
+		arma::rowvec DFrow(4);				
+		DFrow(0)=v(0,vs);				
+		DFrow(1)=v(1,vs);				
+		DFrow(2)=funval(vs);				
+		DFrow(3)=error;				
+		DF=DFrow;				
+						
+ // initialization of variables used in the loop						
+		arma::colvec vm, vr, ve, vc;				
+		double fr, fe, fc;				
+		int loopcount=1;				
+//		int warn=0;				
+						
+ // This is the main loop for the minimization						
+	while(error>limit)  {					
+ // calculate the centroid						
+		vm=(v.col(vs)+v.col(vh))/2.0;				
+ // reflect vg to new vertex vr						
+		vr=(vm+ALPHA*(vm-v.col(vg)));				
+//		fr=LogLike(vr, sign, dist_num, tz );				
+		fr=sign*tryLL(vr, dist_num);				
+//		expv1(0) = vr(0);				
+//		expv1(1) = exp(vr(1));				
+//		fr=sign*tryLL(expv1, dist_num);				
+		if(fr==0) {				
+			warn=2;			
+			break;			
+		}				
+ // depending on success, save reflected vertex in place of vg						
+		if (fr < funval(vh) && fr >= funval(vs)) {				
+		v.col(vg)=vr;				
+		funval(vg)=fr;				
+		}else{				
+			if(funval(vs)<fr)  {			
+						
+ // test for an outside contraction						
+			if (fr < funval(vg) && fr >= funval(vh))   {			
+				vc=vm+BETA*(vr-vm);		
+				}else{		
+ // this is an inside contraction						
+					vc=vm-BETA*(vr-vm);	
+				}		
+				fc=LogLike(vc, sign, dist_num, tz );		
+//				expv1(0) = vc(0);		
+//				expv1(1) = exp(vc(1));		
+//				fc=LogLike(expv1, sign, dist_num, tz );		
+ // upon acceptance replace vg with contracton						
+				if (fc < funval(vg)) {		
+					v.col(vg) = vc;	
+					funval(vg)=fc;	
+				}else{		
+ // upon rare-to-never case shrink the simplex						
+					v.col(vh)=v.col(vs)+(v.col(vh)-v.col(vs))/2.0;	
+					v.col(vg)=v.col(vs)+(v.col(vg)-v.col(vs))/2.0;	
+ // This case results in two function calculations and simply replacing vh and vg points						
+					funval(vh)=LogLike(v.col(vh), sign, dist_num, tz );	
+//					expv1(0) = v(0,vh);	
+//					expv1(1) = exp(v(1,vh));	
+//					funval(vh)=LogLike(expv1, sign, dist_num, tz );	
+					funval(vg)=LogLike(v.col(vg), sign, dist_num, tz );	
+//					expv1(0) = v(0,vg);	
+//					expv1(1) = exp(v(1,vg));	
+//					funval(vg)=LogLike(expv1, sign, dist_num, tz );	
+				}		
+			}else{			
+// now we make an expansion						
+				ve=vm+GAMMA*(vr-vm);		
+				fe=LogLike(ve, sign, dist_num, tz );		
+//				expv1(0) = ve(0);		
+//				expv1(1) = exp(ve(1));		
+//				fe=sign*tryLL(expv1, dist_num);		
+				if(fe==0) {		
+					warn=3;	
+					break;	
+				}		
+ // store the better of reflection or expansion in place of vg						
+				if (fe < fr) {		
+					v.col(vg) =ve;	
+					funval(vg)=fe;	
+				}else{		
+					v.col(vg) = vr;	
+					funval(vg)=fr;	
+				}		
+			}			
+		}				
+ //re-assign vertex order variables						
+		ndx=sort_index(funval);				
+		vs=(int) ndx(0);				
+		vh=(int) ndx(1);				
+		vg=(int) ndx(2);				
+						
+		P2avg=arma::as_scalar(mean(v.row(1)));				
+		error=arma::as_scalar(sum(pow((v.row(1)-P2avg), 2.0)/npar));				
+		DFrow(0)=v(0,vs);				
+		DFrow(1)=v(1,vs);				
+		DFrow(2)=funval(vs);				
+		DFrow(3)=error;				
+		DF=join_cols(DF,DFrow);				
+						
+		loopcount=loopcount+1;				
+		if(loopcount>maxit)  {				
+			warn=1;			
+			break;			
+		}				
+						
+						
+// then close main iteration loop						
+	}					
+						
+						
+//		Rcpp::NumericVector outvec(4);				
+//		if(dist_num==1) {				
+//		outvec[0]=exv(p(1,vs));				
+//		outvec[1]=v(0,vs);				
+//		}else{				
+		outvec[0]=v(0,vs);				
+		outvec[1]=v(1,vs);				
+//		}				
+// end of lognormal treatment						
+}	
+					
 // note: multiplication by sign here assures positive log-likelihood is delivered
 		outvec[2]=sign*funval(vs);
 		outvec[3]=warn;
