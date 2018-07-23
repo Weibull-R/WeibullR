@@ -107,7 +107,7 @@ options.wblr<- function(...){
             is.plot.ppcoordinates=FALSE,
             is.plot.legend=TRUE,
 
-            #         legend.position="bottomright",
+            legend.position="bottomright",
             legend.text.size=0.7,
             label="",
             in.legend=TRUE,
