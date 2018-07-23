@@ -80,9 +80,20 @@ buildSingleDataLegend <- function(x,opadata,...){
     items <- c("legend","lty","lwd","pch","col")
     le  <- lapply(items,fu2,li)
     names(le) <- items
-    if(identical(label <- opadata$label,""))label <- NULL
+    if(identical(label <- opadata$label,"")){label <- NULL}
+	supported_position <- c("bottomright", "bottom", "bottomleft", "left", "topleft", "top", "topright", "right", "center")
+	if(!any(tolower(opadata$legend.position) %in% supported_position)){
+		warrn(paste0(opafit$legend.position," is not a supported legend position, bottomright applied"))
+		opa.data$legend.position<-"bottomright"
+	}
+#	if(opadata$legend.position == "topleft") {
+#	position="topleft"
+#	}else{
+#	position="bottomright"
+#	}
     le$rect <- legend(
-        "bottomright",
+		tolower(opadata$legend.position),
+#        "bottomright",
         legend=le$legend,
         title=label,
         cex = opadata$legend.text.size,
@@ -190,10 +201,20 @@ buildSingleFitLegend <- function(fit,opadata,...){
         items <- c("legend","lty","lwd","pch","col")
         le  <- lapply(items,fu2,li)
         names(le) <- items
-        if(identical(label <- opafit$label,""))label <- NULL
+        if(identical(label <- opafit$label,"")){label <- NULL}
+		supported_position <- c("bottomright", "bottom", "bottomleft", "left", "topleft", "top", "topright", "right","center")
+		if(!any(tolower(opafit$legend.position) %in% supported_position)){
+		warrn(paste0(opafit$legend.position," is not a supported legend position, bottomright applied"))
+		opa.fit$legend.position<-"bottomright"
+	}
+#		if(opafit$legend.position == "topleft") {
+#		position="topleft"
+#		}else{
+#		position="bottomright"
+#		}		
         le$rect <- legend(
-            "bottomright",
-    #                "topright",
+			tolower(opafit$legend.position),
+    #        "bottomright",
             legend=le$legend,
             title=label,
             cex = opafit$legend.text.size,

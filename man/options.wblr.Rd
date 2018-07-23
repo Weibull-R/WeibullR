@@ -145,7 +145,7 @@ Options specific to \code{\link{wblr.conf}}
             A character string describing the techniques used for calculating confidence interval bounds.
             Implemented methods are "pivotal-rr" (default), "bbb", "fm" "fmbounds", and "lrb".
 			Methods must conform to the method.fit in the wblr.fit call immediately preceding the wblr.conf call.
-			Method "pivotal-rr" requires a rank regression fit method. Methods "fm", "fmbounds, and "lrb" require a mle based fit.
+			Method "pivotal-rr" requires a rank regression fit method. Methods "fm", "fmbounds", and "lrb" require a mle based fit.
         }
         \item{\code{dq}}{
 			A named series of quantiles at which confidence interval bounds will be calculated.
@@ -252,6 +252,8 @@ General graphical options
 				\item{\code{is.plot.ppcoordinates}}{ default \code{FALSE}.
 				}
 				\item{\code{is.plot.legend}}{ default \code{TRUE}.
+				}
+				\item{\code{legend.position}}{ default \code{"bottomright"}. See \code{\link[legend]} Details.
 				}
 				\item{\code{legend.text.size}}{ default \code{0.7}.
 				}
