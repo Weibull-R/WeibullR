@@ -116,7 +116,8 @@ if(dist_num==1)  {
 	ptDensity<-ceiling(ptDensity)
 
 ## Call the C++ code to deliver a matrix of contour points
-	resultMat<- .Call("getContour", MLEclassList, par_hat, dist_num, MLLx, ratioLL, RadLimit, ptDensity, package="WeibullR")
+##	resultMat<- .Call("getContour", MLEclassList, par_hat, dist_num, MLLx, ratioLL, RadLimit, ptDensity, package="WeibullR")
+	resultMat<- .Call(getContour, MLEclassList, par_hat, dist_num, MLLx, ratioLL, RadLimit, ptDensity)
 	if(sum(resultMat[,3])>0) {
 		warning("instability detected")
 	}

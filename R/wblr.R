@@ -205,7 +205,8 @@ if( nrow(mod2x)==nrow(p) )  {
 	dpoints<-NULL
 	dlines<-NULL
 ## This is the complex loop implemented in C++ for un-handled duplicates
-	ret<-.Call("plotData", mod2x$left, mod2x$right, mod2x$qty, mod2x$tmean, p$time, p$ppp, p$adj_rank, package="WeibullR")
+##	ret<-.Call("plotData", mod2x$left, mod2x$right, mod2x$qty, mod2x$tmean, p$time, p$ppp, p$adj_rank, package="WeibullR")
+	ret<-.Call(plotData, mod2x$left, mod2x$right, mod2x$qty, mod2x$tmean, p$time, p$ppp, p$adj_rank)
 	if(nrow(ret$dpoints)>0) dpoints<-ret$dpoints
 	if(nrow(ret$dlines)>0) dlines<-ret$dlines
 

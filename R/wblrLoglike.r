@@ -92,8 +92,8 @@ wblrLoglike<-function(par, x, dist="weibull", sign=1, tz=0 )  {
 		stop("sign must be 1 or -1")
 	}	
 							
-	outval<-.Call("MLEloglike",MLEclassList,par,dist_num, sign, tz, package="WeibullR")
-				
+##	outval<-.Call("MLEloglike",MLEclassList,par,dist_num, sign, tz, package="WeibullR")
+	outval<-.Call(MLEloglike,MLEclassList,par,dist_num, sign, tz)				
 			
 outval			
 }

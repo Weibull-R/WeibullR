@@ -104,7 +104,8 @@ if(is.vector(x)) {
 
 	if(aranks=="Johnson")  {
 		## adjust ranks using Leonard Johnson's method
-		 adj_rank<-.Call("adjustedRank", prep_df$event, package="WeibullR")
+##		 adj_rank<-.Call("adjustedRank", prep_df$event, package="WeibullR")
+		 adj_rank<-.Call(adjustedRank, prep_df$event)
 		##	eliminate suspensions and the event column	
 		ftime<-prep_df$time[prep_df$event==1]
 		## combine ftime and adj_rank  as columns in re-defined prep_df

@@ -42,9 +42,9 @@ lslr<-function(x, dist="weibull", npar=2, reg_method="XonY")  {
 	if(fit_dist=="lnorm")casenum=casenum+4
 	if(dist=="gumbel") casenum=casenum+8
 
-
-	resultVec<-.Call("LSLR", x$time, x$ppp, limit, casenum , package="WeibullR")
-
+##	resultVec<-.Call("LSLR", x$time, x$ppp, limit, casenum , package="WeibullR")
+	resultVec<-.Call(LSLR, x$time, x$ppp, limit, casenum)
+	
 	if(casenum < 4) {
 		if(length(resultVec)==3)  {
 			prr<-AbPval(dim(x)[1], resultVec[3])

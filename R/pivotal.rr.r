@@ -55,9 +55,8 @@ pivotal.rr<-function(x, event=NULL, dist="weibull", reg_method="XonY", R2, CI, u
 	if(dist=="lnorm")casenum=casenum+2			
 	if(dist=="gumbel") casenum=casenum+4			
 				
-				
-	result<-.Call("pivotalMC", x$ppp, event, c(R2,CI,P1,P2), S, seed, dq, ProgRpt, casenum , package="WeibullR")
-
+##	result<-.Call("pivotalMC", x$ppp, event, c(R2,CI,P1,P2), S, seed, dq, ProgRpt, casenum , package="WeibullR")
+	result<-.Call(pivotalMC, x$ppp, event, c(R2,CI,P1,P2), S, seed, dq, ProgRpt, casenum)
 
 return(result)				
 }				
