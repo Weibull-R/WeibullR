@@ -83,7 +83,11 @@
         \item{\code{is.plot.ppcoordinates}}{ default \code{FALSE}.
         }
         \item{\code{is.plot.legend}}{ default \code{TRUE}.
-        }
+		}
+		\item{\code{legend.position}}{ default \code{"bottomright"}. See \code{\link[legend]} Details.
+		}
+		\item{\code{legend.inset}}{ default \code{c(0,0)}. legend inset values are fractions of graph width and height.
+		}
         \item{\code{legend.text.size}}{ default \code{0.7}.
         }
         \item{\code{label}}{ defaults to \code{""}.

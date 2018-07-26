@@ -108,6 +108,7 @@ options.wblr<- function(...){
             is.plot.legend=TRUE,
 
             legend.position="bottomright",
+			legend.inset=c(0,0),
             legend.text.size=0.7,
             label="",
             in.legend=TRUE,

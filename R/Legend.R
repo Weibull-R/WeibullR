@@ -86,14 +86,15 @@ buildSingleDataLegend <- function(x,opadata,...){
 		warrn(paste0(opafit$legend.position," is not a supported legend position, bottomright applied"))
 		opa.data$legend.position<-"bottomright"
 	}
-#	if(opadata$legend.position == "topleft") {
-#	position="topleft"
-#	}else{
-#	position="bottomright"
-#	}
+	if(!is.numeric(opadata$legend.inset) || any(opadata$legend.inset<0) || any(opadata$legend.inset>1)) {
+		warning("legend.inset to be fractional graph width and height (0 and 1) inclusive \n
+				default c(0,0) applied.")
+		opadata$legend.inset<- c(0,0)
+	}
     le$rect <- legend(
 		tolower(opadata$legend.position),
 #        "bottomright",
+		inset=opadata$legend.inset,
         legend=le$legend,
         title=label,
         cex = opadata$legend.text.size,
@@ -207,18 +208,19 @@ buildSingleFitLegend <- function(fit,opadata,...){
 		warrn(paste0(opafit$legend.position," is not a supported legend position, bottomright applied"))
 		opa.fit$legend.position<-"bottomright"
 	}
-#		if(opafit$legend.position == "topleft") {
-#		position="topleft"
-#		}else{
-#		position="bottomright"
+		if(!is.numeric(opafit$legend.inset) || any(opafit$legend.inset<0) || any(opafit$legend.inset>1))  {
+			warning("legend.inset to be fractional graph width and height (0 and 1) inclusive \n
+					default c(0,0) applied.")
+			opafit$legend.inset<- c(0,0)
+		}
 #		}		
         le$rect <- legend(
 			tolower(opafit$legend.position),
     #        "bottomright",
-            legend=le$legend,
+	            legend=le$legend,
             title=label,
             cex = opafit$legend.text.size,
-    #        inset=0.1,
+            inset=opafit$legend.inset,
     #        merge = TRUE,
             plot=FALSE)$rect
         le$label <- opafit$label
