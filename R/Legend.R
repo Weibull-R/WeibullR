@@ -83,7 +83,7 @@ buildSingleDataLegend <- function(x,opadata,...){
     if(identical(label <- opadata$label,"")){label <- NULL}
 	supported_position <- c("bottomright", "bottom", "bottomleft", "left", "topleft", "top", "topright", "right", "center")
 	if(!any(tolower(opadata$legend.position) %in% supported_position)){
-		warrn(paste0(opafit$legend.position," is not a supported legend position, bottomright applied"))
+		warning(paste0(opadata$legend.position," is not a supported legend position, bottomright applied"))
 		opa.data$legend.position<-"bottomright"
 	}
 	if(!is.numeric(opadata$legend.inset) || any(opadata$legend.inset<0) || any(opadata$legend.inset>1)) {
@@ -205,12 +205,11 @@ buildSingleFitLegend <- function(fit,opadata,...){
         if(identical(label <- opafit$label,"")){label <- NULL}
 		supported_position <- c("bottomright", "bottom", "bottomleft", "left", "topleft", "top", "topright", "right","center")
 		if(!any(tolower(opafit$legend.position) %in% supported_position)){
-		warrn(paste0(opafit$legend.position," is not a supported legend position, bottomright applied"))
+		warning(paste0(opafit$legend.position," is not a supported legend position, bottomright applied"))
 		opa.fit$legend.position<-"bottomright"
 	}
 		if(!is.numeric(opafit$legend.inset) || any(opafit$legend.inset<0) || any(opafit$legend.inset>1))  {
-			warning("legend.inset to be fractional graph width and height (0 and 1) inclusive \n
-					default c(0,0) applied.")
+			warning("legend.inset to be fractional graph width and height (0 and 1) inclusive \n default c(0,0) applied.")
 			opafit$legend.inset<- c(0,0)
 		}
 #		}		

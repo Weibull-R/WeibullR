@@ -1,5 +1,5 @@
 Package: WeibullR
-Version: 1.0.9.5
+Version: 1.0.10
 Date: 2018-7-23
 Title: Weibull Analysis for Reliability Engineering
 Authors@R: c(person("David", "Silkworth", email = "djsilk@openreliability.org", role = "aut"), person("Jurgen", "Symynck", role = "aut"), person("Jacob", "Ormerod", email = "jake@openreliability.org", role = "cre"), person("OpenReliability.org", role = "cph"))
