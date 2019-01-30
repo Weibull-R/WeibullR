@@ -64,13 +64,12 @@ if(is.vector(x)) {
 ## Just make sure that the qty column contains integers
 					x$qty<-ceiling(x$qty)
 				}
-			F<-sum(failures$qty)
-			
+			F<-sum(failures$qty)			
 			suspensions<-NULL
 			if(any("0" %in% ev_info)) {
 			suspensions<-x[x$event==0,]
 				if(is.null(x$qty)) {
-					qty<-rep(0,nrow(suspensions))
+					qty<-rep(1,nrow(suspensions))
 					suspensions <-cbind(suspensions,qty)
 				}
 			N<-F+sum(suspensions$qty)
