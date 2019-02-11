@@ -6,11 +6,12 @@ LRbounds3pw<-function(x, s=NULL, CL=0.9, DF=1 ,ptDensity=100, tzpoints=10, RadLi
 		## require WeibullR version >= 1.0.10.2 for alloydata	
 		##require(WeibullR)	
 		MLEfit<-mlefit(mleframe(x,s), npar=3)	
-		## must extract these vlues as vectors, numbered items return dataframes	
-		Beta_opt<-MLEfit$Beta	
-		Eta_opt<-MLEfit$Eta	
-		t0_opt<-MLEfit$t0	
-		MLLx3p<-MLEfit$LL	
+		## when the fit return was a dataframe must these vlues as vectors, 
+		## now that the fit return is a vector must use numbered items
+		Beta_opt<-MLEfit[2]	
+		Eta_opt<-MLEfit[1]	
+		t0_opt<-MLEfit[3]	
+		MLLx3p<-MLEfit[4]	
 		##ratioLL  <-  MLLx3p- qchisq(CL,DF)/2	
 		if( !is.null(attr(MLEfit,"unstable"))) stop("unstable 3rd parameter fit")	
 			

@@ -447,9 +447,10 @@ while(!t0_found)  {
 }	
 
 ## must collect outvec and try_list from return of C++ call						
-							
-	outvec<-DF[max_ind,]	
-	row.names(outvec)<-""	
+	#outvec<-DF[max_ind,]	
+	# returning a single line dataframe causes later problems, needs to be a named vector	
+	outvec<-c(DF$P1[max_ind], DF$P2[max_ind], DF$tz[max_ind],DF$gof[max_ind])	
+	##names(outvec)<-""	
 			
 	if(dist_num==1)  {
 		names(outvec)<-c("Eta","Beta", "t0", "LL")
