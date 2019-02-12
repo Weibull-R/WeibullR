@@ -111,8 +111,8 @@ if(dist_num==1)  {
 }
 
 ## MLLx argument is intended for use in establishing confidence intervals for 3-parameter models.
-if(length(MLLx==0)) 	MLLx<-MLEfit[3]
-
+if(is.null(MLLx)){MLLx<-MLEfit[3]}
+##browser()
 	ratioLL  <-  MLLx- qchisq(CL,dof)/2
 ## assure ptDensity is an integer
 	ptDensity<-ceiling(ptDensity)
