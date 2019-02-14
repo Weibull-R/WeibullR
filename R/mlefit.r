@@ -368,8 +368,12 @@ while(!t0_found)  {
 ## The rest of the loop is sorting out whether an optimum has been identified							
 ## or then setting up the next trial							
 							
-	max_ind<-which(DF$gof==max(DF$gof))						
-							
+	max_ind<-which(DF$gof==max(DF$gof))	
+## in case the max can't be defined by a single element of DF, we must be done	
+if(length(max_ind)>1) {
+	max_ind<-max_ind[1]
+	t0_found<-TRUE
+}else{
 	if(max_ind !=1)  {						
 ## get error measures for tz and gof by comparison with max_ind-1, for use in various locations as well as output							
 		err_t0<- abs((DF$tz[max_ind]-DF$tz[max_ind-1])/(DF$tz[max_ind]))					
@@ -442,8 +446,10 @@ while(!t0_found)  {
 	}						
 	if(!t0_found)  {						
 		trial<- trial+1					
-	}						
-							
+	}
+#close the new block for more than one max_ind found	
+}
+#close the main loop finding t0							
 }	
 
 ## must collect outvec and try_list from return of C++ call						
