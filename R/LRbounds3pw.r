@@ -38,8 +38,10 @@ LRbounds3pw<-function(x, s=NULL, CL=0.9, DF=1 ,ptDensity=100, tzpoints=10, RadLi
 		contour_list<-list()	
 		bounds_list<-list()	
 		xlb_mat<-xub_mat<-NULL	
-		minEta<-minBeta<-0	
-		maxEta<-maxBeta<-0	
+		# get seed parameters for contour range determination
+		fit2p<-mlefit(mleframe(x-t0_opt,s-t0_opt))
+		minEta<-maxEta<-fit2p[1]
+		minBeta<-maxBeta<-fit2p[2]
 			
 		list_item=0	
 		## this is the super loop through all tz's	
@@ -89,20 +91,15 @@ LRbounds3pw<-function(x, s=NULL, CL=0.9, DF=1 ,ptDensity=100, tzpoints=10, RadLi
 			 contour_range=list(xlim=c(xlo,xhi),ylim=c(ylo,yhi))
 		)	
 			
-## some response to show=TRUE to be developed here			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
+## some response to show=TRUE to be developed here	
+		if(show==TRUE) {
+		mod.obj<-wblr(x-t0_opt,s-t0_opt)
+		mod.obj<-wblr.fit(mod.obj, method.fit="mle")
+		mod.obj<-wblr.conf(mod.obj,method.conf="lrb",lwd=1, lty=2,col="red")
+		plot(mod.obj, xlab="time - t0", main="Modified Data Plot")
+		lines(boundsDF$lower,p2y(boundsDF$percentile/100),lwd=2,col="red")
+		lines(boundsDF$upper,p2y(boundsDF$percentile/100),lwd=2,col="red")
+		}
+		
 return(outlist)			
 }			

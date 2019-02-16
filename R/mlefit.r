@@ -382,7 +382,8 @@ if(length(max_ind)>1) {
 							
 	if(max_ind != 1 && max_ind !=n) {						
 		if( err_t0 > seek_control$err_t0_limit) {					
-							
+#test_err_gof=1
+#browser()							
 			## establish optcontrol for next trial if necessary				
 			if(err_gof/n < 1e-5) optcontrol$limit=err_gof/n				
 				start<-DF$tz[max_ind-1]			
@@ -402,7 +403,9 @@ if(length(max_ind)>1) {
 					if(err_t0 < seek_control$err_t0_limit) {		
 						t0_found<-TRUE
 						positive_runnout<-TRUE
-					}else{		
+					}else{
+#test_err_gof=2
+#browser()					
 						## establish optcontrol for next trial if necessary	
 						if(err_gof/n < 1e-5) optcontrol$limit=err_gof/n	
 					## check for rebound case		
@@ -427,7 +430,10 @@ if(length(max_ind)>1) {
 					end <- DF$tz[2]		
 				}			
 			}else{				
-			## get err_gof, then check if less than default limit				
+			## get err_gof, then check if less than default limit
+#test_err_gof=3
+#browser()
+			
 				if(err_gof < seek_control$err_gof_limit) {			
 					t0_found<-TRUE
 					negative_runnout<-TRUE
