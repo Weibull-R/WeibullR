@@ -83,10 +83,8 @@ LRbounds3pw<-function(x, s=NULL, CL=0.9, DF=1 ,ptDensity=100, tzpoints=10, RadLi
 		EtaDec<-10^(floor(log(minEta)/log(10))-1)	
 		xlo<-EtaDec*(floor(minEta/EtaDec)-1)	
 		xhi<-EtaDec*(floor(maxEta/EtaDec)+1)	
-			
-			
-			
-		outlist<-list(bounds=boundsDF,bounds_list=bounds_list,	
+						
+		outlist<-list(bounds=boundsDF,bounds_list=list(xlb_mat,xub_mat),	
 			 contour_list=contour_list,
 			 contour_range=list(xlim=c(xlo,xhi),ylim=c(ylo,yhi))
 		)	
