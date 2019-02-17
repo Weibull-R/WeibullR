@@ -476,7 +476,7 @@ if(length(max_ind)>1) {
 			if(debias=="hrbu")  {
 				outvec[2]<-outvec[2]*hrbu(Q[1]-Q[3], Q[3])
 			}
-			outvec[3]<-.Call(MLEloglike,MLEclassList,c(outvec[2],outvec[1]),dist_num, default_sign, X0)
+			outvec[3]<-.Call(MLEloglike,MLEclassList,c(outvec[2],outvec[1]),dist_num, default_sign, DF$tz[max_ind])
 			attr(outvec,"bias_adj")<-debias
 		}
 	}
@@ -488,7 +488,7 @@ if(length(max_ind)>1) {
 				warning("rba has been applied to adjust lognormal")
 				debias="rba"
 			}
-			outvec[3]<-.Call(MLEloglike,MLEclassList,c(outvec[1],outvec[2]),dist_num, default_sign, X0)
+			outvec[3]<-.Call(MLEloglike,MLEclassList,c(outvec[1],outvec[2]),dist_num, default_sign, DF$tz[max_ind])
 			attr(outvec,"bias_adj")<-debias
 		}
 	}

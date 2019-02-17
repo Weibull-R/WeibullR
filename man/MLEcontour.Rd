@@ -10,8 +10,8 @@
 }
 
 \usage{
-MLEcontour(x,  dist="weibull", CL=0.9,dof=1,MLEfit=NULL, RadLimit=1e-5,
-             ptDensity=120, debias="none", show=FALSE)
+MLEcontour(x,  dist="weibull", CL=0.9,dof=1,MLLx=NULL, MLEfit=NULL,
+              RadLimit=1e-5,ptDensity=120, debias="none", show=FALSE)
 }
 
 \arguments{
