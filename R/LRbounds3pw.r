@@ -115,7 +115,7 @@ LRbounds3pw<-function(x, s=NULL, CL=0.9, DF=1 ,ptDensity=100, tzpoints=10, RadLi
 			}		
 			mod.obj<-wblr(x-t0_opt,s-t0_opt)
 			mod.obj<-wblr.fit(mod.obj, method.fit="mle")
-			mod.obj<-wblr.conf(mod.obj,method.conf="lrb",lwd=1, lty=2,col="red")
+			mod.obj<-wblr.conf(mod.obj,method.conf="lrb",lwd=1, lty=2,col="orange")
 			plot(mod.obj, xlab="time - t0", main="Modified Data Plot")
 			lines(boundsDF$lower,p2y(boundsDF$percentile/100),lwd=2,col="red")
 			lines(boundsDF$upper,p2y(boundsDF$percentile/100),lwd=2,col="red")
@@ -144,7 +144,7 @@ LRbounds3pw<-function(x, s=NULL, CL=0.9, DF=1 ,ptDensity=100, tzpoints=10, RadLi
 				lty<-1
 				col<-"black"
 				if(cntr==1) {col="darkgreen";lwd=2}	
-				if(cntr==length(C2P)) {col="red";lwd=2}	
+				if(cntr==length(C2P)) {col="orange";lwd=2;lty=2}	
 				points(C2P[[cntr]],type="l", lwd=lwd, lty=lty, col=col)
 				
 			}	
