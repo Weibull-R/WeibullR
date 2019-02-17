@@ -9,7 +9,7 @@
 
 \usage{
 LRbounds3pw(x, s=NULL, CL=0.9, DF=1 ,ptDensity=100, tzpoints=10,
- RadLimit=1e-5, show=FALSE)
+ RadLimit=1e-5, listout=FALSE, show=c(FALSE,FALSE))
 }
 
 \arguments{
@@ -29,12 +29,16 @@ LRbounds3pw(x, s=NULL, CL=0.9, DF=1 ,ptDensity=100, tzpoints=10,
   }
   \item{RadLimit}{A convergence limit for radius determination as contours points are found.
   }
-   \item{show}{A logical determining whether a graphic of the bounds shall be displayed.
+   \item{listout}{A logical determining whether a list of development objects will be displayed.
+  }
+   \item{show}{A logigal vector determining whether to display [1] a modified data probability plot [2] a plot of all contours for the potential third parameter cases sampled.
   } 
 }
 
 \value{
-  Returns a list holding [[1]]dataframe holding values of percentiles, lower, datum, and upper values of the bound.
+  A dataframe holding values of percentiles, lower, datum, and upper values of the bound.
+  If listout is set to TRUE the following development items are returned in a list:
+  [[1]]dataframe holding values of percentiles, lower, datum, and upper values of the bound.
   [[2]] list of 2 dataframes holding the lower and upper bound values for all potential values of the third parmameter,
   [[3]] a list of all the contour points determined for each potential value of the third parameter, and 
   [[4]] x and y ranges for placing all of the generated contours in a single plot.

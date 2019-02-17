@@ -2,7 +2,7 @@ useDynLib(WeibullR, .registration = TRUE)
 importFrom(Rcpp, evalCpp)
 importFrom("graphics", "abline", "axis", "curve", "legend", "lines",
 		 "par", "plot", "plot.default", "points", "segments",
-		 "title")
+		 "title", "layout", "layout.show")
 importFrom("stats", "approxfun", "coef", "cor", "lm", "na.omit",
 		 "pexp", "plnorm", "pweibull", "qbeta", "qexp", "qlnorm",
 		 "qnorm", "quantile", "qweibull", "rweibull", "optimHess",
