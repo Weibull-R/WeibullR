@@ -2,11 +2,9 @@
 ## this content is expected to be incorporated into LRbounds.r in the future.
 
 
-LRbounds3pw<-function(x, s=NULL, CL=0.9, DF=1 ,ptDensity=100, tzpoints=10, RadLimit=1e-5, show=FALSE)  {			
-		## require WeibullR version >= 1.0.10.2 for alloydata	
-		##require(WeibullR)	
+LRbounds3pw<-function(x, s=NULL, CL=0.9, DF=1 ,ptDensity=100, tzpoints=10, RadLimit=1e-5, listout=FALSE, show=c(FALSE,FALSE))  {			
+	
 		MLEfit<-mlefit(mleframe(x,s), npar=3)	
-		## when the fit return was a dataframe must these vlues as vectors, 
 		## now that the fit return is a vector must use numbered items
 		Beta_opt<-MLEfit[2]	
 		Eta_opt<-MLEfit[1]	
@@ -53,7 +51,7 @@ LRbounds3pw<-function(x, s=NULL, CL=0.9, DF=1 ,ptDensity=100, tzpoints=10, RadLi
 			contourpts<-MLEcontour(mleframe(x-tz, s-tz), MLLx=MLLx3p)
 		## and then adjust for the modified.by.t0 basis	
 			mod_eta<-contourpts[,1]+tz-t0_opt
-			contourpts<-data.frame(mod_eta,contourpts[,2])
+			contourpts<-data.frame(mod_eta,beta=contourpts[,2])
 		## while we are here let's get extents for a contour plot	
 			maxBeta<-max(c(maxBeta,contourpts[,2]))
 			minBeta<-min(c(minBeta, contourpts[,2]))
@@ -78,19 +76,25 @@ LRbounds3pw<-function(x, s=NULL, CL=0.9, DF=1 ,ptDensity=100, tzpoints=10, RadLi
 		)	
 			
 		ylo<-floor(minBeta)	
-		yhi<-floor(maxBeta)+1	
+		if(maxBeta<(floor(maxBeta)+.5)) {
+			yhi<-floor(maxBeta)+.5
+		}else{
+			yhi<-floor(maxBeta)+1	
+		}
 			
 		EtaDec<-10^(floor(log(minEta)/log(10))-1)	
 		xlo<-EtaDec*(floor(minEta/EtaDec)-1)	
-		xhi<-EtaDec*(floor(maxEta/EtaDec)+1)	
+		xhi<-EtaDec*(floor(maxEta/EtaDec)+1)
+
+		contour_range<-list(xlim=c(xlo,xhi),ylim=c(ylo,yhi))		
 						
 		outlist<-list(bounds=boundsDF,bounds_list=list(xlb_mat,xub_mat),	
 			 contour_list=contour_list,
-			 contour_range=list(xlim=c(xlo,xhi),ylim=c(ylo,yhi))
+			 contour_range=contour_range
 		)	
 			
 ## some response to show=TRUE to be developed here	
-		if(show==TRUE) {
+		if(show[1]) {
 		mod.obj<-wblr(x-t0_opt,s-t0_opt)
 		mod.obj<-wblr.fit(mod.obj, method.fit="mle")
 		mod.obj<-wblr.conf(mod.obj,method.conf="lrb",lwd=1, lty=2,col="red")
@@ -98,6 +102,44 @@ LRbounds3pw<-function(x, s=NULL, CL=0.9, DF=1 ,ptDensity=100, tzpoints=10, RadLi
 		lines(boundsDF$lower,p2y(boundsDF$percentile/100),lwd=2,col="red")
 		lines(boundsDF$upper,p2y(boundsDF$percentile/100),lwd=2,col="red")
 		}
+		if(show[2]) {	
+			C2P<-contour_list
+			plotargs <- list(x=NA,axes=TRUE)	
+			plotargs$xlim <- contour_range$xlim	
+			plotargs$ylim <- contour_range$ylim	
+			plotargs$main <- "Contour Plots"	
+			plotargs$sub  <- "data modified by potential t0 values"	
+			plotargs$log <- ""	
+			plotargs$xlab <- names(C2P[[1]])[1]	
+			plotargs$ylab <- names(C2P[[1]])[2]	
 		
-return(outlist)			
+			do.call("plot.default",plotargs)	
+	
+            abline(	
+                h=pretty(contour_range$ylim,10),	
+                v=pretty(contour_range$xlim,10),	
+                col = "grey")	
+				
+			for(cntr in 1:length(C2P) )  {	
+			# plot the contours	
+				lwd<-1
+				lty<-1
+				col<-"black"
+				if(cntr==1) {col="darkgreen";lwd=2}	
+				if(cntr==length(C2P)) {col="red";lwd=2}	
+				points(C2P[[cntr]],type="l", lwd=lwd, lty=lty, col=col)
+				
+			}	
+		}	
+
+	if(show[1] && show[2]) {
+## reset the graphics device for single output
+	par(mfrow=c(1,1))	
+}
+
+	if(listout) {
+		return(outlist)	
+	}else{
+		return(boundsDF)
+	}
 }			
