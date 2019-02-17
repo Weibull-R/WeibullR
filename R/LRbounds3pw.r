@@ -93,7 +93,13 @@ LRbounds3pw<-function(x, s=NULL, CL=0.9, DF=1 ,ptDensity=100, tzpoints=10, RadLi
 			 contour_range=contour_range
 		)	
 			
-## some response to show=TRUE to be developed here	
+	if(show[1] && show[2]) {
+## set the graphic device for double plot output	
+## order of numbers in first arg to matrix determines order top to bottom of plots	
+## additional values represent relative width and height of graphic panes	
+		layout(matrix(c(1,2),2,1, byrow=TRUE))
+		layout.show(n=2)
+	}
 		if(show[1]) {
 			if(!exists("p2y")) {		
 				p2y <- function(p,log="x"){
