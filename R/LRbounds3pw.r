@@ -95,12 +95,24 @@ LRbounds3pw<-function(x, s=NULL, CL=0.9, DF=1 ,ptDensity=100, tzpoints=10, RadLi
 			
 ## some response to show=TRUE to be developed here	
 		if(show[1]) {
-		mod.obj<-wblr(x-t0_opt,s-t0_opt)
-		mod.obj<-wblr.fit(mod.obj, method.fit="mle")
-		mod.obj<-wblr.conf(mod.obj,method.conf="lrb",lwd=1, lty=2,col="red")
-		plot(mod.obj, xlab="time - t0", main="Modified Data Plot")
-		lines(boundsDF$lower,p2y(boundsDF$percentile/100),lwd=2,col="red")
-		lines(boundsDF$upper,p2y(boundsDF$percentile/100),lwd=2,col="red")
+			if(!exists("p2y")) {		
+				p2y <- function(p,log="x"){
+					# This is the inverse Cumulative Distribution function
+					# used to transform a probability value to the
+					# y-axis of the plot canvas.
+					# Use of this transformation permits distributions
+					# to appear as curves on unrelated canvas
+					if(log =="x")ret <- log(qweibull(p,1,1))
+					if(log =="xy") ret <- qlnorm(p,0,1)
+					ret
+				}		
+			}		
+			mod.obj<-wblr(x-t0_opt,s-t0_opt)
+			mod.obj<-wblr.fit(mod.obj, method.fit="mle")
+			mod.obj<-wblr.conf(mod.obj,method.conf="lrb",lwd=1, lty=2,col="red")
+			plot(mod.obj, xlab="time - t0", main="Modified Data Plot")
+			lines(boundsDF$lower,p2y(boundsDF$percentile/100),lwd=2,col="red")
+			lines(boundsDF$upper,p2y(boundsDF$percentile/100),lwd=2,col="red")
 		}
 		if(show[2]) {	
 			C2P<-contour_list
