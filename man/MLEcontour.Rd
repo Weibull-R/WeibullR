@@ -10,8 +10,8 @@
 }
 
 \usage{
-MLEcontour(x,  dist="weibull", CL=0.9,dof=1,MLEfit=NULL, RadLimit=1e-5,
-             ptDensity=120, debias="none", show=FALSE)
+MLEcontour(x,  dist="weibull", CL=0.9,dof=1,MLLx=NULL, MLEfit=NULL,
+              RadLimit=1e-5,ptDensity=120, debias="none", show=FALSE)
 }
 
 \arguments{
@@ -25,8 +25,12 @@ MLEcontour(x,  dist="weibull", CL=0.9,dof=1,MLEfit=NULL, RadLimit=1e-5,
   \item{CL}{a confidence limit to be applied to the Chi square test.}
   \item{dof}{an integer value indicating degrees of freedom to apply to the Chi square test, which defaults to dof=1 for
   confidence interval bound use. Should be set to 2 for comparison of two models each with 2 parameters.}
+  \item{MLLx}{an optional argument intended for 3p modelling so that the maximum log-likelihood from an optimized
+  3rd parameter fit can be used to generate subsequent contours with variation in the translation parameter.
+  }
   \item{MLEfit}{an optional argument to use a fit made external to the function. Disaster awaits any mismatch between data
-  entered and this fit. When provided, the MLEfit} shall be a vector in the order of scale(or logmean), shape (or std dev) and Loglikelihood.
+  entered and this fit. When provided, the MLEfit shall be a vector in the order of scale(or logmean), shape (or std dev) and Loglikelihood.
+  }
   \item{ptDensity}{an integer value for the number of points to be plotted around the circumference of the contour.}
   \item{RadLimit}{a convergence limit for the contour radials based on specific units of Eta/Eta_hat and Beta/Beta_hat.}
   \item{debias}{An optional string argument indicating the adjustment to be applied to the shape or standard deviation

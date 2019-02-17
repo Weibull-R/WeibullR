@@ -286,158 +286,222 @@ mlefit<-function(x, dist="weibull", npar=2, debias="none", optcontrol=NULL)  {
 			}else{
 				listout_int<-0
 			}
-###################################################################
-##                      this would be the position to go to C++
-###################################################################
 
-				secant_warning=FALSE
-##  Tao Pang's original variable labels from FORTRAN are used where possible
-				DL<-ControlList$limit
-## Introduce constraints for tz
-## need to create the vector of potential minimums
-#				fdr<-NULL
-#				if(Nf>0) {fdr<-fsdi[1:Nf]}
-#				if(Nd>0) {fdr<-c(fdr,fsdi[(Nf+Ns+1):(Nf+Ns+Nd)])}
-#				if(Ni>0)  {fdr<-c(fdr, fsdi[(Nf+Ns+Nd+Ni+1):(Nf+Ns+Nd+2*Ni)])}
-				fdr<-NULL
-				if(Nf_rows>0) {fdr<-fsdi[1:Nf_rows]}
-				if(Nd_rows>0) {fdr<-c(fdr,fsdi[(Nf_rows+Ns_rows+1):(Nf_rows+Ns_rows+Nd_rows)])}
-				if(Ni_rows>0)  {fdr<-c(fdr, fsdi[(Nf_rows+Ns_rows+Nd_rows+Ni_rows+1):(Nf_rows+Ns_rows+Nd_rows+2*Ni_rows)])}
-				C1<-min(fdr)
-				maxit<-100
-
-## initial step is based on min(x)*.1
-				DX<-C1*0.1
-				X0<-0.0
-				istep<-0
-				X1<-X0+DX
-				if(X1>C1) {X1<-X0+0.9*(C1-X0)}
-				tz=0
-##				FX0vec<-.Call("MLEdMaxLLdx", MLEclassList, ControlList, vstart, tz, package="WeibullR")
-				FX0vec<-.Call(MLEdMaxLLdx, MLEclassList, ControlList, vstart, tz)
-				FX0<-FX0vec[1]
-## new start estimate from last fit (without any modification)
-				vstart<-FX0vec[-1]
-## X1 is next proposed tz
-				tz=X1
-##				FX1vec<-.Call("MLEdMaxLLdx", MLEclassList, ControlList, vstart, tz, package="WeibullR")
-				FX1vec<-.Call(MLEdMaxLLdx, MLEclassList, ControlList, vstart, tz)
-				FX1<-FX1vec[1]
-## new start estimate from last fit (without any modification)
-				vstart<-FX1vec[-1]
-## FX1 will contain slope sign information to be used only one time to find X2
-				D<- abs(FX1-FX0)
-				X2<-X1+abs(X1-X0)*FX1/D
-				if(X2>C1) {X2<-X1+0.9*(C1-X1)}
-				X0<-X1
-				X1<-X2
-				DX<-X1-X0
-				istep<-istep+1
-##  Detail output to be available with listout==TRUE
-		DF<-data.frame(steps=istep,root=X0,error=DX,deriv=FX1)
-
-
-		while(abs(DX)>DL&&istep<maxit)  {
-				FX0<-FX1
-## save last successful call with useful vstart
-				FX0vec<-FX1vec
-## X1 is next proposed tz
-				tz=X1
-##				FX1vec<-.Call("MLEdMaxLLdx", MLEclassList, ControlList, vstart, tz, package="WeibullR")
-				FX1vec<-.Call(MLEdMaxLLdx, MLEclassList, ControlList, vstart, tz)
-				FX1<-FX1vec[1]
-				if(is.nan(FX1))  {
-				FX1<-FX0
-				secant_warning=TRUE
-				break
-				}
-## new start estimate from last fit (without any modification)
-				vstart<-FX1vec[-1]
-
-## FX1 will contain slope information only one time
-				D<- abs(FX1-FX0)
-				X2<-X1+abs(X1-X0)*FX1/D
-				if(X2>=C1) {X2<-X1+0.9*(C1-X1)}
-
-				X0<-X1
-				X1<-X2
-## setting up to test for instability
-last_abs_DX<-abs(DX)
-				DX<-X1-X0
-
-## Don't understand this instability, but it happened on example testing with interval data
-## The multiplier of 2 here might be too tight, but worked well on example
-if(abs(DX) > last_abs_DX*2) {
-stable<-FALSE
-##browser()
-break
+			
+			
+	## n has been removed as an argument and placed in the control list						
+	seek_control<-list(						
+		num_points=10,					
+		err_t0_limit= 1e-6,					
+		err_gof_limit= 1e-5)
+	optcontrol4seek<-list(optcontrol$num_points, optcontrol$err_t0_limit, optcontrol$err_gof_limit)
+	if(length(optcontrol4seek)>0) seek_control<-modifyList(seek_control, optcontrol4seek)						
+	## restore meaning of n for rest of code						
+	n<-seek_control$num_points						
+	if(n<5) {						
+		n<-5					
+		warning("n specified too small, n=5 used")					
+	}						
+							
+## This is the point to go to C++						
+## Will need to pass in MLEclassList, fit_dist and seek_control							
+							
+							
+	# This function is called in context on each trial to establish the sequence of tz points						
+	#  no arguments, start, end and maxtz labels are drawn from the environment at the time of call						
+	tzvec<-function() {						
+	# we either protect the maxtz end point						
+		if(end == maxtz)  {					
+			spacing<-(end-start)/n  ## protecting maxtz				
+			return(seq(start, end-spacing, by=spacing))				
+		}else{					
+	# or we get a sequence including the end point						
+	# spacing will always take the sign of the end point						
+			spacing<-(end-start)/(n-1)				
+			return(seq(start, end, by=spacing))				
+		}					
+	}						
+							
+							
+							
+	# establish the maximum limit for t0						
+	## MLEmodel will treat convert any negative x$left-tz as zero						
+	## Note discoveries continue to be discoveries until x$right-tz = zero						
+	maxtz<-min(x$right[x$right != -1])						
+							
+## this may not be necessary as MLEmodel will treat any negative x$left-tz as zero							
+##	## short circuit if any discoveries are in intervals						
+##	t0_found<-FALSE						
+##	if(maxtz==0)  {						
+##			t0_found<-TRUE				
+##			t0<-0				
+##			fit<-mlefit(data_mod,dist="weibull")				
+##			DF<-data.frame(P1=fit[1],P2=fit[2],tz,gof=fit[3])				
+##	}						
+							
+	# set up for first trial						
+	start<-0						
+	end<-maxtz						
+							
+							
+	t0_found<-FALSE						
+	rebound<-FALSE						
+	trial<-1						
+	try_list<-list()						
+## the simplex optcontrol is set to the defaults in mlefit							
+	optcontrol<-list(limit=1e-5, maxit=100)						
+							
+while(!t0_found)  {							
+	DF<-NULL						
+							
+## This is the view generation loop that establishes each trial							
+	for(tz in tzvec()) {						
+		right_mod<-sapply(x$right, function(X) if(X>0) X-tz else X)					
+		data_mod<-data.frame(left=x$left-tz, right=right_mod, qty=x$qty)					
+## note MLEmodel::Loglike ignores negative suspensions and will convert early intervals to discoveries as x$left-tz becomes =< 0							
+		fit<-mlefit(data_mod,dist=fit_dist,optcontrol=optcontrol)					
+		thisDFrow<-data.frame(P1=fit[1], P2=fit[2],tz,gof=fit[3])					
+		DF<-rbind(DF,thisDFrow)					
+	}						
+							
+	try_list[[trial]]<-DF						
+## The rest of the loop is sorting out whether an optimum has been identified							
+## or then setting up the next trial							
+							
+	max_ind<-which(DF$gof==max(DF$gof))	
+## in case the max can't be defined by a single element of DF, we must be done	
+if(length(max_ind)>1) {
+	max_ind<-max_ind[1]
+	t0_found<-TRUE
+}else{
+	if(max_ind !=1)  {						
+## get error measures for tz and gof by comparison with max_ind-1, for use in various locations as well as output							
+		err_t0<- abs((DF$tz[max_ind]-DF$tz[max_ind-1])/(DF$tz[max_ind]))					
+		err_gof<-abs((DF$gof[max_ind]-DF$gof[max_ind-1])/(DF$gof[max_ind]))					
+	}						
+							
+	if(max_ind != 1 && max_ind !=n) {						
+		if( err_t0 > seek_control$err_t0_limit) {					
+#test_err_gof=1
+#browser()							
+			## establish optcontrol for next trial if necessary				
+			if(err_gof/n < 1e-5) optcontrol$limit=err_gof/n				
+				start<-DF$tz[max_ind-1]			
+				end<-DF$tz[max_ind+1]			
+		}else{					
+			t0_found<-TRUE				
+		}					
+	}else{						
+		if(trial==1 && max_ind==1)  {					
+		## reverse the seek for negative t0					
+			start<- DF$tz[2]		# make sure to cover all early positve values		
+			end<-(-1)*maxtz				
+		}else{					
+			if(DF$tz[n] >0)  {				
+				if(max_ind == n)  {			
+					## get err_t0, then check if less than default limit		
+					if(err_t0 < seek_control$err_t0_limit) {		
+						t0_found<-TRUE
+						positive_runnout<-TRUE
+					}else{
+#test_err_gof=2
+#browser()					
+						## establish optcontrol for next trial if necessary	
+						if(err_gof/n < 1e-5) optcontrol$limit=err_gof/n	
+					## check for rebound case		
+						shift_gof<-c(DF$gof[1],DF$gof[-n])	
+						progression<-DF$gof-shift_gof	
+						rebound_ind<-which(progression==min(progression))	
+						if(rebound_ind!=1)  {	
+						## if so, next trial is a rework of this trial with end set to rebound point	
+							## start is unchanged
+							end<-DF$tz[rebound_ind]
+							## decrement the trial so it will replace last and flag this unusual event (for further study?).
+							trial<-trial-1
+							rebound<-TRUE
+						}else{	
+							start<-DF$tz[n]
+							end<-maxtz
+						}	
+					}		
+				}else{			
+				## max_ind must be 1, the seek is still positive t0			
+					start <- try_list[[trial-1]]$tz[n-1]		
+					end <- DF$tz[2]		
+				}			
+			}else{				
+			## get err_gof, then check if less than default limit
+#test_err_gof=3
+#browser()
+			
+				if(err_gof < seek_control$err_gof_limit) {			
+					t0_found<-TRUE
+					negative_runnout<-TRUE
+									}else{			
+				## establish next mlefit limit if necessary			
+				if(err_gof/n < 1e-5) optcontrol$limit=err_gof/n			
+							
+	## Code modification required here if negative rebound is a concern						
+							
+							
+					start<-end		
+					end<-end*10		
+				}			
+			}				
+		}					
+	}						
+	if(!t0_found)  {						
+		trial<- trial+1					
+	}
+#close the new block for more than one max_ind found	
 }
-				istep<-istep+1
+#close the main loop finding t0							
+}	
 
-				DFline<-data.frame(steps=istep,root=X0,error=DX,deriv=FX1)
-				DF<-rbind(DF,DFline)
-## return to while loop
-		}
-## provide a last good vstart in case FX1vec indicated nan
-		vstart<-FX0vec[-1]
-		
-## Can X0 be first trial, but ultimately subject to convergence problems??
-		listout_int<-0
-##		result_of_simplex_call<-.Call("MLEsimplex",MLEclassList, ControlList, vstart, X0, listout_int, package="WeibullR")
-		result_of_simplex_call<-.Call(MLEsimplex,MLEclassList, ControlList, vstart, X0, listout_int)
-
-## extract fit vector from result of call to enable finishing treatment of the outvec
-
-
-		outvec<-c(result_of_simplex_call[1:2], X0, result_of_simplex_call[3])
-
-		if(dist_num==1)  {
-			names(outvec)<-c("Eta","Beta", "t0", "LL")
-			if(debias!="none")  {
-				if(debias=="rba")  {
-					outvec[2]<-outvec[2]*rba(Q[1]-Q[3], dist="weibull",basis="median")
-				}
-				if(debias=="mean")  {
-					outvec[2]<-outvec[2]*rba(Q[1]-Q[3], dist="weibull",basis="mean")
-				}
-				if(debias=="hrbu")  {
-					outvec[2]<-outvec[2]*hrbu(Q[1]-Q[3], Q[3])
-				}
-##				outvec[3]<-.Call("MLEloglike",MLEclassList,c(outvec[2],outvec[1]),dist_num, default_sign, X0, package="WeibullR")
-				outvec[3]<-.Call(MLEloglike,MLEclassList,c(outvec[2],outvec[1]),dist_num, default_sign, X0)
-				attr(outvec,"bias_adj")<-debias
+## must collect outvec and try_list from return of C++ call						
+	#outvec<-DF[max_ind,]	
+	# returning a single line dataframe causes later problems, needs to be a named vector	
+	outvec<-c(DF$P1[max_ind], DF$P2[max_ind], DF$tz[max_ind],DF$gof[max_ind])	
+	##names(outvec)<-""	
+			
+	if(dist_num==1)  {
+		names(outvec)<-c("Eta","Beta", "t0", "LL")
+		if(debias!="none")  {
+			if(debias=="rba")  {
+				outvec[2]<-outvec[2]*rba(Q[1]-Q[3], dist="weibull",basis="median")
 			}
-		}
-		if(dist_num == 2)  {
-			names(outvec)<-c("Mulog","Sigmalog", "t0", "LL")
-			if(debias!="none")  {
-				outvec[2]<-outvec[2]*rba(Q[1]-Q[3], dist="lognormal")
-				if(debias!="rba")  {
-					warning("rba has been applied to adjust lognormal")
-					debias="rba"
-				}
-##				outvec[3]<-.Call("MLEloglike",MLEclassList,c(outvec[1],outvec[2]),dist_num, default_sign, X0, package="WeibullR")
-				outvec[3]<-.Call(MLEloglike,MLEclassList,c(outvec[1],outvec[2]),dist_num, default_sign, X0)
-				attr(outvec,"bias_adj")<-debias
+			if(debias=="mean")  {
+				outvec[2]<-outvec[2]*rba(Q[1]-Q[3], dist="weibull",basis="mean")
 			}
+			if(debias=="hrbu")  {
+				outvec[2]<-outvec[2]*hrbu(Q[1]-Q[3], Q[3])
+			}
+			outvec[3]<-.Call(MLEloglike,MLEclassList,c(outvec[2],outvec[1]),dist_num, default_sign, DF$tz[max_ind])
+			attr(outvec,"bias_adj")<-debias
 		}
+	}
+	if(dist_num == 2)  {
+		names(outvec)<-c("Mulog","Sigmalog", "t0", "LL")
+		if(debias!="none")  {
+			outvec[2]<-outvec[2]*rba(Q[1]-Q[3], dist="lognormal")
+			if(debias!="rba")  {
+				warning("rba has been applied to adjust lognormal")
+				debias="rba"
+			}
+			outvec[3]<-.Call(MLEloglike,MLEclassList,c(outvec[1],outvec[2]),dist_num, default_sign, DF$tz[max_ind])
+			attr(outvec,"bias_adj")<-debias
+		}
+	}
 
-		optDF<-DF[-1]
+if(exists("positive_runnout")) {
+	attr(outvec, "message")<-"t0 cutoff at minimal change"
+}
 
+if(exists("negative_runnout")) {
+	attr(outvec, "message")<-"optimum not found, t0 cutoff at minimal gof change"
+}
 ## end of 3p code
 }
-
-## restored the original secant_warning and added the new stabile warning
-## perhaps using if(exists("secant_warning"))  etc. would be better.
-#if(secant_warning==TRUE) {
-if(exists("secant_warning")) {
-	attr(outvec, "warn")<-"unstable fit 1"
-}
-#if(stable==FALSE) {
-if(exists("stable")) {
-	attr(outvec, "warn")<-"unstable fit 2"
-}
-
 ## the following applies to both 2p and 3p results
 ## it is used by LRbounds to simplify data_type determination for debias adjustment
 ## but often removed for normal use by attributes(fit_vec)$data_types<-NULL
@@ -446,7 +510,8 @@ if(exists("stable")) {
 	if(listout==FALSE) {
 		out_object<-outvec
 	}else{
-		out_object<-list(fit=outvec, opt=optDF)
+		if(npar==2)  out_object<-list(fit=outvec, opt=optDF)
+		if(npar==3)  out_object<-list(fit=outvec, opt=try_list)
 	}
 
 	out_object

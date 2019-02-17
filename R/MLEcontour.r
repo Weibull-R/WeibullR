@@ -1,4 +1,4 @@
-MLEcontour<-function(x,  dist="weibull", CL=0.9,dof=1,MLEfit=NULL, RadLimit=1e-5,
+MLEcontour<-function(x,  dist="weibull", CL=0.9,dof=1,MLLx=NULL,MLEfit=NULL, RadLimit=1e-5,
 		ptDensity=120, debias="none", show=FALSE)  {
 
 ## check basic parameters of x
@@ -109,8 +109,10 @@ if(dist_num==1)  {
 ## par is provided as a vector c(meanlog, sdlog) for lognormal
 	par_hat <- c(MLEfit[1], MLEfit[2])
 }
-	MLLx<-MLEfit[3]
 
+## MLLx argument is intended for use in establishing confidence intervals for 3-parameter models.
+if(is.null(MLLx)){MLLx<-MLEfit[3]}
+##browser()
 	ratioLL  <-  MLLx- qchisq(CL,dof)/2
 ## assure ptDensity is an integer
 	ptDensity<-ceiling(ptDensity)
