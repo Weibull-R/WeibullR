@@ -10,7 +10,7 @@ LRbounds3pw<-function(x, s=NULL, CL=0.9, DF=1 ,ptDensity=100, tzpoints=10, RadLi
 		Eta_opt<-MLEfit[1]	
 		t0_opt<-MLEfit[3]	
 		MLLx3p<-MLEfit[4]	
-		##ratioLL  <-  MLLx3p- qchisq(CL,DF)/2	
+		ratioLL  <-  MLLx3p- qchisq(CL,DF)/2	
 		if( !is.null(attr(MLEfit,"unstable"))) stop("unstable 3rd parameter fit")	
 			
 		if(!is.null(attr(MLEfit, "rebound_pt")))  {	
@@ -20,17 +20,44 @@ LRbounds3pw<-function(x, s=NULL, CL=0.9, DF=1 ,ptDensity=100, tzpoints=10, RadLi
 		}	
 			
 		if(t0_opt==0) stop("t0 = 0, nothing to do")	
+		
+		tzpoints_arg<-tzpoints
+		valid_tz<-NULL	
+		invalid_tz<-NULL
+		
+	repeat{
+		if(t0_opt> 0 )  {			
+			tzvec<-seq(0, maxtz-maxtz/tzpoints, by=maxtz/tzpoints)		
+			if(!is.null(invalid_tz)) {		
+				tzvec<-unlist(sapply(tzvec, function(X) if(X>max(invalid_tz)) X))	
+			}		
+		}else{			
+		## just a guess for negative t0 will actually give one extra point beyond t0_opt			
+			tzvec<-seq(0, t0_opt+t0_opt/tzpoints, by=t0_opt/tzpoints)		
+			if(!is.null(invalid_tz)) {		
+				tzvec<-unlist(sapply(tzvec, function(X) if(X<min(invalid_tz)) X))	
+			}		
+		}			
+					
+		for(tz in 1:length(tzvec)) {			
+			## get the mle for 2-parameter fit at tz for validation testing		
+			mle2p<-mlefit(mleframe(x-tzvec[tz], s-tzvec[tz]))		
+			if(mle2p[3]<ratioLL) {		
+				invalid_tz<-unique(c(invalid_tz,tzvec[tz]))	
+			}else{		
+				valid_tz<-unique(c(valid_tz,tzvec[tz]))	
+			}		
+		}			
+										
+		if(length(valid_tz)<tzpoints_arg*.7) {			
+			tzpoints<-tzpoints * 2		
+		}else{			
+			break		
+		}			
+	}	
 			
-		if(t0_opt> 0 )  {	
-			
-			tzvec<-seq(0, maxtz-maxtz/tzpoints, by=maxtz/tzpoints)
-		}else{	
-		## just a guess for negative t0 will actually give one extra point beyond t0_opt	
-			tzvec<-seq(0, t0_opt+t0_opt/tzpoints, by=t0_opt/tzpoints)
-		}	
-			
-		## Need to add t0_opt into tzvec, but no need to sort?	
-		tzvec<-c(tzvec,t0_opt)	
+		## Need to add t0_opt into valid_tz, but no need to sort?	
+		valid_tz<-c(valid_tz,t0_opt)	
 			
 		# initialize objects to be constructed in the tz loop	
 		contour_list<-list()	
@@ -40,10 +67,12 @@ LRbounds3pw<-function(x, s=NULL, CL=0.9, DF=1 ,ptDensity=100, tzpoints=10, RadLi
 		fit2p<-mlefit(mleframe(x-t0_opt,s-t0_opt))
 		minEta<-maxEta<-fit2p[1]
 		minBeta<-maxBeta<-fit2p[2]
-			
+		
+
+	
 		list_item=0	
 		## this is the super loop through all tz's	
-	for(tz in tzvec)  {		
+	for(tz in valid_tz)  {	
 			list_item=list_item+1
 		## get adjusted contour points for this modified.by.tz data	
 		## can use MLEcontour in place of  test_contour3 with WeibullR version >= 1.0.10.3	
@@ -115,7 +144,7 @@ LRbounds3pw<-function(x, s=NULL, CL=0.9, DF=1 ,ptDensity=100, tzpoints=10, RadLi
 			}		
 			mod.obj<-wblr(x-t0_opt,s-t0_opt)
 			mod.obj<-wblr.fit(mod.obj, method.fit="mle")
-			mod.obj<-wblr.conf(mod.obj,method.conf="lrb",lwd=1, lty=2,col="orange")
+			mod.obj<-wblr.conf(mod.obj,method.conf="lrb",lwd=2, lty=2,col="orange")
 			plot(mod.obj, xlab="time - t0", main="Modified Data Plot")
 			lines(boundsDF$lower,p2y(boundsDF$percentile/100),lwd=2,col="red")
 			lines(boundsDF$upper,p2y(boundsDF$percentile/100),lwd=2,col="red")
@@ -143,7 +172,7 @@ LRbounds3pw<-function(x, s=NULL, CL=0.9, DF=1 ,ptDensity=100, tzpoints=10, RadLi
 				lwd<-1
 				lty<-1
 				col<-"black"
-				if(cntr==1) {col="darkgreen";lwd=2}	
+				if(cntr==1&&!(0 %in% invalid_tz)) {col="darkgreen";lwd=2}	
 				if(cntr==length(C2P)) {col="orange";lwd=2;lty=2}	
 				points(C2P[[cntr]],type="l", lwd=lwd, lty=lty, col=col)
 				
