@@ -49,6 +49,7 @@ pivotal3pw<-function(x, s=NULL, CI=0.9, unrel=NULL, S=1000, listout=FALSE, show=
 	lo_row<-ceiling(S*(1-CI)/2)
 	up_row<-floor(S*(1-(1-CI)/2))
 	Lower<-boot.mat[lo_row,]
+	Lower<-sapply(Lower,function(X) ifelse(X<=0,NA,X))
 	Upper<-boot.mat[up_row,]
 	Datum<-boot.mat[floor(S/2),]
 
