@@ -29,7 +29,7 @@ pivotal3pw<-function(x, s=NULL, CI=0.9, unrel=NULL, S=1000, listout=FALSE, show=
 		dq<-c(.01, .02, .05, .10, .15, .20, .30, .40, .50,  .60, .70, .80, .90, .95, .99)
 	}
 
-	Datum<-qweibull(dq,Beta_opt, Eta_opt) + t0_opt
+	#Datum<-qweibull(dq,Beta_opt, Eta_opt) + t0_opt
 	set.seed(1234)
 # passing the dataframe passes the ppp column	
 	sample_data<-da	
@@ -50,6 +50,7 @@ pivotal3pw<-function(x, s=NULL, CI=0.9, unrel=NULL, S=1000, listout=FALSE, show=
 	up_row<-floor(S*(1-(1-CI)/2))
 	Lower<-boot.mat[lo_row,]
 	Upper<-boot.mat[up_row,]
+	Datum<-boot.mat[floor(S/2),]
 
 	if(show) {
 	if(!exists("p2y")) {
