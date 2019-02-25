@@ -36,7 +36,10 @@ pivotal3pw<-function(x, s=NULL, CI=0.9, unrel=NULL, S=1000, listout=FALSE, show=
 	boot.mat<-NULL	
 	## generation of  parametric bootstrap	
 	for(set in 1:S) {	
-		sample_data$time<-sort(rweibull(nrow(da),Beta_opt,Eta_opt)+t0_opt)
+		repeat{
+			sample_data$time<-sort(rweibull(nrow(da),Beta_opt,Eta_opt)+t0_opt)
+			if(!any(sample_data<0)) break
+		}
 		fit<-lslr(sample_data, npar=3)
 		xvals<- qweibull(dq,fit[2], fit[1])+fit[3]
 		boot.mat<-rbind(boot.mat, xvals)
