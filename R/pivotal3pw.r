@@ -67,8 +67,8 @@ pivotal3pw<-function(x, s=NULL, CI=0.9, unrel=NULL, S=1000, listout=FALSE, show=
 	}	
 	}
 	
-	obj<-wblr.conf(wblr.fit(wblr(x-t0_opt,s-t0_opt, col="red"), col="grey"),lty=2, col="orange")
-	plot(obj, xlab="time-t0", main="Modified Data Plot")	
+	obj1<-wblr.conf(wblr.fit(wblr(x-t0_opt,s-t0_opt, col="red"), col="grey"),lty=2, col="orange")
+	plot(obj1, xlab="time - t0", main="Modified Data Plot")	
 		
 	lines(Median-t0_opt,p2y(dq), col="black")	
 	lines(Lower-t0_opt,p2y(dq), col="blue")	
@@ -76,8 +76,8 @@ pivotal3pw<-function(x, s=NULL, CI=0.9, unrel=NULL, S=1000, listout=FALSE, show=
 
 	## start a new graphics device
 	x11(xpos=-350, ypos=100)
-	obj<-wblr.fit(wblr(x,s, col="red"), npar=3, col="grey")	
-	plot(obj)	
+	obj2<-wblr.fit(wblr(x,s, col="red"), npar=3, lty=0)	
+	plot(obj2)	
 		
 	lines(Median,p2y(dq), col="black")	
 	lines(Lower,p2y(dq), col="blue")	
@@ -88,10 +88,9 @@ pivotal3pw<-function(x, s=NULL, CI=0.9, unrel=NULL, S=1000, listout=FALSE, show=
 ## The return from the R function pivotal.rr should be the untransformed values, 
 ## without regard to graphic presentation.
 
-	obj<-wblr.conf(wblr.fit(wblr(x,s)))
-	bounds2p<-obj$fit[[1]]$conf[[1]]$bounds
-	lines(bounds2p$Lower,p2y(bounds2p$unrel), lty=2, lwd=2, col="orange")
-	lines(bounds2p$Upper,p2y(bounds2p$unrel), lty=2, lwd=2, col="orange")
+	bounds2p<-obj1$fit[[1]]$conf[[1]]$bounds
+	lines(bounds2p$Lower+t0_opt,p2y(bounds2p$unrel), lty=2, lwd=2, col="orange")
+	lines(bounds2p$Upper+t0_opt,p2y(bounds2p$unrel), lty=2, lwd=2, col="orange")
 		
 	}
 
