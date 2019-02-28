@@ -51,7 +51,7 @@ pivotal3pw<-function(x, s=NULL, CI=0.9, unrel=NULL, S=1000, listout=FALSE, show=
 	Lower<-boot.mat[lo_row,]
 	Lower<-sapply(Lower,function(X) ifelse(X<=0,NA,X))
 	Upper<-boot.mat[up_row,]
-	Datum<-boot.mat[floor(S/2),]
+	Median<-boot.mat[floor(S/2),]
 
 	if(show) {
 	if(!exists("p2y")) {
@@ -65,20 +65,38 @@ pivotal3pw<-function(x, s=NULL, CI=0.9, unrel=NULL, S=1000, listout=FALSE, show=
 		if(log =="xy") ret <- qlnorm(p,0,1)
 		ret
 	}	
-	}	
+	}
+	
+	obj<-wblr.conf(wblr.fit(wblr(x-t0_opt,s-t0_opt, col="red"), col="grey"),lty=2, col="orange")
+	plot(obj, xlab="time-t0", main="Modified Data Plot")	
 		
+	lines(Median-t0_opt,p2y(dq), col="black")	
+	lines(Lower-t0_opt,p2y(dq), col="blue")	
+	lines(Upper-t0_opt,p2y(dq), col="blue")				
+
+	## start a new graphics device
+	x11(xpos=-350, ypos=100)
 	obj<-wblr.fit(wblr(x,s, col="red"), npar=3, col="grey")	
 	plot(obj)	
 		
-	lines(Datum,p2y(dq), col="black")	
-		
+	lines(Median,p2y(dq), col="black")	
 	lines(Lower,p2y(dq), col="blue")	
-	lines(Upper,p2y(dq), col="blue")	
+	lines(Upper,p2y(dq), col="blue")
+	
+## The easiest way to get the bound lines for such a plot is to use the wblr object. 
+## However placement of the conversion code should in the base technical code, not the wblr.conf function. 
+## The return from the R function pivotal.rr should be the untransformed values, 
+## without regard to graphic presentation.
+
+	obj<-wblr.conf(wblr.fit(wblr(x,s)))
+	bounds2p<-obj$fit[[1]]$conf[[1]]$bounds
+	lines(bounds2p$Lower,p2y(bounds2p$unrel), lty=2, lwd=2, col="orange")
+	lines(bounds2p$Upper,p2y(bounds2p$unrel), lty=2, lwd=2, col="orange")
 		
 	}
 
 
-	bounds<-data.frame(unreliability=dq, Lower=Lower, Datum=Datum, Upper=Upper)
+	bounds<-data.frame(unreliability=dq, Lower=Lower, Median=Median, Upper=Upper)
 
 ## listout could include the boot.mat as a return item
 bounds
