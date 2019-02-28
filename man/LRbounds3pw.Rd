@@ -14,8 +14,7 @@ LRbounds3pw(x, s=NULL, CL=0.9, DF=1 ,ptDensity=100, tzpoints=10,
 
 \arguments{
   \item{x}{
-	Either a dataframe containing at least \code{$time} and \code{$event}
-	columns, or a vector of class \code{"numeric"} or \code{"integer"} with
+	 a vector of class \code{"numeric"} or \code{"integer"} with
 	(life-)time observations.
   }
   \item{s}{An optional vector of suspension data.}
@@ -36,7 +35,7 @@ LRbounds3pw(x, s=NULL, CL=0.9, DF=1 ,ptDensity=100, tzpoints=10,
 }
 
 \value{
-  A dataframe holding values of percentiles, lower, datum, and upper values of the bound.
+  A dataframe holding values of percentiles, lower, median, and upper values of the bound.
   If listout is set to TRUE the following development items are returned in a list:
   [[1]]dataframe holding values of percentiles, lower, datum, and upper values of the bound.
   [[2]] list of 2 dataframes holding the lower and upper bound values for all potential values of the third parmameter,
