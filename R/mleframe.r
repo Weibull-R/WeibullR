@@ -135,12 +135,22 @@ mleframe<-function(x, s=NULL, interval=NULL)  {
 				stop("non-positive values in failure or suspension data")
 			}
 	## verify 1's and 0's only in event
-	## using Jurgen's validation code
+	## using Jurgen's validation code modified now for possibility of failures only in intervals with only suspension data in x
+			event_column_ok=FALSE
 			ev_info <- levels(factor(x$event))
-			if(identical(ev_info,c("0","1")) || identical(ev_info,"1")){
-			# okay x is holding event indicators
+			if(is.null(interval))  {
+				if(identical(ev_info,c("0","1")) || identical(ev_info,"1")){
+			# okay x is holding event indicators and at least one failure is present
+					event_column_ok=TRUE
+				}
 			}else{
-			stop("event column not '1' or '0' ")
+				if(identical(ev_info,c("0","1")) || identical(ev_info,"1") || identical(ev_info,"0")){
+			# okay x is holding event indicators while failures are reported in intervals which have already been validated
+					event_column_ok=TRUE
+				}
+			}
+			if(!event_column_ok) {
+				stop("event column not '1' or '0' ")
 			}
 
 			if(length(s)>0)  {
