@@ -157,18 +157,23 @@ mleframe<-function(x, s=NULL, interval=NULL)  {
 			warning("argument 's' ignored when time-event dataframe provided")
 			}
 
-			if(is.null(x$qty)) {
-				fail_vec<-x$time[x$event==1]
-				# failures <- data.frame(left = f, right = f, qty = rep(1, length(f)))
-			}else{
+## need to wrap the determination of failures in the rlq dataframe construction 
+## with a test that exact failures indeed exist			
+			if("1" %in% ev_info) {	
+					if(is.null(x$qty)) {
+						fail_vec<-x$time[x$event==1]
+						# failures <- data.frame(left = f, right = f, qty = rep(1, length(f)))
+					}else{
 	## The assumption is that data input with a qty field is appropriately  consolidated
 	## But let's be sure the qty field is all integer, else future havoc could ensue
-				if(any(!is.integer(x$qty))) x$qty<-ceiling(x$qty)
-				f<-x$time[x$event==1]
-				failures <- data.frame(left = f, right = f, qty = x$qty[x$event==1])
+						if(any(!is.integer(x$qty))) x$qty<-ceiling(x$qty)
+						f<-x$time[x$event==1]
+						failures <- data.frame(left = f, right = f, qty = x$qty[x$event==1])
+					}
 			}
-
-			if(identical(ev_info, c("0","1"))) {
+#			if(identical(ev_info, c("0","1"))) {
+## Need to permit evaluation of suspension data when only type in the time-event dataframe in x
+			if("0" %in% ev_info) {	
 			s<-x$time[x$event==0]
 				if(is.null(x$qty)) {
 
