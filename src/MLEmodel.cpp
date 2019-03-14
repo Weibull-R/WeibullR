@@ -334,7 +334,7 @@ if(dist_num == 1)  {
 					v.col(vg)=v.col(vs)+(v.col(vg)-v.col(vs))/2.0;	
  // This case results in two function calculations and simply replacing vh and vg points						
 //					funval(vh)=LogLike(v.col(vh), sign, dist_num, tz );	
-					expv1(0) = exp(v(0,vh);	
+					expv1(0) = exp(v(0,vh));	
 					expv1(1) = exp(v(1,vh));	
 					funval(vh)=LogLike(expv1, sign, dist_num, tz );	
 //					funval(vg)=LogLike(v.col(vg), sign, dist_num, tz );	
