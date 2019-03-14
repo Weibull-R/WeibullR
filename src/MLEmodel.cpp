@@ -250,7 +250,7 @@ if(dist_num == 1)  {
  // construct the initial simplex						
 		arma::colvec transvstart(2);				
 		arma::colvec expv1(2);				
-		transvstart(0) = vstart(0);				
+		transvstart(0) = log(vstart(0));				
 		transvstart(1) = log(vstart(1));				
 		arma::mat v(2,3);				
 		for(int i=0;i<k;i++)  {				
@@ -262,7 +262,7 @@ if(dist_num == 1)  {
 //		arma::colvec funval(3);				
 		for(int i=0;i<k;i++)  {				
 //		funval(i)=LogLike(v.col(i), sign, dist_num, tz );				
-		expv1(0) = v(0,i);				
+		expv1(0) = exp(v(0,i));				
 		expv1(1) = exp(v(1,i));				
 		funval(i)=LogLike(expv1, sign, dist_num, tz );				
 		}				
@@ -299,7 +299,7 @@ if(dist_num == 1)  {
 		vr=(vm+ALPHA*(vm-v.col(vg)));				
 //		fr=LogLike(vr, sign, dist_num, tz );				
 //		fr=sign*tryLL(vr, dist_num);				
-		expv1(0) = vr(0);				
+		expv1(0) = exp(vr(0));				
 		expv1(1) = exp(vr(1));				
 		fr=sign*tryLL(expv1, dist_num);				
 		if(fr==0) {				
@@ -321,7 +321,7 @@ if(dist_num == 1)  {
 					vc=vm-BETA*(vr-vm);	
 				}		
 //				fc=LogLike(vc, sign, dist_num, tz );		
-				expv1(0) = vc(0);		
+				expv1(0) = exp(vc(0));		
 				expv1(1) = exp(vc(1));		
 				fc=LogLike(expv1, sign, dist_num, tz );		
  // upon acceptance replace vg with contracton						
@@ -334,11 +334,11 @@ if(dist_num == 1)  {
 					v.col(vg)=v.col(vs)+(v.col(vg)-v.col(vs))/2.0;	
  // This case results in two function calculations and simply replacing vh and vg points						
 //					funval(vh)=LogLike(v.col(vh), sign, dist_num, tz );	
-					expv1(0) = v(0,vh);	
+					expv1(0) = exp(v(0,vh));	
 					expv1(1) = exp(v(1,vh));	
 					funval(vh)=LogLike(expv1, sign, dist_num, tz );	
 //					funval(vg)=LogLike(v.col(vg), sign, dist_num, tz );	
-					expv1(0) = v(0,vg);	
+					expv1(0) = exp(v(0,vg));	
 					expv1(1) = exp(v(1,vg));	
 					funval(vg)=LogLike(expv1, sign, dist_num, tz );	
 				}		
@@ -346,7 +346,7 @@ if(dist_num == 1)  {
 // now we make an expansion						
 				ve=vm+GAMMA*(vr-vm);		
 //				fe=LogLike(ve, sign, dist_num, tz );		
-				expv1(0) = ve(0);		
+				expv1(0) = exp(ve(0));		
 				expv1(1) = exp(ve(1));		
 				fe=sign*tryLL(expv1, dist_num);		
 				if(fe==0) {		
@@ -391,7 +391,7 @@ if(dist_num == 1)  {
 //		Rcpp::NumericVector outvec(4);				
 //		if(dist_num==1) {				
 		outvec[0]=exp(v(1,vs));				
-		outvec[1]=v(0,vs);				
+		outvec[1]=exp(v(0,vs));				
 //		}else{				
 //		outvec[0]=v(0,vs);				
 //		outvec[1]=v(1,vs);				
