@@ -1,7 +1,4 @@
 mlefit<-function(x, dist="weibull", npar=2, debias="none", optcontrol=NULL)  {
-## these warnings only apply to 3p fitting, but the object must be created
-#secant_warning<-FALSE
-#stable<-TRUE
 ## tz is required for MLEloglike and MLEsimplex calls now
 		default_tz=0
 ## sign is now required for MLEloglike call
