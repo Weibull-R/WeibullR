@@ -180,6 +180,9 @@ getPlotData<-function(x,opa) {
 	mod2x<-cbind(mod1x[,-4],tmean=dataDF$time)
 
 	p<-getPPP(p_argx, ppos=ppos, aranks=aranks, ties=opa$ties.handler)
+	
+## code below will fail if any qty in mod2x is zero
+mod2x<-mod2x[mod2x$qty>0,]
 
 if( nrow(mod2x)==nrow(p) )  {
 ## this is the R-efficient method when ties have been handled, 

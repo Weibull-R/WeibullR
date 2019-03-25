@@ -135,30 +135,45 @@ mleframe<-function(x, s=NULL, interval=NULL)  {
 				stop("non-positive values in failure or suspension data")
 			}
 	## verify 1's and 0's only in event
-	## using Jurgen's validation code
+	## using Jurgen's validation code modified now for possibility of failures only in intervals with only suspension data in x
+			event_column_ok=FALSE
 			ev_info <- levels(factor(x$event))
-			if(identical(ev_info,c("0","1")) || identical(ev_info,"1")){
-			# okay x is holding event indicators
+			if(is.null(interval))  {
+				if(identical(ev_info,c("0","1")) || identical(ev_info,"1")){
+			# okay x is holding event indicators and at least one failure is present
+					event_column_ok=TRUE
+				}
 			}else{
-			stop("event column not '1' or '0' ")
+				if(identical(ev_info,c("0","1")) || identical(ev_info,"1") || identical(ev_info,"0")){
+			# okay x is holding event indicators while failures are reported in intervals which have already been validated
+					event_column_ok=TRUE
+				}
+			}
+			if(!event_column_ok) {
+				stop("event column not '1' or '0' ")
 			}
 
 			if(length(s)>0)  {
 			warning("argument 's' ignored when time-event dataframe provided")
 			}
 
-			if(is.null(x$qty)) {
-				fail_vec<-x$time[x$event==1]
-				# failures <- data.frame(left = f, right = f, qty = rep(1, length(f)))
-			}else{
+## need to wrap the determination of failures in the rlq dataframe construction 
+## with a test that exact failures indeed exist			
+			if("1" %in% ev_info) {	
+					if(is.null(x$qty)) {
+						fail_vec<-x$time[x$event==1]
+						# failures <- data.frame(left = f, right = f, qty = rep(1, length(f)))
+					}else{
 	## The assumption is that data input with a qty field is appropriately  consolidated
 	## But let's be sure the qty field is all integer, else future havoc could ensue
-				if(any(!is.integer(x$qty))) x$qty<-ceiling(x$qty)
-				f<-x$time[x$event==1]
-				failures <- data.frame(left = f, right = f, qty = x$qty[x$event==1])
+						if(any(!is.integer(x$qty))) x$qty<-ceiling(x$qty)
+						f<-x$time[x$event==1]
+						failures <- data.frame(left = f, right = f, qty = x$qty[x$event==1])
+					}
 			}
-
-			if(identical(ev_info, c("0","1"))) {
+#			if(identical(ev_info, c("0","1"))) {
+## Need to permit evaluation of suspension data when only type in the time-event dataframe in x
+			if("0" %in% ev_info) {	
 			s<-x$time[x$event==0]
 				if(is.null(x$qty)) {
 

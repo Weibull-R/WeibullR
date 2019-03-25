@@ -49,14 +49,14 @@ LRbounds3pw(x, s=NULL, CL=0.9, DF=1 ,ptDensity=100, tzpoints=10,
  LRbounds in future CRAN submission.
  
  As beta and eta parameters form a log-likelihood mound peaking at the maximum estimate fit. Often a profile is
- generated as a vertical cross section trough the mound. A contour is a horizonalt slice through the mound at a
+ generated as a vertical cross section trough the mound. A contour is a horizontal slice through the mound at a
  log likelihood value matching the likelihood ratio defined by max(LL)- qchisq(CL,DF)/2. The beta and eta parameter pairs
  forming this contour can generate a series of fitted lines on the weibull canvas. Likelihood ratio bounds are determined
  by capturing the furthest extent of these fitted lines.
  
- The confidence interval bounds reflecting the uncertainty of the third parameter are determineed by generating
+ The confidence interval bounds reflecting the uncertainty of the third parameter are determined by generating
  a series of bounds across a range of potential third parameter values. Each of the contours underlying these bounds
- are match a ratio using the highest log-likelihood from third parameter optimization. The final bound selection is formed 
+ match a ratio using the highest log-likelihood from third parameter optimization. The final bound selection is formed 
  by the furthest extent of the compiled bounds from varied third parameter values.
  
  The example below runs, but exceeds execution time permitted by check --as-cran.
