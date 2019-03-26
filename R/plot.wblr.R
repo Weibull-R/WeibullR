@@ -295,24 +295,13 @@ plot.wblr <- function(x,...){
         # TODO: check if this makes sense when supplying a list
 }
 
-## could consider a y2p function, but not used
+#######################################################################################
+## p2y has been relocated to its own file, and is now exported
+## could consider a y2p function, but not used in WeibullR
+#Jurgen's original function
 #F0 <- function(q)
 #   1-exp(-exp(q))
-
-
-## since the log option only has meaning upon plot.wblr
-## p2y should only be used within plot.wblr() or functions it calls
-p2y <- function(p,canvas="weibull"){
-#F0inv <- function(p,log="x"){
-    # This is the inverse Cumulative Distribution function
-	# used to transform a probability value to the
-    # y-axis of the plot canvas. 
-	# Use of this transformation permits distributions
-	# to appear as curves on unrelated canvas
-    if(canvas =="weibull")ret <- log(qweibull(p,1,1))
-	if(canvas =="lognormal") ret <- qlnorm(p,0,1)
-    ret
-}
+#######################################################################################
 
 findMaxDataRange <- function(x,log=""){
     # +-------------------------------------------+
