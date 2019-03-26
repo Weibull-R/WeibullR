@@ -11,7 +11,7 @@
 
 \arguments{
     \item{obj}{
-        An object created by wblr and having at least one modifying call to wblr.fit.
+        An object created by wblr and the result of at least one modifying wblr.fit call.
 	}
 	\item{fit_num}{
 		The numbered fit in the wblr object.
@@ -19,7 +19,7 @@
 }
 
 \value{
-	A list holding the distribution name and fit vector as extracted from the \code{wblr} object.
+	A list holding \code{dist} the distribution name and \code{fit} a vector as extracted from the \code{wblr} object.
 }
 
 \references{
