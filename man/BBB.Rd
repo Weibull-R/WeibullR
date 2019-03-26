@@ -16,6 +16,10 @@ BBB(xdata, xfit,n=NULL, CI=.90, unrel=NULL, type="horizontal", nknots=NULL)
   \item{xfit}{A list containing dist and fit elements. A suitable object can be extracted from a wblr object containing the resuult of at least one modifying wblr.fit call.
 	Function \code{xfit} has been provided to return such a list.
   }
+  \item{n}{The total number of data entries fail, suspension, discovery and interval. This value is only required to be provided
+   if not available from either xdata (as sum(xdata$lrq_frame$qty) or xfit (as attr(xfit$fit)$n), however, an entry
+   for this argument will take precidence over the other argument sources.
+  }  
   \item{CI}{A scalar for the double-sided confidence interval of interest. Default = 0.9, for 90% double-sided bounds.
   }
   \item{unrel}{An optional vector of unreliability values to be used as the descriptive percentiles at which the bound quantiles will be calculated.

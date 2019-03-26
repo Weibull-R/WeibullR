@@ -16,7 +16,7 @@ pivotal3pw(x, s=NULL, CI=0.9, unrel=NULL, S=1000, listout=FALSE, show=FALSE)
   }
   \item{s}{An optional vector of suspension data.
   }
-  \item{CL}{A scalar for the double-sided confidence interval of interest. Default = 0.9, for 90% double-sided bounds.
+  \item{CI}{A scalar for the double-sided confidence interval of interest. Default = 0.9, for 90% double-sided bounds.
   }
   \item{unrel}{An optional vector of unreliability values to be used as the descriptive quantiles at which the bounds will be calculated.
   }

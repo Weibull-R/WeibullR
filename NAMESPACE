@@ -9,7 +9,7 @@ importFrom("stats", "approxfun", "coef", "cor", "lm", "na.omit",
 		 "sd", "var", "pchisq", "qchisq", "dnorm", "dlnorm", "dweibull",
 		 "smooth.spline", "predict")
 importFrom("utils", "modifyList")
-
+importFrom("grDevices", "dev.new")
 
 export(
 	AbPval,

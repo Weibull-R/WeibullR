@@ -75,7 +75,8 @@ pivotal3pw<-function(x, s=NULL, CI=0.9, unrel=NULL, S=1000, listout=FALSE, show=
 	lines(Upper-t0_opt,p2y(dq), col="blue")				
 
 	## start a new graphics device
-	x11(xpos=-350, ypos=100)
+	#x11(xpos=-350, ypos=100)
+	dev.new(xpos=-350, ypos=100)
 	obj2<-wblr.fit(wblr(x,s, col="red"), npar=3, lty=0)	
 	plot(obj2)	
 		

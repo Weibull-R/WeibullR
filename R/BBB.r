@@ -58,8 +58,8 @@ BBB<-function(xdata, xfit,n=NULL, CI=.90, unrel=NULL, type="horizontal", nknots=
 ## Perhaps a test that the xfit$fit is indeed a numeric vector would be better						
 			fit_par<-xfit$fit			
 			if(!is.null(xfit$n))  {			
-				if(!is.null(attr(fit,"data_types")) ) {		
-					n<-attr(fit,"data_types")[1]	
+				if(!is.null(attr(fit_par,"data_types")) ) {		
+					n<-attr(fit_par,"data_types")[1]	
 				}		
 			}			
 		}				
@@ -126,7 +126,7 @@ BBB<-function(xdata, xfit,n=NULL, CI=.90, unrel=NULL, type="horizontal", nknots=
 				upper.h<- data.frame(p=sx$ppp, upper=qlnorm(Zhi,fit_par[1],fit_par[2]))		
 				upper.v<-data.frame(p=Zlo, upper=qlnorm(Zhi,fit_par[1],fit_par[2]))		
 			}else{			
-				stop(paste0("distribution ", dist, " not supported for bbb."))		
+				stop(paste0("distribution ", base_distribution, " not supported for bbb."))		
 			}			
 						
 		}				
@@ -147,7 +147,7 @@ BBB<-function(xdata, xfit,n=NULL, CI=.90, unrel=NULL, type="horizontal", nknots=
 				upper.h<- data.frame(p=sx$ppp, upper=qlnorm(Zhi,fit_par[1],fit_par[2]) + fit_par[3])		
 				upper.v<-data.frame(p=Zlo, upper=qlnorm(Zhi,fit_par[1],fit_par[2]) + fit_par[3])		
 			}else{			
-				stop(paste0("distribution ", dist, " not supported for bbb."))		
+				stop(paste0("distribution ", base_distribution, " not supported for bbb."))		
 			}			
 		}				
 	}					
