@@ -33,6 +33,11 @@ wblr.fit <- function(x, modify.by.t0=FALSE,...){
 ## okay lets do some realistic validation
 ## It will probably be better to splitfitargs(...) for more comprehensive validations
 	arg <- list(...)
+	if(length(arg) > 0) {
+	if(class(arg[[1]])=="list")  {
+	arg<-arg[[1]]
+	}
+	}
 	if(!is.null(c(arg$log,arg$canvas))) stop("cannot set log or canvas option in wblr.fit")
 	if(!is.null(c(arg$ties.handler, arg$ties))) warning("handling of ties is only performed on object creation in function wblr.")
 
