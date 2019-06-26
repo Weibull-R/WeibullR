@@ -26,9 +26,8 @@ LRbounds3pw<-function(x, s=NULL, CL=0.9, DF=1 ,ptDensity=120, tzpoints=c(10,10,1
 			
 		}	
 	
-		## mlefit does not currently return this attribute	
-		if(!is.null(attr(MLEfit, "rebound_pt")))  {	
-			maxtz<-attr(MLEfit,"rebound_pt")
+		if(!is.null(attr(MLEfit, "rebound")))  {	
+			maxtz<-attr(MLEfit,"rebound")
 		}else{	
 			maxtz<-min(x)
 		}	
@@ -41,8 +40,12 @@ LRbounds3pw<-function(x, s=NULL, CL=0.9, DF=1 ,ptDensity=120, tzpoints=c(10,10,1
 		invalid_tz<-NULL
 		
 	repeat{
-		if(t0_opt> 0 )  {			
-			tzvec<-seq(0, maxtz-maxtz/tzpoints_now, by=maxtz/tzpoints_now)		
+		if(t0_opt> 0 )  {
+			if(!is.null(attr(MLEfit, "rebound")))  {
+				tzvec<-seq(0, maxtz, by=maxtz/tzpoints_now)
+			}else{
+				tzvec<-seq(0, maxtz-maxtz/tzpoints_now, by=maxtz/tzpoints_now)	
+			}					
 			if(!is.null(invalid_tz)) {		
 				tzvec<-unlist(sapply(tzvec, function(X) if(X>max(invalid_tz)) X))	
 			}		

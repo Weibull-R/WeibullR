@@ -416,6 +416,7 @@ if(length(max_ind)>1) {
 							## decrement the trial so it will replace last and flag this unusual event (for further study?).
 							trial<-trial-1
 							rebound<-TRUE
+							rebound_value<-DF$tz[rebound_ind]
 						}else{	
 							start<-DF$tz[n]
 							end<-maxtz
@@ -496,6 +497,9 @@ if(exists("positive_runnout")) {
 
 if(exists("negative_runnout")) {
 	attr(outvec, "message")<-"optimum not found, t0 cutoff at minimal gof change"
+}
+if(rebound == TRUE) {
+	attr(outvec, "rebound")<-rebound_value
 }
 ## end of 3p code
 }
