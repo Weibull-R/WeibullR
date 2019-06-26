@@ -185,7 +185,7 @@ LRbounds3pw<-function(x, s=NULL, CL=0.9, DF=1 ,ptDensity=120, tzpoints=c(10,10,1
 ## set the graphic device for double plot output	
 ## order of numbers in first arg to matrix determines order top to bottom of plots	
 ## additional values represent relative width and height of graphic panes	
-		layout(matrix(c(1,2),2,1, byrow=TRUE))
+		layout(matrix(c(2,1),2,1, byrow=TRUE))
 		layout.show(n=2)
 	}
 		if(show[1]) {
