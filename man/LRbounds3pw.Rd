@@ -8,7 +8,7 @@
  likelihood ratio contours at varied potential values for the third parameter.}
 
 \usage{
-LRbounds3pw(x, s=NULL, CL=0.9, DF=1 ,ptDensity=100, tzpoints=10,
+LRbounds3pw(x, s=NULL, CL=0.9, DF=1 ,ptDensity=120, tzpoints=c(10,10,1),
  RadLimit=1e-5, listout=FALSE, show=c(FALSE,FALSE))
 }
 
@@ -24,7 +24,11 @@ LRbounds3pw(x, s=NULL, CL=0.9, DF=1 ,ptDensity=100, tzpoints=10,
   confidence interval bound use. Should be set to 2 for comparison of two models each with 2 parameters.
   }
   \item{ptDensity}{an integer value for the number of points to be plotted around the circumference of the contour.}
-  \item{tzpoints}{an integer value for the number of potential values for the third parameter to be modeled.
+  \item{tzpoints}{a vector of integer value for the number of potential values for the third parameter to be modeled. 
+   the first value is the number of trials from either zero to an approach to the minimum data value (for positive t0 case) or
+   the optimized t0 to an approach to the minimum data value (for negative t0 case). The second entry is the number of 
+   additional negative t0 steps to take beyond the first set of values, while the third entry indicates a by value
+   used in the additional negative t0 step sequence.
   }
   \item{RadLimit}{A convergence limit for radius determination as contours points are found.
   }
