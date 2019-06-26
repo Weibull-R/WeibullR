@@ -408,7 +408,7 @@ if(length(max_ind)>1) {
 					## check for rebound case		
 						shift_gof<-c(DF$gof[1],DF$gof[-n])	
 						progression<-DF$gof-shift_gof	
-						rebound_ind<-which(progression==min(progression))	
+						rebound_ind<-which(progression==min(progression))						
 						if(rebound_ind!=1)  {	
 						## if so, next trial is a rework of this trial with end set to rebound point	
 							## start is unchanged
