@@ -185,7 +185,7 @@ LRbounds3pw<-function(x, s=NULL, CL=0.9, DF=1 ,ptDensity=120, tzpoints=c(10,10,1
 ## set the graphic device for double plot output	
 ## order of numbers in first arg to matrix determines order top to bottom of plots	
 ## additional values represent relative width and height of graphic panes	
-		layout(matrix(c(2,1),2,1, byrow=TRUE))
+		layout(matrix(c(2,1),1,2, byrow=TRUE))
 		layout.show(n=2)
 	}
 		if(show[1]) {
@@ -204,7 +204,14 @@ LRbounds3pw<-function(x, s=NULL, CL=0.9, DF=1 ,ptDensity=120, tzpoints=c(10,10,1
 			mod.obj<-wblr(x-t0_opt,s-t0_opt)
 			mod.obj<-wblr.fit(mod.obj, method.fit="mle")
 			mod.obj<-wblr.conf(mod.obj,method.conf="lrb",lwd=2, lty=2,col="orange")
-			plot(mod.obj, xlab="time - t0", main="Modified Data Plot")
+			if(show[1] && show[2]) {
+				plot(mod.obj, xlab="time - t0",
+				in.legend=FALSE,
+				main="Modified Data Plot")
+			}else{
+				plot(mod.obj, xlab="time - t0", in.legend.blives=FALSE,
+				main="Modified Data Plot")
+			}
 			lines(boundsDF$lower,p2y(boundsDF$percentile/100),lwd=2,col="red")
 			lines(boundsDF$upper,p2y(boundsDF$percentile/100),lwd=2,col="red")
 		}
