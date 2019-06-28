@@ -408,7 +408,7 @@ if(length(max_ind)>1) {
 					## check for rebound case		
 						shift_gof<-c(DF$gof[1],DF$gof[-n])	
 						progression<-DF$gof-shift_gof	
-						rebound_ind<-which(progression==min(progression))	
+						rebound_ind<-which(progression==min(progression))						
 						if(rebound_ind!=1)  {	
 						## if so, next trial is a rework of this trial with end set to rebound point	
 							## start is unchanged
@@ -416,6 +416,7 @@ if(length(max_ind)>1) {
 							## decrement the trial so it will replace last and flag this unusual event (for further study?).
 							trial<-trial-1
 							rebound<-TRUE
+							rebound_value<-DF$tz[rebound_ind]
 						}else{	
 							start<-DF$tz[n]
 							end<-maxtz
@@ -496,6 +497,9 @@ if(exists("positive_runnout")) {
 
 if(exists("negative_runnout")) {
 	attr(outvec, "message")<-"optimum not found, t0 cutoff at minimal gof change"
+}
+if(rebound == TRUE) {
+	attr(outvec, "rebound")<-rebound_value
 }
 ## end of 3p code
 }

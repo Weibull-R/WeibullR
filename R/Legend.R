@@ -101,6 +101,7 @@ buildSingleDataLegend <- function(x,opadata,...){
         plot=FALSE)$rect
     le$label <- opadata$label
     le$legend.text.size <- opadata$legend.text.size
+#	le$legend.text.width <- opadata$legend.text.width
     le
 }
 

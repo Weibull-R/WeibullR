@@ -2,8 +2,14 @@
 ## this content is expected to be incorporated into LRbounds.r in the future.
 
 
-LRbounds3pw<-function(x, s=NULL, CL=0.9, DF=1 ,ptDensity=100, tzpoints=10, RadLimit=1e-5, listout=FALSE, show=c(FALSE,FALSE))  {			
-	
+LRbounds3pw<-function(x, s=NULL, CL=0.9, DF=1 ,ptDensity=120, tzpoints=c(10,10,1), RadLimit=1e-5, listout=FALSE, show=c(FALSE,FALSE))  {			
+		if(class(x)=="data.frame") {		
+	##Note that any qty column would be ignored here. 
+	##Actually there should be an expansion by qty if this code remains.			
+		s=x$time[x$event==0]	
+		x=x$time[x$event==1]	
+		}		
+
 		MLEfit<-mlefit(mleframe(x,s), npar=3)	
 		## now that the fit return is a vector must use numbered items
 		Beta_opt<-MLEfit[2]	
@@ -11,29 +17,45 @@ LRbounds3pw<-function(x, s=NULL, CL=0.9, DF=1 ,ptDensity=100, tzpoints=10, RadLi
 		t0_opt<-MLEfit[3]	
 		MLLx3p<-MLEfit[4]	
 		ratioLL  <-  MLLx3p- qchisq(CL,DF)/2	
-		if( !is.null(attr(MLEfit,"unstable"))) stop("unstable 3rd parameter fit")	
+		if( !is.null(attr(MLEfit,"message"))) {	
+			if(attr(MLEfit, "message") == "t0 cutoff at minimal change") {
+			warning("t0_opt at optcontrol limit, 2p bounds on modified data applies")
+			}
+		## need to determine what to do when cutoff is LL at minimal change, characteristic of negative t0 instability	
 			
-		if(!is.null(attr(MLEfit, "rebound_pt")))  {	
-			maxtz<-attr(MLEfit,"rebound_pt")
+			
+		}	
+	
+		if(!is.null(attr(MLEfit, "rebound")))  {	
+			maxtz<-attr(MLEfit,"rebound")
 		}else{	
 			maxtz<-min(x)
 		}	
 			
 		if(t0_opt==0) stop("t0 = 0, nothing to do")	
 		
-		tzpoints_arg<-tzpoints
+		tzpoints_arg<-tzpoints[1]
+		tzpoints_now<-tzpoints[1]
 		valid_tz<-NULL	
 		invalid_tz<-NULL
 		
 	repeat{
-		if(t0_opt> 0 )  {			
-			tzvec<-seq(0, maxtz-maxtz/tzpoints, by=maxtz/tzpoints)		
+		if(t0_opt> 0 )  {
+			if(!is.null(attr(MLEfit, "rebound")))  {
+				tzvec<-seq(0, maxtz, by=maxtz/tzpoints_now)
+			}else{
+				tzvec<-seq(0, maxtz-maxtz/tzpoints_now, by=maxtz/tzpoints_now)	
+			}					
 			if(!is.null(invalid_tz)) {		
 				tzvec<-unlist(sapply(tzvec, function(X) if(X>max(invalid_tz)) X))	
 			}		
 		}else{			
 		## just a guess for negative t0 will actually give one extra point beyond t0_opt			
-			tzvec<-seq(0, t0_opt+t0_opt/tzpoints, by=t0_opt/tzpoints)		
+		##	tzvec<-seq(0, t0_opt+t0_opt/tzpoints, by=t0_opt/tzpoints)
+			tzseq<-seq(maxtz-maxtz/tzpoints_now, t0_opt, by=(t0_opt-maxtz)/tzpoints_now)
+		## remove 0 if it is within this sequence, so it can be made first entry and appear only once	
+			tzseq<-tzseq[!tzseq %in% 0]
+			tzvec<-c(0, seq(maxtz-maxtz/tzpoints_now, t0_opt, by=(t0_opt-maxtz)/tzpoints_now))
 			if(!is.null(invalid_tz)) {		
 				tzvec<-unlist(sapply(tzvec, function(X) if(X<min(invalid_tz)) X))	
 			}		
@@ -50,11 +72,48 @@ LRbounds3pw<-function(x, s=NULL, CL=0.9, DF=1 ,ptDensity=100, tzpoints=10, RadLi
 		}			
 										
 		if(length(valid_tz)<tzpoints_arg*.7) {			
-			tzpoints<-tzpoints * 2		
+			tzpoints_now<-tzpoints_now * 2
+			if(tzpoints_now<1000) break		
 		}else{			
 			break		
 		}			
 	}	
+
+	## add negative t0 candidates to valid_tz				
+	if((t0_opt> 0 && 0 %in% valid_tz) )  {				
+		tzpoints_neg<-seq(tzpoints[3],tzpoints[2], by=tzpoints[3])			
+		step_size<-valid_tz[2]			
+					
+		for(try in tzpoints_neg) {			
+			## get the mle for 2-parameter fit at tz for validation testing		
+			neg_tz<- (-1)*step_size*try		
+			mle2p<-mlefit(mleframe(x-neg_tz, s-neg_tz))		
+			if(mle2p[3]<ratioLL) {		
+				invalid_tz<-unique(c(invalid_tz,neg_tz))	
+			}else{		
+				valid_tz<-unique(c(valid_tz,neg_tz))	
+			}		
+		}			
+	}				
+					
+	if(t0_opt<0) {				
+		tzpoints_neg<-seq(tzpoints[3],tzpoints[2], by=tzpoints[3])			
+		step_size<-valid_tz[length(valid_tz)]-valid_tz[length(valid_tz)-1]			
+					
+		for(try in tzpoints_neg) {			
+			## get the mle for 2-parameter fit at tz for validation testing		
+			neg_tz<- t0_opt+step_size*try		
+			mle2p<-mlefit(mleframe(x-neg_tz, s-neg_tz))		
+			if(mle2p[3]<ratioLL) {		
+				invalid_tz<-unique(c(invalid_tz,neg_tz))	
+			}else{		
+				valid_tz<-unique(c(valid_tz,neg_tz))	
+			}		
+		}			
+	}				
+
+
+
 			
 		## Need to add t0_opt into valid_tz, but no need to sort?	
 		valid_tz<-c(valid_tz,t0_opt)	
@@ -126,7 +185,7 @@ LRbounds3pw<-function(x, s=NULL, CL=0.9, DF=1 ,ptDensity=100, tzpoints=10, RadLi
 ## set the graphic device for double plot output	
 ## order of numbers in first arg to matrix determines order top to bottom of plots	
 ## additional values represent relative width and height of graphic panes	
-		layout(matrix(c(1,2),2,1, byrow=TRUE))
+		layout(matrix(c(2,1),1,2, byrow=TRUE))
 		layout.show(n=2)
 	}
 		if(show[1]) {
@@ -144,8 +203,20 @@ LRbounds3pw<-function(x, s=NULL, CL=0.9, DF=1 ,ptDensity=100, tzpoints=10, RadLi
 			}		
 			mod.obj<-wblr(x-t0_opt,s-t0_opt)
 			mod.obj<-wblr.fit(mod.obj, method.fit="mle")
+<<<<<<< HEAD
 			mod.obj<-wblr.conf(mod.obj,method.conf="lrb",ci=CL,lwd=2, lty=2,col="orange")
 			plot(mod.obj, xlab="time - t0", main="Modified Data Plot")
+=======
+			mod.obj<-wblr.conf(mod.obj,method.conf="lrb",lwd=2, lty=2,col="orange")
+			if(show[1] && show[2]) {
+				plot(mod.obj, xlab="time - t0",
+				in.legend=FALSE,
+				main="Modified Data Plot")
+			}else{
+				plot(mod.obj, xlab="time - t0", in.legend.blives=FALSE,
+				main="Modified Data Plot")
+			}
+>>>>>>> e4d7c92dd4bc4dbeb6dc6fa605694cd6c366fd66
 			lines(boundsDF$lower,p2y(boundsDF$percentile/100),lwd=2,col="red")
 			lines(boundsDF$upper,p2y(boundsDF$percentile/100),lwd=2,col="red")
 		}
