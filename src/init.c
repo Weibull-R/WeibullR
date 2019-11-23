@@ -14,8 +14,8 @@ package_native_routine_registration_skeleton("C:/Users/Dad_laptop/Documents/Gith
 
 /* .Call calls */
 extern SEXP adjustedRank(SEXP);
-extern SEXP CallgetCCC2(SEXP, SEXP);
-extern SEXP CallgetPvalue(SEXP, SEXP, SEXP);
+//extern SEXP CallgetCCC2(SEXP, SEXP);
+//extern SEXP CallgetPvalue(SEXP, SEXP, SEXP);
 extern SEXP getContour(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
 extern SEXP LSLR(SEXP, SEXP, SEXP, SEXP);
 extern SEXP MLEdMaxLLdx(SEXP, SEXP, SEXP, SEXP);
@@ -26,8 +26,8 @@ extern SEXP plotData(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
 
 static const R_CallMethodDef CallEntries[] = {
     {"adjustedRank",  (DL_FUNC) &adjustedRank,  1},
-    {"CallgetCCC2",   (DL_FUNC) &CallgetCCC2,   2},
-    {"CallgetPvalue", (DL_FUNC) &CallgetPvalue, 3},
+//    {"CallgetCCC2",   (DL_FUNC) &CallgetCCC2,   2},
+//    {"CallgetPvalue", (DL_FUNC) &CallgetPvalue, 3},
     {"getContour",    (DL_FUNC) &getContour,    7},
     {"LSLR",          (DL_FUNC) &LSLR,          4},
     {"MLEdMaxLLdx",   (DL_FUNC) &MLEdMaxLLdx,   4},
