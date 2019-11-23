@@ -47,8 +47,12 @@ lslr<-function(x, dist="weibull", npar=2, reg_method="XonY")  {
 	
 	if(casenum < 4) {
 		if(length(resultVec)==3)  {
+
 			prr<-AbPval(dim(x)[1], resultVec[3])
 			outVec<-c(Eta=resultVec[1],Beta=resultVec[2],Rsqr=resultVec[3], AbPval=prr[1])
+			names(outVec)<-c("Eta", "Beta", "Rsqr", "AbPval")
+## This wass a workaround due to unexpected sporatic failure of the AbPval function on Ubuntu 18.04 - now corrected
+			##outVec<-c(Eta=resultVec[1],Beta=resultVec[2],Rsqr=resultVec[3], AbPval=NA)
 		}else{
 			outVec<-c(Eta=resultVec[1],Beta=resultVec[2], t0=resultVec[3],Rsqr=resultVec[4])
 			if(resultVec[5]==1)  {
@@ -61,6 +65,7 @@ lslr<-function(x, dist="weibull", npar=2, reg_method="XonY")  {
 			if(length(resultVec)==3)  {
 				prr<-AbPval(length(x[,1]), resultVec[3],"lnorm")
 				outVec<-c(Mulog=resultVec[1],Sigmalog=resultVec[2],Rsqr=resultVec[3], AbPval=prr[1])
+				names(outVec)<-c("Mulog", "Sigmalog", "Rsqr", "AbPval")
 			}else{
 				outVec<-c(Mulog=resultVec[1],Sigmalog=resultVec[2], t0=resultVec[3],Rsqr=resultVec[4])
 				if(resultVec[5]==1)  {
