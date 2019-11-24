@@ -555,7 +555,10 @@ if(dist=="weibull")  {
 									
 	Aitken_CFs<-CFpoints[Aitken_pts]								
 									
-	Pvalue<-Aitken(Aitken_CFs,Aitken_Pvals,CritFit)								
+	Pvalue<-Aitken(Aitken_CFs,Aitken_Pvals,CritFit)	
+	if(Pvalue>100) Pvalue<-100
+	if(Pvalue<0) Pvalue<-0
+	
 	outdf<-c(Pvalue=Pvalue, CCC2=CCC2)								
 }else{
 ## trapping the potential case where a failure of the CCC2 correlation occurred
