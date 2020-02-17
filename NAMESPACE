@@ -23,7 +23,6 @@ export(
 	LLln,
 	LLw,
 	LRbounds,
-	LRbounds3pw,
 	MLEcontour,
 	MLEln2p,
 	MLEln3p,
