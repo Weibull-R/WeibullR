@@ -6,6 +6,11 @@ ehthumbs.db
 src-i386
 src-x64
 
+# Compiled object files
+*.o
+*.dll
+*.so
+
 # Folder config file
 Desktop.ini
 

@@ -17,12 +17,9 @@ RcppExport SEXP MLEsimplex(SEXP arg1, SEXP arg2, SEXP arg3, SEXP arg4, SEXP arg5
 // used in secant method for determination of 3rd parameter optimization
 RcppExport SEXP MLEdMaxLLdx(SEXP arg1, SEXP arg2, SEXP arg3, SEXP arg4);
 //******************//
-// end abremDebias
 
-
-// abremPivotals code
 RcppExport SEXP LSLR(SEXP arg1);
-RcppExport SEXP pivotalMC(SEXP arg1, SEXP arg2, SEXP arg3, SEXP arg4, SEXP arg5, SEXP arg6,SEXP arg7,SEXP arg8);
+RcppExport SEXP pivotalMC(SEXP arg1);
 //RcppExport SEXP CallgetCCC2(SEXP arg1, SEXP model);
 //RcppExport SEXP CallgetPvalue(SEXP arg1, SEXP arg2, SEXP arg3);
 

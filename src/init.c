@@ -21,7 +21,7 @@ extern SEXP LSLR(SEXP);
 extern SEXP MLEdMaxLLdx(SEXP, SEXP, SEXP, SEXP);
 extern SEXP MLEloglike(SEXP, SEXP, SEXP, SEXP, SEXP);
 extern SEXP MLEsimplex(SEXP, SEXP, SEXP, SEXP, SEXP);
-extern SEXP pivotalMC(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
+extern SEXP pivotalMC(SEXP);
 extern SEXP plotData(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
 
 static const R_CallMethodDef CallEntries[] = {
@@ -33,7 +33,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"MLEdMaxLLdx",   (DL_FUNC) &MLEdMaxLLdx,   4},
     {"MLEloglike",    (DL_FUNC) &MLEloglike,    5},
     {"MLEsimplex",    (DL_FUNC) &MLEsimplex,    5},
-    {"pivotalMC",     (DL_FUNC) &pivotalMC,     8},
+    {"pivotalMC",     (DL_FUNC) &pivotalMC,     1},
     {"plotData",      (DL_FUNC) &plotData,      7},
     {NULL, NULL, 0}
 };
