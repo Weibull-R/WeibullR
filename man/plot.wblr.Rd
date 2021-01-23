@@ -5,7 +5,7 @@
     S3 \code{wblr} Object Plotting on pretty canvax
 }
 \description{
-    This function adds the \code{.wblr} method to \code{\link[graphics]{plot}}
+    This function adds the \code{.wblr} method to \code{\link[graphics]{plot.default}}
     from the \pkg{graphics} package.
 
     Currently, the function plots the (life-)time observations, fits (if any)
