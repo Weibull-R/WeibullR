@@ -8,7 +8,7 @@ This function implements a wide assortment of options for linear regression fitt
 }
 
 \usage{
-lslr(x, dist="weibull", npar=2, reg_method="XonY") 
+lslr(x, dist="weibull", npar=2, reg_method="XonY", abpval=TRUE) 
 }
 
 \arguments{
@@ -16,6 +16,7 @@ lslr(x, dist="weibull", npar=2, reg_method="XonY")
   \item{dist}{A string defining a distribution to be fit. Implemented distributions are "weibull" (default), "lnorm", and "gumbel" (Extreme Value Type 1)}
   \item{npar}{Number of parameters to evaluate. This really is only looking for potential value of 3 for 3rd parameter optimization.  Any other value will resolve the same as default of 2.}
   \item{reg_method}{A string defining the order of axes presented for regression, whether "XonY" axis(default) or "YonX" axis for alternative study.}
+  \item{abpval}{A logical indicating whether to include the Abernethy P value in the result. When set to False the output vector will further be returned unnamed. }
 }
 
 

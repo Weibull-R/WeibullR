@@ -17,7 +17,7 @@ extern SEXP adjustedRank(SEXP);
 //extern SEXP CallgetCCC2(SEXP, SEXP);
 //extern SEXP CallgetPvalue(SEXP, SEXP, SEXP);
 extern SEXP getContour(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
-extern SEXP LSLR(SEXP, SEXP, SEXP, SEXP);
+extern SEXP LSLR(SEXP);
 extern SEXP MLEdMaxLLdx(SEXP, SEXP, SEXP, SEXP);
 extern SEXP MLEloglike(SEXP, SEXP, SEXP, SEXP, SEXP);
 extern SEXP MLEsimplex(SEXP, SEXP, SEXP, SEXP, SEXP);
@@ -29,7 +29,7 @@ static const R_CallMethodDef CallEntries[] = {
 //    {"CallgetCCC2",   (DL_FUNC) &CallgetCCC2,   2},
 //    {"CallgetPvalue", (DL_FUNC) &CallgetPvalue, 3},
     {"getContour",    (DL_FUNC) &getContour,    7},
-    {"LSLR",          (DL_FUNC) &LSLR,          4},
+    {"LSLR",          (DL_FUNC) &LSLR,          1},
     {"MLEdMaxLLdx",   (DL_FUNC) &MLEdMaxLLdx,   4},
     {"MLEloglike",    (DL_FUNC) &MLEloglike,    5},
     {"MLEsimplex",    (DL_FUNC) &MLEsimplex,    5},
