@@ -60,8 +60,8 @@ pivotal.rr<-function(x, event=NULL, dist="weibull", npar=2, reg_method="XonY", R
 			
 ## trap mistakes that can be made with parameterization			
 	if(P2 == 0) stop("neither weibull beta, nor lognormal sigmalog should be 0")		
-	if(dist_num = 0 && !P1>0 ) stop("non-positive weibull eta")		
-	if(dist_num = 1 && !P2>0 ) stop("non-positive lognormal sigmalog")		
+	if(dist_num == 0 && !P1>0 ) stop("non-positive weibull eta")		
+	if(dist_num == 1 && !P2>0 ) stop("non-positive lognormal sigmalog")		
 
 	S = as.integer(S/10)*10	
 	if (S < 10^3) {
