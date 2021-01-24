@@ -2,7 +2,7 @@
 ## This function name has been refactored to avoid confusion with pivotalMC in abremPivotals
 
 
-pivotal.rr<-function(x, event=NULL, dist="weibull", reg_method="XonY", R2, CI, unrel=NULL, P1=1.0, P2=1.0, npar=2, S=10^4, seed=1234, ProgRpt=FALSE)  {		
+pivotal.rr<-function(x, event=NULL, dist="weibull", npar=2, reg_method="XonY", R2, CI, unrel=NULL, P1=1.0, P2=1.0, S=10^4, seed=1234, ProgRpt=FALSE)  {		
 			
 	if(is.vector(x))  {			
 		stop("use MRR functions for casual fitting, or pre-process with getPPP")		
@@ -37,12 +37,32 @@ pivotal.rr<-function(x, event=NULL, dist="weibull", reg_method="XonY", R2, CI, u
 	dp=c(seq(.01,.09,by=.01),seq(.10,.90,by=.10),seq(.91,.99, by=.01))
 	}
 
-	if(!(dist %in% c("weibull", "lnorm"))) {
-	stop("only standard R dist names 'weibull', or 'lnorm' are handled in pivotal.rr")
-	}
+## It turns out that this code is general to all fitting methods:			
+	if(tolower(dist) %in% c("weibull","weibull2p","weibull3p")){		
+		dist_num <- 0	
+	}else{		
+		if(tolower(dist) %in% c("lnorm", "lognormal","lognormal2p", "lognormal3p")){	
+			dist_num <-1
+		}else{	
+			if(!dist=="gumbel") {
+		## Note: Original pivotalMC contained experimental support for "gumbel"	
+			stop(paste0("dist argument ", dist, "is not recognized for distribution fitting"))
+			}
+			if(dist=="gumbel") {
+			stop("experimental support for gumbel is currently suspended")
+			}
+		}	
+	}		
+	if(tolower(dist) %in% c("weibull3p", "lognormal3p")){		
+		npar<-3	
+	}		
+	if(!(npar %in% c(2,3))) stop("unsupported npar value")		
+			
+## trap mistakes that can be made with parameterization			
+	if(P2 == 0) stop("neither weibull beta, nor lognormal sigmalog should be 0")		
+	if(dist_num = 0 && !P1>0 ) stop("non-positive weibull eta")		
+	if(dist_num = 1 && !P2>0 ) stop("non-positive lognormal sigmalog")		
 
-	if(dist!="weibull" && P1==1.0) message("lognormal or gumbel sampled with P1=1.0")
-		
 	S = as.integer(S/10)*10	
 	if (S < 10^3) {
 ## return the full vector or matrix output for special small sampled cases
@@ -52,20 +72,9 @@ pivotal.rr<-function(x, event=NULL, dist="weibull", reg_method="XonY", R2, CI, u
 	if(S>4*10^9)   {
 		stop("Samples beyond MAX_INT")
 	}
-
-## casenum is no longer used in C++ code, rather the reg_order, and dist_num are handled directly				
-##	casenum<-0			
-##	if(reg_method=="YonX") casenum=casenum+1						
-##	if(dist=="lnorm")casenum=casenum+2			
-##	if(dist=="gumbel") casenum=casenum+4	
 	
 	reg_order=0
 	if(reg_method=="YonX") reg_order=1
-	dist_num=0
-	if(dist=="lnorm")dist_num=1
-##	if(dist!="weibull") stop(paste0("dist= ", dist, " not implemented"))
-##	if(dist=="gumbel") dist_num=3
-	if(!any(dist_num %in% c(0,1))) stop(paste0("dist= ", dist, " not implemented"))
 	
 ## a convergence limit is fixed here for 3rd parameter  convergence
 ## no longer an argument for the R function, but still an argument to C++ functions
