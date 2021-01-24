@@ -36,7 +36,11 @@ pivotal.rr<-function(x, event=NULL, dist="weibull", reg_method="XonY", R2, CI, u
 	## these descriptive percentiles match Minitab unchangeable defaults
 	dp=c(seq(.01,.09,by=.01),seq(.10,.90,by=.10),seq(.91,.99, by=.01))
 	}
-	
+
+	if(!(dist %in% c("weibull", "lnorm"))) {
+	stop("only standard R dist names 'weibull', or 'lnorm' are handled in pivotal.rr")
+	}
+
 	if(dist!="weibull" && P1==1.0) message("lognormal or gumbel sampled with P1=1.0")
 		
 	S = as.integer(S/10)*10	
