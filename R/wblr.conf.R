@@ -297,15 +297,14 @@ DQ<-DescriptiveQuantiles
 				rotation_intercept<-ret[rotation_pos,2]-log(log(1/(1-unrel[rotation_pos])))/rotation_slope					
 				ret<-(ret-rotation_intercept)*rotation_slope					
 ## 3p bounds translate and rotate according to the 2p fit line			
-	if(npar == 3) {		
-		fit2p<-lslr(xdata$dpoints, dist=fit_dist,npar=2, abpval=FALSE)	
-		fit$conf[[i]]$bounds <- cbind(unrel,	
-			exp(log(fit2p[1])+ ret/fit2p[2]))
-	}else{		
-		fit$conf[[i]]$bounds <- cbind(unrel,	
-			exp(log(fit$eta)+ ret/fit$beta))
-	}		
-				
+				if(npar == 3) {		
+					fit2p<-lslr(xdata$dpoints, dist=fit_dist,npar=2, abpval=FALSE)	
+					fit$conf[[i]]$bounds <- cbind(unrel,	
+						exp(log(fit2p[1])+ ret/fit2p[2]))
+				}else{		
+					fit$conf[[i]]$bounds <- cbind(unrel,	
+						exp(log(fit$eta)+ ret/fit$beta))
+				}		
 			}						
 									
 			if(fit_dist=="lnorm") {						
@@ -324,11 +323,15 @@ DQ<-DescriptiveQuantiles
 #                                    exp(fit$meanlog + ret/fit$sdlog) ## just wrong									
 ##                                    exp(fit$meanlog - ret/fit$sdlog)) ## appears to be flipped on y-axis at 50% intercept									
 									
-									
-									
-									
-				fit$conf[[i]]$bounds <- cbind(unrel,					
-					exp(ret*fit$sdlog + fit$meanlog))				
+## 3p bounds translate and rotate according to the 2p fit line			
+				if(npar == 3) {										
+					fit2p<-lslr(xdata$dpoints, dist=fit_dist,npar=2, abpval=FALSE)	
+					fit$conf[[i]]$bounds <- cbind(unrel,	
+						exp(log(fit2p[2])+ ret/fit2p[1]))									
+				}else{					
+					fit$conf[[i]]$bounds <- cbind(unrel,					
+						exp(ret*fit$sdlog + fit$meanlog))
+				}
 			}						
 									
 					names(fit$conf[[i]]$bounds) <- c("unrel","Lower","Datum", "Upper")				
