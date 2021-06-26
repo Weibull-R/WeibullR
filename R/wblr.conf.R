@@ -206,145 +206,150 @@ DQ<-DescriptiveQuantiles
 
 
 
-#	if(any(c("pivotal-rr","pivotal","mcpivotals","mcpivotal") %in% tolower(opaconf$method.conf))){
-	if(substr(tolower(opaconf$method.conf),1,7)=="pivotal"){
-		#                       _            _        _
-		#  _ __ ___   ___ _ __ (_)_   _____ | |_ __ _| |___
-		# | '_ ` _ \ / __| '_ \| \ \ / / _ \| __/ _` | / __|
-		# | | | | | | (__| |_) | |\ V / (_) | || (_| | \__ \
-		# |_| |_| |_|\___| .__/|_| \_/ \___/ \__\__,_|_|___/
-		#
-## this qualifier needs to apply to all bounds
-	if(any(c("weibull3p", "lognormal3p") %in% tolower(fit$options$dist))) {
-		stop("confidence bounds are not prepared on 3-parameter fits")
-	}
-	if(substr(tolower(fit$options$method.fit),1,2)!= "rr") {
-		stop("pivotal bounds are only applied on rank regression fits")
-	}
-	
-		if(!is.integer(opaconf$seed))  {
-			##warning(paste0("opaconf$seed: ",opaconf$seed,"is not an integer"))
-			opaconf$seed<-1234
-		}
-
-		fit$conf[[i]]        <- list()
-		fit$conf[[i]]$type   <- "pivotal-rr"
-		fit$conf[[i]]$S      <- 10^4
-		fit$conf[[i]]$seed   <- opaconf$seed
-##		fit$conf[[i]]$rgen   <- opaconf$rgen
-		fit$conf[[i]]$ci     <- opaconf$ci
-##		fit$conf[[i]]$sides  <- opaconf$conf.blives.sides
-		fit$conf[[i]]$blife.pts <- opaconf$blife.pts
-		ret <- NULL
-
-## now using pivotalMC from abremPivotals . . .
-## \usage{
-##pivotalMC(x, event=NULL, dist="weibull", reg_method="XonY", R2, CI, unrel,
-##  P1=1.0, P2=1.0, S=10^4,seed=1234, ProgRpt=FALSE)
-
-## data with intervals should already have been excluded from pivotalMC
-		if(!is.null(xdata$dlines)) stop("mcpivotals not performed with interval data")
-
-		if(tolower(fit$options$dist) %in% c("weibull","weibull2p")) {
-			fit_dist<-"weibull"
-## prepare the weibull parameters for pivotal evaluation per Jurgen Symynck's	method
-			P1<-lslr(getPPP(qweibull(xdata$dpoints$ppp,1,1)))[1]
-			P2<-lslr(getPPP(qweibull(xdata$dpoints$ppp,1,1)))[2]
-		}else{
-			if(tolower(fit$options$dist) %in% c("lognormal","lognormal2p")) {
-				fit_dist<-"lnorm"
-## prepare the lognormal parameters for pivotal evaluation per
-## David Silkworth's adaptation of Jurgen Symynck's weibull method
-				completePPP<-getPPP(xdata$dpoints$time)
-				comp_prob<- as.vector(completePPP[,2])
-				P1=mean(qnorm(xdata$dpoints$ppp,0,1))
-				P2=sd(qnorm(xdata$dpoints$ppp,0,1))/sd(qnorm(comp_prob,0,1))
-			## division by sd(qnorm(comp_prob,0,1))
-			## corrects for resolution of sd for complete failures to 1.0
-			## critically needed for lognormal pivotal parameter determination
-
-			}else{
-				stop("fit distribution not weibull or lognormal for pivotalMC")
-			}
-		}
-
-		regression_order<-"XonY" #default for anything other than "yonx" that might be an rr method.fit
-		if(nchar(opafit$method.fit)>2){
-		if(substr(tolower(opafit$method.fit),4,7)=="yonx") {
-			regression_order<-"YonX"
-		}
-		}
-
-## R2 and CI control format of return object
-## given R2 value 0 suppresses prr and ccc2 output
-## given CI value >0 <1 a "pivotals" dataframe of interval bounding values will be returned
-
-
-		ret<-pivotal.rr(
-			xdata$dpoints,
-#			event=event_vec, # in this case, if present it would be rep(1,length(xdata$dpoints[,1])
-			dist=fit_dist,
-			reg_method=regression_order,
-			R2=0,
-			CI=opaconf$ci,
-			unrel=unrel,
-			S=opaconf$S,
-			P1=P1,
-			P2=P2,
-			seed=opaconf$seed,
-			ProgRpt=FALSE
-		)
-
-
-
-
-				if(!is.null(ret)){
-					atLeastOneBLifeConf <- TRUE
-					if(fit_dist=="weibull") {
-## David Silkworth's final adaptation to nail the bounds around the fitted line
-		rotation_slope<-(log(log(1/(1-unrel[length(unrel)])))-log(log(1/(1-unrel[1]))))/(ret[length(unrel),2]-ret[1,2])
-## F0(0) is coded as (1-exp(-exp(0)))
-		rotation_pos<-which(unrel > (1-exp(-exp(0)))-10^-5)[1]
-		rotation_intercept<-ret[rotation_pos,2]-log(log(1/(1-unrel[rotation_pos])))/rotation_slope
-		ret<-(ret-rotation_intercept)*rotation_slope
-
-						fit$conf[[i]]$bounds <- cbind(unrel,
-							exp(log(fit$eta)+ ret/fit$beta))
-					}
-					if(fit_dist=="lnorm") {
-## David Silkworth's final adaptation to nail the bounds around the fitted line
-		## check the slope of the rotation pivotals to get correction to 1.0
-		rotation_slope<-(qnorm(unrel[length(unrel)], 0, 1)  - qnorm(unrel[1], 0, 1))/(ret[length(unrel),2]-ret[1,2])
-		## don't know why I originally used 60% quantile in MRRln2p (same as MRRw2p)
-		rotation_pos<-which(unrel > .5-10^-5)[1]
-		rotation_intercept<-ret[rotation_pos,2]-qnorm(unrel[rotation_pos], 0, 1)/rotation_slope
-		ret<-(ret-rotation_intercept)*rotation_slope
-
-		## interpret the pivotals for the log plot
-		#plot_piv<-(adj_piv)*fit[2]+fit[1]
-## some confusion as to which way to rotate
-#                                    exp(fit$meanlog + ret/fit$sdlog) ## just wrong
-##                                    exp(fit$meanlog - ret/fit$sdlog)) ## appears to be flipped on y-axis at 50% intercept
-						fit$conf[[i]]$bounds <- cbind(unrel,
-							exp(ret*fit$sdlog + fit$meanlog))
-					}
-
-					names(fit$conf[[i]]$bounds) <- c("unrel","Lower","Datum", "Upper")
-					op <- unique(c(names(opafit),names(opaconf)))
-						# this is needed to add options from opafit into li that
-						# are NULL in opafit
-						# TODO:tolower() not needed?
-					if(length(li <- opaconf[sapply(op,function(y){
-						!identical(opafit[[y]], opaconf[[y]])})]) > 0){
-						fit$conf[[i]]$options <- li
-					}
-				}else{
-					message("calculateSingleConf: Confidence calculation failed.")
-					fit$conf[[i]] <- NULL
+	if(substr(tolower(opaconf$method.conf),1,7)=="pivotal"){								
+		#                       _            _        _							
+		#  _ __ ___   ___ _ __ (_)_   _____ | |_ __ _| |___							
+		# | '_ ` _ \ / __| '_ \| \ \ / / _ \| __/ _` | / __|							
+		# | | | | | | (__| |_) | |\ V / (_) | || (_| | \__ \							
+		# |_| |_| |_|\___| .__/|_| \_/ \___/ \__\__,_|_|___/							
+		#							
+	npar=2								
+	if(any(c("weibull3p", "lognormal3p") %in% tolower(fit$options$dist))) {								
+		npar=3							
+	}								
+	if(substr(tolower(fit$options$method.fit),1,2)!= "rr") {								
+		stop("pivotal bounds are only applied on rank regression fits")							
+	}								
+									
+		if(!is.integer(opaconf$seed))  {							
+			##warning(paste0("opaconf$seed: ",opaconf$seed,"is not an integer"))						
+			opaconf$seed<-1234						
+		}							
+									
+		fit$conf[[i]]        <- list()							
+		fit$conf[[i]]$type   <- "pivotal-rr"							
+		fit$conf[[i]]$S      <- 10^4							
+		fit$conf[[i]]$seed   <- opaconf$seed							
+		fit$conf[[i]]$ci     <- opaconf$ci							
+		fit$conf[[i]]$blife.pts <- opaconf$blife.pts							
+		ret <- NULL							
+									
+## data with intervals should already have been excluded from pivotal bounds									
+		if(!is.null(xdata$dlines)) stop("pivotal bounds not performed with interval data")							
+									
+		if(tolower(fit$options$dist) %in% c("weibull","weibull2p", "weibull3p")) {							
+			fit_dist<-"weibull"						
+## prepare the weibull parameters for pivotal evaluation per Jurgen Symynck's method									
+			piv_fit<-lslr(getPPP(qweibull(xdata$dpoints$ppp,1,1)), abpval=FALSE)						
+		}else{							
+			if(tolower(fit$options$dist) %in% c("lnorm", "lognormal","lognormal2p","lognormal3p")) {						
+				fit_dist<-"lnorm"					
+## prepare the lognormal parameters for pivotal evaluation per adaptation of Jurgen Symynck's weibull method									
+				piv_fit<-lslr(getPPP(qlnorm(xdata$dpoints$ppp,0,1)), abpval=FALSE)					
+			}else{						
+				stop("fit distribution not weibull or lognormal for pivotal.rr")					
+			}						
+		}							
+		P1<-piv_fit[1]							
+		P2<-piv_fit[2]							
+									
+		regression_order<-"XonY" #default for anything other than "yonx" that might be an rr method.fit							
+		if(nchar(opafit$method.fit)>2){							
+		if(substr(tolower(opafit$method.fit),4,7)=="yonx") {							
+			regression_order<-"YonX"						
+		}							
+		}							
+									
+## R2 and CI control format of return object									
+## given R2 value 0 suppresses prr and ccc2 output									
+## given CI value >0 <1 a "pivotals" dataframe of interval bounding values will be returned									
+									
+									
+##pivotal.rr(x, event=NULL, dist="weibull", npar=2, reg_method="XonY", R2, CI, 									
+##  unrel, P1=1.0, P2=1.0, S=10^4,seed=1234, ProgRpt=FALSE)									
+		ret<-pivotal.rr(							
+			xdata$dpoints,						
+			dist=fit_dist,						
+			npar = npar,						
+			reg_method=regression_order,						
+			R2=0,						
+			CI=opaconf$ci,						
+			unrel=unrel,						
+			S=opaconf$S,						
+			P1=P1,						
+			P2=P2,						
+			seed=opaconf$seed,						
+			ProgRpt=FALSE						
+		)							
+									
+									
+									
+									
+		if(!is.null(ret)){							
+			atLeastOneBLifeConf <- TRUE						
+			if(fit_dist=="weibull") {						
+## David Silkworth's final adaptation to nail the bounds around the fitted line									
+## F0(0) was coded as (1-exp(-exp(0)))									
+				rotation_pos<-which(unrel > (1-exp(-exp(0)))-10^-5)[1]					
+				rise<-(log(log(1/(1-unrel[length(unrel)])))-log(log(1/(1-unrel[rotation_pos]))))					
+				run<-(ret[length(unrel),2]-ret[rotation_pos,2])					
+				rotation_slope<-rise/run					
+				rotation_intercept<-ret[rotation_pos,2]-log(log(1/(1-unrel[rotation_pos])))/rotation_slope					
+				ret<-(ret-rotation_intercept)*rotation_slope					
+## 3p bounds translate and rotate according to the 2p fit line			
+				if(npar == 3) {		
+					fit2p<-lslr(xdata$dpoints, dist=fit_dist,npar=2, abpval=FALSE)	
+					fit$conf[[i]]$bounds <- cbind(unrel,	
+						exp(log(fit2p[1])+ ret/fit2p[2]))
+				}else{		
+					fit$conf[[i]]$bounds <- cbind(unrel,	
+						exp(log(fit$eta)+ ret/fit$beta))
+				}		
+			}						
+									
+			if(fit_dist=="lnorm") {						
+## David Silkworth's final adaptation to nail the bounds around the fitted line									
+				## don't know why I originally used 60% quantile in MRRln2p (same as MRRw2p)					
+				rotation_pos<-which(unrel > .5-10^-5)[1]					
+				## check the slope of the rotation pivotals to get correction to 1.0					
+				rise<-(qnorm(unrel[length(unrel)], 0, 1)  - qnorm(unrel[rotation_pos], 0, 1))					
+				run<-(ret[length(unrel),2]-ret[rotation_pos,2])					
+				rotation_slope<-rise/run					
+				rotation_intercept<-ret[rotation_pos,2]-qnorm(unrel[rotation_pos], 0, 1)/rotation_slope					
+				ret<-(ret-rotation_intercept)*rotation_slope					
+									
+									
+## some confusion as to which way to rotate									
+#                                    exp(fit$meanlog + ret/fit$sdlog) ## just wrong									
+##                                    exp(fit$meanlog - ret/fit$sdlog)) ## appears to be flipped on y-axis at 50% intercept									
+									
+## 3p bounds translate and rotate according to the 2p fit line			
+				if(npar == 3) {										
+					fit2p<-lslr(xdata$dpoints, dist=fit_dist,npar=2, abpval=FALSE)	
+					fit$conf[[i]]$bounds <- cbind(unrel,	
+						exp(ret*fit2p[2]+ fit2p[1]))									
+				}else{					
+					fit$conf[[i]]$bounds <- cbind(unrel,					
+						exp(ret*fit$sdlog + fit$meanlog))
 				}
-
-
-	}  ## end pivotal-rr
+			}						
+									
+					names(fit$conf[[i]]$bounds) <- c("unrel","Lower","Datum", "Upper")				
+					op <- unique(c(names(opafit),names(opaconf)))				
+						# this is needed to add options from opafit into li that			
+						# are NULL in opafit			
+						# TODO:tolower() not needed?			
+					if(length(li <- opaconf[sapply(op,function(y){				
+						!identical(opafit[[y]], opaconf[[y]])})]) > 0){			
+						fit$conf[[i]]$options <- li			
+					}				
+				}else{					
+					message("calculateSingleConf: Confidence calculation failed.")				
+					fit$conf[[i]] <- NULL				
+				}					
+									
+									
+	}  ## end pivotal-rr								
 
 
 #############################################################################
