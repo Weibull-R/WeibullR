@@ -279,6 +279,7 @@ DQ<-DescriptiveQuantiles
 			xdata$dpoints,
 #			event=event_vec, # in this case, if present it would be rep(1,length(xdata$dpoints[,1])
 			dist=fit_dist,
+			npar = npar,
 			reg_method=regression_order,
 			R2=0,
 			CI=opaconf$ci,
