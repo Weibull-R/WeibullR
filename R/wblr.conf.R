@@ -327,7 +327,7 @@ DQ<-DescriptiveQuantiles
 				if(npar == 3) {										
 					fit2p<-lslr(xdata$dpoints, dist=fit_dist,npar=2, abpval=FALSE)	
 					fit$conf[[i]]$bounds <- cbind(unrel,	
-						exp(log(fit2p[2])+ ret/fit2p[1]))									
+						exp(ret*fit2p[2]+ fit2p[1]))									
 				}else{					
 					fit$conf[[i]]$bounds <- cbind(unrel,					
 						exp(ret*fit$sdlog + fit$meanlog))
