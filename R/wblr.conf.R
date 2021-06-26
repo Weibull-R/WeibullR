@@ -349,7 +349,7 @@ DQ<-DescriptiveQuantiles
 				}					
 									
 									
-	}  ## end pivotal-rr								
+	}  ## end pivotal-rr
 
 
 #############################################################################
