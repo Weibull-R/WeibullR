@@ -17,6 +17,6 @@ p2y <- function(p,canvas="weibull"){
 	# Use of this transformation permits distributions
 	# to appear as curves on unrelated canvas
     if(canvas =="weibull")ret <- log(qweibull(p,1,1))
-	if(canvas =="lognormal") ret <- qlnorm(p,0,1)
+	if(canvas =="lognormal") ret <- qnorm(p,0,1)
     ret
 }
