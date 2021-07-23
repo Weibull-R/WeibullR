@@ -256,7 +256,8 @@ plot.wblr <- function(x,...){
 
             cex = le$legend.text.size,
             bg = "white",
-            lty = unlist(le$lty),
+# overspecification of lty caused problems when dashed lines were used in fit or bounds			
+#            lty = unlist(le$lty),
             lwd = unlist(le$lwd),
             pch = unlist(le$pch),
             col = unlist(le$col),
