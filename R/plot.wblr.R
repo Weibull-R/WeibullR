@@ -256,10 +256,7 @@ plot.wblr <- function(x,...){
 
             cex = le$legend.text.size,
             bg = "white",
-# man page for legend arguments lty, lwd 	
-# "the line types and widths for lines appearing in the legend. 
-# One of these two must be specified for line drawing."
- #           lty = unlist(le$lty),
+            lty = unlist(le$lty),
             lwd = unlist(le$lwd),
             pch = unlist(le$pch),
             col = unlist(le$col),
