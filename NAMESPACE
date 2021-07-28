@@ -35,6 +35,7 @@ export(
 	mlefit,
 	mleframe,
 	rba,
+	simplex,
 	wblr,
 	wblr.conf,
 	wblr.fit,
