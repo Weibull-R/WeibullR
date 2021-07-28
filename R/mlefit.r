@@ -167,8 +167,8 @@ mlefit<-function(x, dist="weibull", npar=2, debias="none", optcontrol=NULL)  {
 	MLEclassList<-list(fsdi=fsdi,q=q,N=N)
 ## Test for successful log-likelihood calculation with given vstart
 ## tz is required for MLEloglike call now
-##		LLtest<-.Call("MLEloglike",MLEclassList,vstart,dist_num, default_sign, default_tz, package="WeibullR")
-		LLtest<-.Call(MLEloglike,MLEclassList,vstart,dist_num, default_sign, default_tz)
+		LLtest<-.Call("MLEloglike",MLEclassList,vstart,dist_num, default_sign, default_tz, package="WeibullR")
+##		LLtest<-.Call(MLEloglike,MLEclassList,vstart,dist_num, default_sign, default_tz)
 ## This should have failed as left with abremDebias call.
 		if(!is.finite(LLtest))  {
 			stop("Cannot start mle optimization with given parameters")
@@ -198,8 +198,8 @@ mlefit<-function(x, dist="weibull", npar=2, debias="none", optcontrol=NULL)  {
 				listout_int<-0
 			}
 ##  tz  inserted here with a default of zero
-##		result_of_simplex_call<-.Call("MLEsimplex",MLEclassList, ControlList, vstart, default_tz, listout_int, package="WeibullR")
-		result_of_simplex_call<-.Call(MLEsimplex,MLEclassList, ControlList, vstart, default_tz, listout_int)
+		result_of_simplex_call<-.Call("MLEsimplex",MLEclassList, ControlList, vstart, default_tz, listout_int, package="WeibullR")
+##		result_of_simplex_call<-.Call(MLEsimplex,MLEclassList, ControlList, vstart, default_tz, listout_int)
 ## extract fit vector from result of call to enable finishing treatment of the outvec
 		if(listout==FALSE)  {
 			resultvec<-result_of_simplex_call
@@ -227,8 +227,8 @@ mlefit<-function(x, dist="weibull", npar=2, debias="none", optcontrol=NULL)  {
 				if(debias=="hrbu")  {
 					outvec[2]<-outvec[2]*hrbu(Q[1]-Q[3], Q[3])
 				}
-##			outvec[3]<-.Call("MLEloglike",MLEclassList,c(outvec[2],outvec[1]),dist_num, default_sign, default_tz, package="WeibullR")
-			outvec[3]<-.Call(MLEloglike,MLEclassList,c(outvec[2],outvec[1]),dist_num, default_sign, default_tz)
+			outvec[3]<-.Call("MLEloglike",MLEclassList,c(outvec[2],outvec[1]),dist_num, default_sign, default_tz, package="WeibullR")
+##			outvec[3]<-.Call(MLEloglike,MLEclassList,c(outvec[2],outvec[1]),dist_num, default_sign, default_tz)
 			attr(outvec,"bias_adj")<-debias
 			}
 		}
@@ -241,8 +241,8 @@ mlefit<-function(x, dist="weibull", npar=2, debias="none", optcontrol=NULL)  {
 					warning("rba has been applied to adjust lognormal")
 					debias="rba"
 				}
-##			outvec[3]<-.Call("MLEloglike",MLEclassList,c(outvec[1],outvec[2]),dist_num, default_sign, default_tz, package="WeibullR")
-			outvec[3]<-.Call(MLEloglike,MLEclassList,c(outvec[1],outvec[2]),dist_num, default_sign, default_tz)
+			outvec[3]<-.Call("MLEloglike",MLEclassList,c(outvec[1],outvec[2]),dist_num, default_sign, default_tz, package="WeibullR")
+##			outvec[3]<-.Call(MLEloglike,MLEclassList,c(outvec[1],outvec[2]),dist_num, default_sign, default_tz)
 			attr(outvec,"bias_adj")<-debias
 			}
 		}
@@ -272,8 +272,8 @@ mlefit<-function(x, dist="weibull", npar=2, debias="none", optcontrol=NULL)  {
 		listout_int<-0
 
 ## for now enter a default tz=0
-##			result_of_simplex_call<-.Call("MLEsimplex",MLEclassList, ControlList, vstart, default_tz, listout_int, package="WeibullR")
-			result_of_simplex_call<-.Call(MLEsimplex,MLEclassList, ControlList, vstart, default_tz, listout_int)
+			result_of_simplex_call<-.Call("MLEsimplex",MLEclassList, ControlList, vstart, default_tz, listout_int, package="WeibullR")
+##			result_of_simplex_call<-.Call(MLEsimplex,MLEclassList, ControlList, vstart, default_tz, listout_int)
 			if(result_of_simplex_call[4]>0)  {
 				stop("2p model does not converge")
 			}
@@ -474,7 +474,8 @@ if(length(max_ind)>1) {
 			if(debias=="hrbu")  {
 				outvec[2]<-outvec[2]*hrbu(Q[1]-Q[3], Q[3])
 			}
-			outvec[3]<-.Call(MLEloglike,MLEclassList,c(outvec[2],outvec[1]),dist_num, default_sign, DF$tz[max_ind])
+			outvec[3]<-.Call("MLEloglike",MLEclassList,c(outvec[2],outvec[1]),dist_num, default_sign, DF$tz[max_ind],package="WeibullR")
+##			outvec[3]<-.Call(MLEloglike,MLEclassList,c(outvec[2],outvec[1]),dist_num, default_sign, DF$tz[max_ind])
 			attr(outvec,"bias_adj")<-debias
 		}
 	}
@@ -486,7 +487,8 @@ if(length(max_ind)>1) {
 				warning("rba has been applied to adjust lognormal")
 				debias="rba"
 			}
-			outvec[3]<-.Call(MLEloglike,MLEclassList,c(outvec[1],outvec[2]),dist_num, default_sign, DF$tz[max_ind])
+			outvec[3]<-.Call("MLEloglike",MLEclassList,c(outvec[1],outvec[2]),dist_num, default_sign, DF$tz[max_ind],package="WeibullR")
+##			outvec[3]<-.Call(MLEloglike,MLEclassList,c(outvec[1],outvec[2]),dist_num, default_sign, DF$tz[max_ind])
 			attr(outvec,"bias_adj")<-debias
 		}
 	}
