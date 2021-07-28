@@ -15,7 +15,7 @@
 RcppExport SEXP MLEloglike(SEXP arg1, SEXP arg3, SEXP arg5, SEXP arg6);
 RcppExport SEXP MLEsimplex(SEXP arg1, SEXP arg2, SEXP arg3, SEXP arg4, SEXP arg5);
 // used in secant method for determination of 3rd parameter optimization
-RcppExport SEXP MLEdMaxLLdx(SEXP arg1, SEXP arg2, SEXP arg3, SEXP arg4);
+//RcppExport SEXP MLEdMaxLLdx(SEXP arg1, SEXP arg2, SEXP arg3, SEXP arg4);
 //******************//
 
 RcppExport SEXP LSLR(SEXP arg1);
@@ -32,9 +32,9 @@ RcppExport SEXP adjustedRank (SEXP arg1);
 // dpoints and dlines loop
 RcppExport SEXP plotData(SEXP arg1, SEXP arg2, SEXP arg3, SEXP arg4, SEXP arg5, SEXP arg6, SEXP arg7);
 // contour code
-RcppExport SEXP getContour(SEXP arg1, SEXP arg2, SEXP arg3, SEXP arg4, SEXP arg5, SEXP arg6, SEXP arg7);
+RcppExport SEXP getContour(SEXP arg1, SEXP arg2, SEXP arg4, SEXP arg5, SEXP arg6, SEXP arg7);
 
-extern "C" void R_init_WeibullR(DllInfo* info);
+//extern "C" void R_init_WeibullR(DllInfo* info);
 
 #endif
 #endif

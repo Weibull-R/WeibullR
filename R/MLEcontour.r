@@ -87,7 +87,7 @@ MLEcontour<-function(x,  dist="weibull", CL=0.9,dof=1,MLLx=NULL,MLEfit=NULL, Rad
 		}
 	}
 
-	MLEclassList<-list(fsdi=fsdi,q=q,N=N)
+	MLEclassList<-list(fsdi=fsdi,q=q,N=N,dist_num=dist_num)
 
 ## start of main contour procedures
 	if(is.null(MLEfit))  {
@@ -118,8 +118,8 @@ if(is.null(MLLx)){MLLx<-MLEfit[3]}
 	ptDensity<-ceiling(ptDensity)
 
 ## Call the C++ code to deliver a matrix of contour points
-	resultMat<- .Call("getContour", MLEclassList, par_hat, dist_num, MLLx, ratioLL, RadLimit, ptDensity, package="WeibullR")
-##	resultMat<- .Call(getContour, MLEclassList, par_hat, dist_num, MLLx, ratioLL, RadLimit, ptDensity)
+	resultMat<- .Call("getContour", MLEclassList, par_hat, MLLx, ratioLL, RadLimit, ptDensity, package="WeibullR")
+##	resultMat<- .Call(getContour, MLEclassList, par_hat, MLLx, ratioLL, RadLimit, ptDensity)
 	if(sum(resultMat[,3])>0) {
 		warning("instability detected")
 	}
