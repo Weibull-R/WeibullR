@@ -64,7 +64,7 @@ FMbounds<-function(x, dist="weibull", CI=.90, unrel=NULL, debias="none", show=FA
 	names(theta)<-c("mu", "sigma")				
 	if(npar == 3) theta<- c(theta, gamma = fit[3])				
 					
-	hessian<-optimHess(theta, LL, dist=dist, data=x)				
+	hessian<-stats::optimHess(theta, LL, dist=dist, data=x)				
 	varcov <- solve(hessian)				
 					
 	Q<-q				
@@ -106,5 +106,5 @@ LL<-function(theta, dist, data) {
 	}	
 	tz<-theta[3]	
 	if(is.na(tz)) tz<-0	
-	return(wblrLoglike2(c(P1,P2), x=data, dist=dist, sign= -1, tz=tz))	
+	return(wblrLoglike(c(P1,P2), x=data, dist=dist, sign= -1, tz=tz))	
 }		

@@ -317,7 +317,6 @@ mlefit<-function(x, dist="weibull", npar=2, debias="none", optcontrol=NULL)  {
 ## Note: vstart was defined before separating processing based on npar
 
 ret3p<-.Call("callMLE3p", MLEclassList, simplex_control, vstart, maxtz, seek_control, package="WeibullR")
-
 #ret3p<-list(MLEclassList, simplex_control, vstart, maxtz, seek_control)
 
 outvec<-ret3p$outvec
@@ -340,7 +339,8 @@ outvec<-ret3p$outvec
    				if(debias=="hrbu")  {	
    					outvec[2]<-outvec[2]*hrbu(Q[1]-Q[3], Q[3])
    				}	
-   				outvec[3]<-.Call(MLEloglike,MLEclassList,c(outvec[2],outvec[1]),dist_num, default_sign, DF$tz[max_ind])	
+   				outvec[3]<-.Call("MLEloglike",MLEclassList,c(outvec[2],outvec[1]),dist_num, default_sign, outvec[3], package="WeibullR")	
+## 				outvec[3]<-.Call(MLEloglike,MLEclassList,c(outvec[2],outvec[1]),dist_num, default_sign, DF$tz[max_ind])	
    				attr(outvec,"bias_adj")<-debias	
    			}		
    		}			
@@ -352,7 +352,8 @@ outvec<-ret3p$outvec
    					warning("rba has been applied to adjust lognormal")
    					debias="rba"
    				}	
-   				outvec[3]<-.Call(MLEloglike,MLEclassList,c(outvec[1],outvec[2]),dist_num, default_sign, DF$tz[max_ind])	
+   				outvec[3]<-.Call("MLEloglike",MLEclassList,c(outvec[1],outvec[2]),dist_num, default_sign, outvec[3],package="WeibullR")	
+## 				outvec[3]<-.Call(MLEloglike,MLEclassList,c(outvec[1],outvec[2]),dist_num, default_sign, DF$tz[max_ind])	
    				attr(outvec,"bias_adj")<-debias	
    			}		
    		}			
@@ -366,9 +367,10 @@ outvec<-ret3p$outvec
 		}	
 			
 		if(ret3p$rebound == TRUE) {	
-			attr(outvec, "rebound")<-rebound_value
+			attr(outvec, "rebound")<-ret3p$rebound_value
 		}	
-				
+		
+		try_list<-ret3p$try_list
 
 ## end of 3p code
 }
