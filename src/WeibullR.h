@@ -33,6 +33,9 @@ RcppExport SEXP adjustedRank (SEXP arg1);
 RcppExport SEXP plotData(SEXP arg1, SEXP arg2, SEXP arg3, SEXP arg4, SEXP arg5, SEXP arg6, SEXP arg7);
 // contour code
 RcppExport SEXP getContour(SEXP arg1, SEXP arg2, SEXP arg4, SEXP arg5, SEXP arg6, SEXP arg7);
+// MLE 3p code
+RcppExport SEXP callMLE3p(SEXP arg1,  SEXP arg2, SEXP arg3, SEXP arg4, SEXP arg5);
+	     //SEXP callMLE3p(SEXP arg1,  SEXP arg2, SEXP arg3, SEXP arg4, SEXP arg5) {		//implementation
 
 //extern "C" void R_init_WeibullR(DllInfo* info);
 
