@@ -26,7 +26,7 @@ stitle<-"Lognormal MLE 3-parameter fit"
 #}
 
 if(show==TRUE) {
-plot(obj, canvas="lognormal", in.legend.blives=FALSE, sub=stitle)
+plot(obj, canvas="lognormal", in.legend.blives=FALSE, sub=stitle, xlab=("Time - t0"))
 }
 
 ret
