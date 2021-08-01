@@ -393,7 +393,7 @@ DQ<-DescriptiveQuantiles
 		fit$conf[[i]]$debias <- debias
 		
 ## re-append the 3p when applicable
-		if(npar=3) fit_dist <- paste0(fit_dist, "3p")
+		if(npar==3) fit_dist <- paste0(fit_dist, "3p")
 
 ## usage FMbounds(x, dist="weibull", CI=.90, unrel=NULL, debias="none", show=FALSE)
 		ret<-FMbounds(xdata$lrq_frame, dist=fit_dist, CI=opaconf$ci, unrel=unrel, debias=debias)
