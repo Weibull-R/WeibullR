@@ -357,6 +357,10 @@ DQ<-DescriptiveQuantiles
 #############################################################################
 
 	if(any(c("fm","fmbounds") %in% tolower(opaconf$method.conf))) {
+	if(substr(tolower(fit$options$method.fit),1,3)!= "mle") {								
+		stop("fm bounds are only applicable on mle fits")							
+	}	
+	
 		fit$conf[[i]]        <- list()
 		fit$conf[[i]]$type   <- "fm"
 		fit$conf[[i]]$ci     <- opaconf$ci
@@ -428,6 +432,10 @@ DQ<-DescriptiveQuantiles
 #############################################################################
 
 	if(any(c("lrb","lrbounds") %in% tolower(opaconf$method.conf))) {
+	
+	if(substr(tolower(fit$options$method.fit),1,3)!= "mle") {								
+		stop("likelinood ratio bounds are only applicable on mle fits")							
+	}		
 		fit$conf[[i]]        <- list()
 		fit$conf[[i]]$type   <- "lrb"
 		fit$conf[[i]]$ci     <- opaconf$ci
