@@ -66,7 +66,7 @@ wblrLoglike<-function(par, x, dist="weibull", sign=1, tz=0 )  {
 		if(Nd>0) {fdr<-c(fdr,fsdi[(Nf+Ns+1):(Nf+Ns+Nd)])}	
 		if(Ni>0)  {fdr<-c(fdr, fsdi[(Nf+Ns+Nd+Ni+1):(Nf+Ns+Nd+2*Ni)])}	
 			
-		if(tz>fdr)  {	
+		if(tz>min(fdr))  {	
 			stop("tz is greater than data permits")
 		}	
 	}		
@@ -86,14 +86,16 @@ wblrLoglike<-function(par, x, dist="weibull", sign=1, tz=0 )  {
 		}
 	}
 
-	MLEclassList<-list(fsdi=fsdi,q=q,N=N)
+	MLEclassList<-list(fsdi=fsdi,q=q,N=N,dist_num=dist_num)
 	
 	if(sign^2!=1)  {	
 		stop("sign must be 1 or -1")
 	}	
+
 							
-##	outval<-.Call("MLEloglike",MLEclassList,par,dist_num, sign, tz, package="WeibullR")
-	outval<-.Call(MLEloglike,MLEclassList,par,dist_num, sign, tz)				
+	outval<-.Call("MLEloglike",MLEclassList, par, sign, tz, package="WeibullR")
+##	outval<-.Call(MLEloglike,MLEclassList,par, sign, tz)				
 			
-outval			
+outval
+			
 }

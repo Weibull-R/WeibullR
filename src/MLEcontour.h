@@ -2,10 +2,10 @@
 #define _MLEcontour_H
 
 class MLEcontour {
-
-MLEmodel model;
+//MLEmodel model;
+std::unique_ptr<MLEmodel> model;
 arma::colvec par_hat;
-int dist_num;
+//int dist_num;
 double MLLx;
 double RatioLL;
 double RadLimit;
@@ -14,7 +14,8 @@ double RadLimit;
 
 
 public:
-MLEcontour(SEXP, arma::colvec, int, double, double, double);
+//MLEcontour(SEXP, arma::colvec, int, double, double, double);
+MLEcontour(SEXP, arma::colvec, double, double, double);
 arma::rowvec getContourPt( double);
 
 };

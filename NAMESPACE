@@ -1,4 +1,4 @@
-useDynLib(WeibullR, .registration = TRUE)
+useDynLib(WeibullR)
 importFrom(Rcpp, evalCpp)
 importFrom("graphics", "abline", "axis", "curve", "legend", "lines",
 		 "par", "plot", "plot.default", "points", "segments",

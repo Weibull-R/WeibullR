@@ -357,22 +357,32 @@ DQ<-DescriptiveQuantiles
 #############################################################################
 
 	if(any(c("fm","fmbounds") %in% tolower(opaconf$method.conf))) {
+	if(substr(tolower(fit$options$method.fit),1,3)!= "mle") {								
+		stop("fm bounds are only applicable on mle fits")							
+	}	
+	
 		fit$conf[[i]]        <- list()
 		fit$conf[[i]]$type   <- "fm"
 		fit$conf[[i]]$ci     <- opaconf$ci
 ##		fit$conf[[i]]$sides  <- opaconf$conf.blives.sides
 		fit$conf[[i]]$blife.pts <- opaconf$blife.pts
 		ret <- NULL
-
-	if(any(c("weibull3p", "lognormal3p") %in% tolower(fit$options$dist))) {
-		stop("confidence bounds are not prepared on 3-parameter fits")
+	npar=2								
+	if(any(c("weibull3p", "lognormal3p") %in% tolower(fit$options$dist))) {								
+		npar=3							
 	}
+##	if(any(c("weibull3p", "lognormal3p") %in% tolower(fit$options$dist))) {
+##		stop("confidence bounds are not prepared on 3-parameter fits")
+##	}
 ## assure valid dist names for FMbounds and the debias functions
-	if(tolower(fit$options$dist) %in% c("weibull","weibull2p")){
+	if(tolower(fit$options$dist) %in% c("weibull","weibull2p","weibull3p")){
 		fit_dist<-"weibull"
-	}
-	if(tolower(fit$options$dist) %in% c("lnorm","lognormal","lognormal2p")){
-		fit_dist<-"lognormal"
+	}else{
+		if(tolower(fit$options$dist) %in% c("lnorm","lognormal","lognormal2p","lognormal3p")){
+			fit_dist<-"lognormal"
+		}else{
+			stop(paste0("dist ",dist, " not recognized"))
+		}
 	}
 		debias<-"none"
 		if(tolower(opafit$method.fit) == "mle-rba")  debias <- "rba"
@@ -385,6 +395,9 @@ DQ<-DescriptiveQuantiles
 			}
 		}
 		fit$conf[[i]]$debias <- debias
+		
+## re-append the 3p when applicable
+		if(npar==3) fit_dist <- paste0(fit_dist, "3p")
 
 ## usage FMbounds(x, dist="weibull", CI=.90, unrel=NULL, debias="none", show=FALSE)
 		ret<-FMbounds(xdata$lrq_frame, dist=fit_dist, CI=opaconf$ci, unrel=unrel, debias=debias)
@@ -419,6 +432,10 @@ DQ<-DescriptiveQuantiles
 #############################################################################
 
 	if(any(c("lrb","lrbounds") %in% tolower(opaconf$method.conf))) {
+	
+	if(substr(tolower(fit$options$method.fit),1,3)!= "mle") {								
+		stop("likelinood ratio bounds are only applicable on mle fits")							
+	}		
 		fit$conf[[i]]        <- list()
 		fit$conf[[i]]$type   <- "lrb"
 		fit$conf[[i]]$ci     <- opaconf$ci

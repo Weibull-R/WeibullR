@@ -28,7 +28,8 @@ mlefit(x, dist="weibull", npar = 2, debias="none", optcontrol=NULL)
   \item{optcontrol}{An optional list of arguments for control of the MLE optimization.  The strict naming convention for the list items are:
   'vstart', a vector holding starting estimate for parameters in the order used by the underlying R distribution [CAUTION: for weibull
   the order of parameters is (shape, scope)], 'limit', the convergence limit, 'maxit', the maximum number of interations permitted in
-  the optimization, and 'listout' a logical indicating whether output should list both the fit and the optimization progress as a dataframe.
+  the simplex optimization, and 'listout' a logical indicating whether output should list both the fit and the optimization progress as a dataframe. 
+  Additional list items 'num_points', 'err_t0_limit', and 'err_gor_limit' are handled for 3rd parameter processing -see details.
   }  
 }
 
@@ -40,6 +41,9 @@ Returns a named vector with parameters of the distribution fit and goodness of f
 The negative log-likelihood is minimized by the Nelder-Meade, simplex, algorithm.  This algorithm requires a reasonable starting point
 for the estimate.  Such a reasonable estimate is attempted by default, but in some cases this may be inadequate for proper function.
 the optcontrol argument has been provided to give debug developers a means of altering and examining the progress of the optimization.
+For 3rd parameter processing defaults are used for the simplex options, while 'num_points' can be used to alter the seek points, 
+'err_t0_limit', and 'err_gor_limit' control cut-offs for unstable optiimizations, while 'list_out' provides a different output on the
+optimization progress.
 }
 
 \references{

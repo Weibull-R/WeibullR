@@ -14,19 +14,19 @@ if(is.logical(s)) {
 obj<-wblr.fit(wblr(x,s), dist="weibull3p", modify.by.t0=T, method.fit="mle", col="darkgreen")
 fit<-obj$fit[[1]]$fit_vec
 attributes(fit)$data_types<-NULL
-## bounds are not prepared for 3p fits, so the bounds argument is simply ignored.
-#if(bounds==TRUE) {
-#obj<-wblr.conf(obj, method.conf="lrb", dq="minitab", col="green3")
-#bnds<-obj$fit[[1]]$conf[[1]]$bounds
-#ret<-list(fit,bnds)
-#stitle<-"MLE fit with 90% double-sided likelihood ratio bounds"
-#}else{
+
+if(bounds==TRUE) {
+obj<-wblr.conf(obj, method.conf="fm", dq="minitab", col="green3")
+bnds<-obj$fit[[1]]$conf[[1]]$bounds
+ret<-list(fit,bnds)
+stitle<-"MLE fit with 90% double-sided likelihood ratio bounds"
+}else{
 ret<-fit
 stitle<-"Weibull MLE 3-parameter fit"
-#}
+}
 
 if(show==TRUE) {
-plot(obj, in.legend.blives=FALSE, sub=stitle)
+plot(obj, in.legend.blives=FALSE, sub=stitle, xlab=("Time - t0"))
 }
 
 ret

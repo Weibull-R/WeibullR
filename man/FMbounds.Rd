@@ -54,5 +54,3 @@ set.seed(4321)
 data<-rlnorm(30,2,1.2)
 asymptotic_bounds<-FMbounds(mleframe(data[7:30],data[1:6]), dist="lognormal")
 }
-
-\keyword{ regression reliability }
