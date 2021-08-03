@@ -381,7 +381,7 @@ DQ<-DescriptiveQuantiles
 		if(tolower(fit$options$dist) %in% c("lnorm","lognormal","lognormal2p","lognormal3p")){
 			fit_dist<-"lognormal"
 		}else{
-			stop(paste0("dist ",dist, " not recognized"))
+			stop(paste0("dist ",fit$options$dist, " not recognized"))
 		}
 	}
 		debias<-"none"
