@@ -6,26 +6,46 @@ LRbounds<-function(x,  dist="weibull", CL=0.9, unrel=NULL,  contour=NULL, dof=1,
 	xnames<-names(x)
 	if(xnames[1]!="left" || xnames[2]!="right"||xnames[3]!="qty")  {
 		 stop("mlefit takes a structured dataframe input, use mleframe")  }
+		 
+	npar=2			
+	if(tolower(dist) %in% c("weibull3p", "lognormal3p")){			
+		npar=3		
+	}			
+				
+	if(tolower(dist) %in% c("weibull","weibull2p", "weibull3p")){			
+		dist <- "weibull"		
+	}else{			
+		if(tolower(dist) %in% c("lnorm", "lognormal","lognormal2p","lognormal3p")){		
+			dist <- "lognormal"	
+		}else{		
+			stop("distribution not identified in FMbounds")	
+		}		
+	}			
+	 
+	if(length(unrel)>0)  {
+	dp<-unrel
+	}else{
+	## these descriptive percentiles match Minitab unchangeable defaults
+	dp=c(seq(.01,.09,by=.01),seq(.10,.90,by=.10),seq(.91,.99, by=.01))
+	}
+		 
+		 
+if(npar==2) {	
+	ptDensity=120
+	if(!is.null(control$ptDensity))  ptDensity<-control$ptDensity
+		 
 	if(missing(contour))  {
 		contour<-MLEcontour(x, dist, CL, dof=dof, ptDensity=ptDensity, debias=debias)
 	}
 
-	if(length(unrel)>0)  {
-	dq<-unrel
-	}else{
-	## these descriptive quantiles match Minitab unchangeable defaults
-	dq=c(seq(.01,.09,by=.01),seq(.10,.90,by=.10),seq(.91,.99, by=.01))
-	}
-
 	if(dist=="weibull")  {
-		ypts<-log(qweibull(dq,1,1))
+		ypts<-log(qweibull(dp,1,1))
 	}else{
 ## Need lognormal p2y here
-		ypts<-qnorm(dq,0,1)
+		ypts<-qnorm(dp,0,1)
 	}
-	
-		j=1
-
+		
+	j=1
 ## P1 was Eta
 	P1<-contour[j,1]
 ## P2 was Beta
@@ -71,7 +91,6 @@ LRbounds<-function(x,  dist="weibull", CL=0.9, unrel=NULL,  contour=NULL, dof=1,
 				}
 			}
 		}
-##	}
 
 ## calculate the Datum vector
 
@@ -121,8 +140,12 @@ LRbounds<-function(x,  dist="weibull", CL=0.9, unrel=NULL,  contour=NULL, dof=1,
 
 
 
-	outDF<-data.frame(percentile=dq*100, lower=exp(outmat[2,]), datum=exp(xvals), upper=exp(outmat[5,]))
+	outDF<-data.frame(percentile=dp*100, lower=exp(outmat[2,]), datum=exp(xvals), upper=exp(outmat[5,]))
 	outList<-list(bounds=outDF,contour=contour)
+## close 2p handling here.
+}
+	
+	
 
 outList
 }
