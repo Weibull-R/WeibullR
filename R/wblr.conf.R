@@ -469,7 +469,7 @@ DQ<-DescriptiveQuantiles
 if(!is.null(debias)) fit$conf[[i]]$debias <- debias
 
 
-## usage LRbounds(x,  dist="weibull", CL=0.9, unrel=NULL,  contour=NULL, dof=1, debias="none", show=FALSE)
+## usage LRbounds(x,  dist="weibull", CL=0.9, unrel=NULL,  contour=NULL, dof=1, control=NULL, debias="none", show=FALSE)
 		ret<-LRbounds(xdata$lrq_frame,
 			dist=fit$options$dist,
 			CL=opaconf$ci,
@@ -477,7 +477,7 @@ if(!is.null(debias)) fit$conf[[i]]$debias <- debias
 # this specific setting broke the code, just depend on default
 #			contour=NULL,
 			dof=fit$conf[[i]]$dof,
-			ptDensity=opaconf$ptDensity,
+			control=list(ptDensity=opaconf$ptDensity),
 			debias=debias
 		)
 
