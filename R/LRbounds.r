@@ -1,4 +1,4 @@
-LRbounds<-function(x,  dist="weibull", CL=0.9, unrel=NULL,  contour=NULL, dof=1, ptDensity=120, debias="none", show=FALSE)  {
+LRbounds<-function(x,  dist="weibull", CL=0.9, unrel=NULL,  contour=NULL, dof=1, control=NULL, debias="none", show=FALSE)  {
 
 ## check basic parameters of x
 	if(class(x)!="data.frame") {stop("mlefit takes a structured dataframe input, use mleframe")}
