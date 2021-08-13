@@ -12,11 +12,11 @@
 
 p2y <- function(p,canvas="weibull"){
     # This is the inverse Cumulative Distribution function
-	# used to transform a probability value to the
+    # used to transform a probability value to the
     # y-axis of the plot canvas. 
-	# Use of this transformation permits distributions
-	# to appear as curves on unrelated canvas
+    # Use of this transformation permits distributions
+    # to appear as curves on unrelated canvas
     if(canvas =="weibull")ret <- log(qweibull(p,1,1))
-	if(canvas =="lognormal") ret <- qlnorm(p,0,1)
+    if(canvas =="lognormal") ret <- qlnorm(p,0,1)
     ret
 }
