@@ -138,7 +138,7 @@ mlefit<-function(x, dist="weibull", npar=2, debias="none", optcontrol=NULL)  {
 		maxit <-100	
 		listout <-FALSE	
 # default optimization controls for 3p seek			
-		num_points <-10	
+		num_points <-20	
 		err_t0_limit <- 1e-6	
 		err_gof_limit <- 1e-5	
 		try_limit <- 100	
@@ -308,7 +308,7 @@ mlefit<-function(x, dist="weibull", npar=2, debias="none", optcontrol=NULL)  {
 	num_points<-5
 	warning("num_points specified too small, num_points=5 used")
 	}				
-	seek_control<-list(num_points, err_t0_limit, err_gof_limit)						
+	seek_control<-list(num_points=num_points, err_t0_limit=err_t0_limit, err_gof_limit=err_gof_limit)						
 
 	# establish the maximum limit for t0						
 	## MLEmodel will treat convert any negative x$left-tz as zero						
@@ -317,7 +317,7 @@ mlefit<-function(x, dist="weibull", npar=2, debias="none", optcontrol=NULL)  {
 
 ## set simplex control based on mlefit defaults or optcontrol items						
 	#simplex_control<-list(limit=1e-5, maxit=100) # previously hard coded here
-		simplex_control<-list(limit, maxit)
+		simplex_control<-list(limit=limit, maxit=maxit)
 							
 ## This is the point to go to C++						
 ## Will need to pass in MLEclassList, fit_dist and seek_control							
