@@ -132,26 +132,44 @@ mlefit<-function(x, dist="weibull", npar=2, debias="none", optcontrol=NULL)  {
 		}
 	}
 
-## Optional optimization control list to be handled here
-		## vstart will be as estimated
-		limit<-1e-6
-		maxit<-100
-		listout<-FALSE
-
-	if(length(optcontrol)>0)  {
-		if(length(optcontrol$vstart>0))  {
+## Optional optimization control list to be handled here			
+		## vstart default as estimated	
+		limit<-1e-6	
+		maxit<-100	
+		listout<-FALSE	
+# default optimization controls for 3p seek			
+		num_points=20,	
+		err_t0_limit= 1e-6,	
+		err_gof_limit= 1e-5,	
+		try_limit=try_limit)	
+			
+	if(length(optcontrol)>0)  {		
+		if(length(optcontrol$vstart>0))  {	
 			vstart<-optcontrol$vstart
-		}
-		if(length(optcontrol$limit)>0)  {
+		}	
+		if(length(optcontrol$limit)>0)  {	
 			limit<-optcontrol$limit
-		}
-		if(length(optcontrol$maxit)>0)  {
+		}	
+		if(length(optcontrol$maxit)>0)  {	
 			maxit<-optcontrol$maxit
-		}
-		if(length(optcontrol$listout)>0)  {
+		}	
+		if(length(optcontrol$listout)>0)  {	
 			listout<-optcontrol$listout
-		}
-	}
+		}	
+		if(length(optcontrol$num_points>0))  {	
+			num_points<-optcontrol$num_points
+		}	
+		if(length(optcontrol$err_t0_limit>0))  {	
+			err_t0_limit<-optcontrol$err_t0_limit
+		}	
+		if(length(optcontrol$err_gof_limit>0))  {	
+			err_gof_limit<-optcontrol$err_gof_limit
+		}	
+		if(length(optcontrol$try_limit>0))  {	
+			try_limit<-optcontrol$try_limit
+		}	
+	}		
+
 
 	pos<-1
 	Q<-sum(q)
@@ -285,16 +303,13 @@ mlefit<-function(x, dist="weibull", npar=2, debias="none", optcontrol=NULL)  {
 				listout_int<-0
 			}
 
-			
-			
-	## n has been removed as an argument and placed in the control list						
-	seek_control<-list(						
-		num_points=10,					
-		err_t0_limit= 1e-6,					
-		err_gof_limit= 1e-5)
-	optcontrol4seek<-list(optcontrol$num_points, optcontrol$err_t0_limit, optcontrol$err_gof_limit)
-	if(length(optcontrol4seek)>0) seek_control<-modifyList(seek_control, optcontrol4seek)						
-	## restore meaning of n for rest of code						
+## set the 3p seek_control list
+	if(num_points<5) {	
+	num_points<-5
+	warning("num_points specified too small, num_points=5 used")
+	}				
+	seek_control<-list(num_points, err_t0_limit, err_gof_limit)
+					
 	n<-seek_control$num_points						
 	if(n<5) {						
 		n<-5					
@@ -306,8 +321,9 @@ mlefit<-function(x, dist="weibull", npar=2, debias="none", optcontrol=NULL)  {
 	## Note discoveries continue to be discoveries until x$right-tz = zero						
 	maxtz<-min(x$right[x$right != -1])
 
-## the simplex optcontrol is set to the defaults in mlefit							
-	simplex_control<-list(limit=1e-5, maxit=100)	
+## set simplex control based on mlefit defaults or optcontrol items						
+	#simplex_control<-list(limit=1e-5, maxit=100) # previously hard coded here
+		simplex_control<-list(limit, maxit)
 							
 ## This is the point to go to C++						
 ## Will need to pass in MLEclassList, fit_dist and seek_control							
