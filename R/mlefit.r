@@ -134,14 +134,14 @@ mlefit<-function(x, dist="weibull", npar=2, debias="none", optcontrol=NULL)  {
 
 ## Optional optimization control list to be handled here			
 		## vstart default as estimated	
-		limit<-1e-6	
-		maxit<-100	
-		listout<-FALSE	
+		limit <-1e-6	
+		maxit <-100	
+		listout <-FALSE	
 # default optimization controls for 3p seek			
-		num_points=20,	
-		err_t0_limit= 1e-6,	
-		err_gof_limit= 1e-5,	
-		try_limit=try_limit)	
+		num_points <-10	
+		err_t0_limit <- 1e-6	
+		err_gof_limit <- 1e-5	
+		try_limit <- 100	
 			
 	if(length(optcontrol)>0)  {		
 		if(length(optcontrol$vstart>0))  {	
@@ -308,13 +308,7 @@ mlefit<-function(x, dist="weibull", npar=2, debias="none", optcontrol=NULL)  {
 	num_points<-5
 	warning("num_points specified too small, num_points=5 used")
 	}				
-	seek_control<-list(num_points, err_t0_limit, err_gof_limit)
-					
-	n<-seek_control$num_points						
-	if(n<5) {						
-		n<-5					
-		warning("n specified too small, n=5 used")					
-	}						
+	seek_control<-list(num_points, err_t0_limit, err_gof_limit)						
 
 	# establish the maximum limit for t0						
 	## MLEmodel will treat convert any negative x$left-tz as zero						
