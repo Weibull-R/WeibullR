@@ -176,7 +176,7 @@ if(npar==3) {
 	ratioLL  <-  MLLx3p- qchisq(CL,dof)/2						
 	if( !is.null(attr(MLEfit,"message"))) {						
 		if(attr(MLEfit, "message") == "t0 cutoff at minimal change") {					
-		warning("t0_opt at optcontrol limit, 2p bounds on modified data applies")					
+		warning("t0 cutoff at minimal change")					
 		}					
 	## need to determine what to do when cutoff is LL at minimal change, characteristic of negative t0 instability						
 		if(attr(MLEfit, "message") == "optimum not found, t0 cutoff at minimal gof change") {					
@@ -267,7 +267,7 @@ if(npar==3) {
 			for(try in tzpoints_neg) {				
 				## get the mle for 2-parameter fit at tz for validation testing			
 				neg_tz<- t0_opt+step_size*try			
-				mle2p<-mlefit(mleframe(x-neg_tz, s-neg_tz))			
+				mle2p<-mlefit(modx(x,t0_opt), dist)			
 				if(mle2p[3]<ratioLL) {			
 					invalid_tz<-unique(c(invalid_tz,neg_tz))		
 				}else{			
@@ -336,7 +336,7 @@ if(npar==3) {
 							
 	contour_range<-list(xlim=c(xlo,xhi),ylim=c(ylo,yhi))						
 							
-	outlist<-list(bounds=boundsDF,bounds_list=list(xlb_mat,xub_mat),						
+	outList<-list(bounds=boundsDF,bounds_list=list(xlb_mat,xub_mat),						
 		 contour_list=contour_list,					
 		 contour_range=contour_range					
 	)						
