@@ -267,7 +267,7 @@ if(npar==3) {
 			for(try in tzpoints_neg) {				
 				## get the mle for 2-parameter fit at tz for validation testing			
 				neg_tz<- t0_opt+step_size*try			
-				mle2p<-mlefit(modx(x,t0_opt), dist)			
+				mle2p<-mlefit(modx(x,neg_tz), dist)			
 				if(mle2p[3]<ratioLL) {			
 					invalid_tz<-unique(c(invalid_tz,neg_tz))		
 				}else{			
