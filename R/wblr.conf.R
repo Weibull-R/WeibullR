@@ -2,7 +2,7 @@
 ## inspired by code originally authored by Jurgen Symynck, April 2014
 # Extensive re-write by David J. Silkworth simplifying calls to independent, generalized
 # functions to generate confidence interval bounds from which Blife estimates can also be determined.
-## Copyright 2014-2017 OpenReliability.org
+## Copyright 2014-2021 OpenReliability.org
 #
 # For more info, visit http://www.openreliability.org/
 #
@@ -446,12 +446,9 @@ DQ<-DescriptiveQuantiles
 		fit$conf[[i]]$blife.pts <- opaconf$blife.pts
 		ret <- NULL
 	## this qualifier needs to apply to all bounds
-		if(any(c("weibull3p", "lognormal3p") %in% tolower(fit$options$dist))) {
-			stop("confidence bounds are not prepared on 3-parameter fits")
-		}
-	if(substr(tolower(fit$options$method.fit),1,3)!= "mle") {
-		stop("likelihood ratio bounds are only applied on mle fits")
-	}
+	##	if(any(c("weibull3p", "lognormal3p") %in% tolower(fit$options$dist))) {
+	##		stop("confidence bounds are not prepared on 3-parameter fits")
+	##	}
 
 ## just get the distribution from the fit object, no crossfire
 	fit_dist<-fit$options$dist
