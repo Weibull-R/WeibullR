@@ -193,8 +193,8 @@ if(npar==3) {
 							
 	if(t0_opt==0) {						
 	outList<-get2pbounds()						
-	# need to break out of the npar==3 block						
-	break;						
+	# control then drops to end of else block						
+	# break would have not meaning here					
 	}else{						
 							
 							
