@@ -8,7 +8,7 @@
 
 \usage{
 LRbounds(x,  dist="weibull", CL=0.9, unrel=NULL,  contour=NULL, dof=1,
-                control=NULL, debias="none", show=FALSE)
+                control=NULL, debias="none", show=c(FALSE,FALSE))
 }
 
 \arguments{
@@ -38,7 +38,10 @@ LRbounds(x,  dist="weibull", CL=0.9, unrel=NULL,  contour=NULL, dof=1,
   \item{debias}{A place holder for an optional string argument indicating the adjustment to be applied to the shape or standard deviation
   parameter of the fitted data. NOT YET IMPLEMEMENTED - see details.
   }
-   \item{show}{A logical determining whether a crude graphic of the bounds shall be displayed.
+   \item{show}{A vector of logicals determining whether and how a graphic of the bounds shall be displayed.
+   For 2-parameter bounds only the first element is considered and a crude graphic is provided for the bounds.
+   For 3-parameter bounds the first element determines whether a wblr graphic is displayed for the bounds, while
+   the second element determines whether the series of contours generated to develop the bounds is displayed.
   } 
 }
 
@@ -47,7 +50,13 @@ LRbounds(x,  dist="weibull", CL=0.9, unrel=NULL,  contour=NULL, dof=1,
 }
 
 \details{  
-  Some commercial softwares apply a modification of the LR bounds based on the application of a bias adjustment. Abernethy's "Justified Likelihood Function" has not been demonstrated to be academically accepted, so no attempt has been made to implement similar modification.
+  The approach used for 3p bouns has been to vary the threshold value through a selection of increments from the optimized MLE.
+  Then 2-parameter contours based on a likelihood ratio determined from the final optimized MLE are plotted as if looking down
+  on a 3 dimensional plot with threshold values in the z-direction. The bounds are then derived from the farthest extent of all the contours.
+
+  Some commercial softwares apply a modification of the LR bounds based on the application of a bias adjustment.
+  Abernethy's "Justified Likelihood Function" has not been demonstrated to be academically accepted. 
+  For this reason no attempt has been made to implement similar modification.
   Contribution of evidence or a method contrary to this position will gladly be reviewed by the package maintainer.
 }
 
