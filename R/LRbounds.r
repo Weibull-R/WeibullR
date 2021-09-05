@@ -390,8 +390,8 @@ if(npar==3) {
 				canvas = dist,			
 				main="Modified Data Plot")			
 			}				
-			lines(boundsDF$lower,p2y(boundsDF$percentile/100,canvas = dist),lwd=2,col="red")				
-			lines(boundsDF$upper,p2y(boundsDF$percentile/100,canvas = dist),lwd=2,col="red")				
+			lines(boundsDF$lower-t0_opt,p2y(boundsDF$percentile/100,canvas = dist),lwd=2,col="red")				
+			lines(boundsDF$upper-t0_opt,p2y(boundsDF$percentile/100,canvas = dist),lwd=2,col="red")				
 		}					
 		if(show[2]) {					
 			C2P<-contour_list				
