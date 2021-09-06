@@ -318,9 +318,9 @@ if(npar==3) {
 							
 							
 	boundsDF<-data.frame(percentile=boundpts$bounds$percentile,						
-		lower=apply(t(xlb_mat),1,min),					
-		datum=boundpts$bounds$datum,					
-		upper=apply(t(xub_mat),1,max) 					
+		lower=apply(t(xlb_mat),1,min)+t0_opt,					
+		datum=boundpts$bounds$datum+t0_opt,					
+		upper=apply(t(xub_mat),1,max)+t0_opt 					
 	)						
 							
 	ylo<-floor(minP2)						
