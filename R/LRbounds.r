@@ -357,7 +357,7 @@ if(npar==3) {
 					interval_data<-data[which((data$right-data$left)>0),]		
 					teq<-data.frame(time=NULL, event=NULL, qty=NULL)		
 					if(dim(tefail)[1]>0) teq<-rbind(teq,data.frame(time=tefail$left, event=1, qty=tefail$qty))		
-					if(dim(tesusp)[1]>0) teq<-rbind(teq,data.frame(time=tesusp$left, event=0, qty=tefail$qty))		
+					if(dim(tesusp)[1]>0) teq<-rbind(teq,data.frame(time=tesusp$left, event=0, qty=tesusp$qty))		
 					if(dim(teq)[1]==0) teq=NULL		
 					if(dim(interval_data)[1]==0) interval_data=NULL		
 					return(wblr(teq, interval=interval_data, canvas=canvas))		
