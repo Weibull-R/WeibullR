@@ -295,7 +295,7 @@ if(npar==3) {
 		## get adjusted contour points for this modified.by.tz data					
 		## can use MLEcontour in place of  test_contour3 with WeibullR version >= 1.0.10.3					
 		##	contourpts<-test_contour3(x-tz, s-tz, MLLx=MLLx3p)				
-			contourpts<-MLEcontour(modx(x, tz), dist, MLLx=MLLx3p)				
+			contourpts<-MLEcontour(modx(x, tz), dist, MLLx=MLLx3p, debias=debias)				
 		## and then adjust for the modified.by.t0 basis					
 			if(dist=="weibull") mod_P1<-contourpts[,1]+tz-t0_opt				
 			if(dist=="lognormal") mod_P1<-log(exp(contourpts[,1])+tz-t0_opt)				
@@ -322,7 +322,11 @@ if(npar==3) {
 		datum=boundpts$bounds$datum+t0_opt,					
 		upper=apply(t(xub_mat),1,max)+t0_opt 					
 	)						
-							
+	
+	if(debias!="none")  {	
+		attr(boundsDF,"bias_adj")<-debias
+	}	
+	
 	ylo<-floor(minP2)						
 	if(maxP2<(floor(maxP2)+.5)) {						
 		yhi<-floor(maxP2)+.5					
