@@ -307,7 +307,7 @@ if(npar==3) {
 			maxP1<-max(c(maxP1, contourpts[,1]))				
 		## get points for the bounds for this tz case (on a modified.by.t0 basis)					
 		##  using LRbounds directly from WeibullR					
-			boundpts<-LRbounds(modx(x,t0_opt), dist, unrel=dp, contour=contourpts, CL=CL, dof=dof)				
+			boundpts<-LRbounds(modx(x,t0_opt), dist, unrel=dp, contour=contourpts, CL=CL, dof=dof, debias=debias)				
 		## assemble matrices for all the bounds, so we can find min and max values later					
 			xlb_mat<-rbind(xlb_mat, boundpts$bounds$lower)				
 			xub_mat<-rbind(xub_mat, boundpts$bounds$upper)				
