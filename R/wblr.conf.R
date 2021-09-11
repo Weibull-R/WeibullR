@@ -86,7 +86,7 @@ DescriptivePercentiles<-function(dplabel)  {
 	}	
 		
 	if(tolower(dplabel)=="user") {	
-		dp<-opaconf$user_dq
+		dp<-opaconf$user_dp
 	}	
 		
 	if(tolower(dplabel)=="abrem")  {	
@@ -94,7 +94,7 @@ DescriptivePercentiles<-function(dplabel)  {
 	## it produces evenly spaced points across the y limits of a weibull canvas	
 	#F0(seq(F0inv(1e-3), F0inv(0.999),length.out=??)) Attempting to hold a constant number of points.	
 	spec_pts<-c(opaconf$blife.pts, 0.5, 1-exp(-exp(0)))	
-	len_out<-opaconf$num_dq-length(unique(spec_pts)) # in case any blife.points duplicate pivot points	
+	len_out<-opaconf$num_dp-length(unique(spec_pts)) # in case any blife.points duplicate pivot points	
 	mini <- min(c(opaconf$ylim[1]/10,datarange$yrange[1]/10),0.001)	
 	maxi <- max(c((1-(1-opaconf$ylim[2])/10),(1-(1-datarange$yrange[2])/10),0.999))	
 	dp<-1-exp(-exp(seq(log(qweibull((mini),1,1)), log(qweibull((maxi),1,1)),length.out=len_out)))	
