@@ -68,54 +68,54 @@ if(!is.null(arg$method.conf)) {
 	opaconf <- modifyList(opafit,arg)
 
 
-DescriptiveQuantiles<-function(dqlabel)  {
-## Descriptive quantiles are the percentile positions at which points on the curved bounds are
-## calculated, so that a smoothed curve can be plotted by linear interpolation.
-## This function will return a vector of quantiles based on a named set that can be stored
-##  in the options.wblr list. This is helpful for comparison with other software.
-## It is expected that this function will most often be called by its aleas, DQ.
-
-	if(tolower(dqlabel)=="minitab") {
-	## these descriptive quantiles match Minitab unchangeable defaults (27 values)
-		dq<-c(seq(.01,.09,by=.01),seq(.10,.90,by=.10),seq(.91,.99, by=.01))
-	}
-
-	if(tolower(dqlabel)=="supersmith") {
-		## descriptive quantiles for comparison with SuperSMITH (limit of 15 values)
-		dq<-c(.01, .02, .05, .10, .15, .20, .30, .40, .50,  .60, .70, .80, .90, .95, .99)
-	}
-
-	if(tolower(dqlabel)=="user") {
-		dq<-opaconf$user_dq
-	}
-
-	if(tolower(dqlabel)=="abrem")  {
-	## this is the original default by Jurgen Symynck for package abrem
-	## it produces evenly spaced points across the y limits of a weibull canvas
-	#F0(seq(F0inv(1e-3), F0inv(0.999),length.out=??)) Attempting to hold a constant number of points.
-	spec_pts<-c(opaconf$blife.pts, 0.5, 1-exp(-exp(0)))
-	len_out<-opaconf$num_dq-length(unique(spec_pts)) # in case any blife.points duplicate pivot points
-	mini <- min(c(opaconf$ylim[1]/10,datarange$yrange[1]/10),0.001)
-	maxi <- max(c((1-(1-opaconf$ylim[2])/10),(1-(1-datarange$yrange[2])/10),0.999))
-	dq<-1-exp(-exp(seq(log(qweibull((mini),1,1)), log(qweibull((maxi),1,1)),length.out=len_out)))
-	}
-
-	dq
-}
-
-DQ<-DescriptiveQuantiles
-
-## prepare the descriptive quantiles  -  0.5 and F0(0) are pivot points for pivotal corrections
-	mini <- min(c(opaconf$ylim[1]/10,datarange$yrange[1]/10),0.001)
-	maxi <- max(c((1-(1-opaconf$ylim[2])/10),(1-(1-datarange$yrange[2])/10),0.999))
-
-	lodq<-1-exp(-exp(log(qweibull((mini),1,1))))
-	hidq<-1-exp(-exp(log(qweibull((maxi),1,1))))
-	unrel <- c(DQ(opaconf$dq),opaconf$blife.pts, 0.5, 1-exp(-exp(0)),lodq,hidq)
-
-	unrel <- unique(signif(unrel[order(unrel)]))
+DescriptivePercentiles<-function(dplabel)  {		
+## Descriptive percentiles are the percentile positions at which points on the curved bounds are		
+## calculated, so that a smoothed curve can be plotted by linear interpolation.		
+## This function will return a vector of percentiles based on a named set that can be stored		
+##  in the options.wblr list. This is helpful for comparison with other software.		
+## It is expected that this function will most often be called by its aleas, DP.		
+		
+	if(tolower(dplabel)=="minitab") {	
+	## these descriptive percentiles match Minitab unchangeable defaults (27 values)	
+		dp<-c(seq(.01,.09,by=.01),seq(.10,.90,by=.10),seq(.91,.99, by=.01))
+	}	
+		
+	if(tolower(dplabel)=="supersmith") {	
+		## descriptive percentiles for comparison with SuperSMITH (limit of 15 values)
+		dp<-c(.01, .02, .05, .10, .15, .20, .30, .40, .50,  .60, .70, .80, .90, .95, .99)
+	}	
+		
+	if(tolower(dplabel)=="user") {	
+		dp<-opaconf$user_dq
+	}	
+		
+	if(tolower(dplabel)=="abrem")  {	
+	## this is the original default by Jurgen Symynck for package abrem	
+	## it produces evenly spaced points across the y limits of a weibull canvas	
+	#F0(seq(F0inv(1e-3), F0inv(0.999),length.out=??)) Attempting to hold a constant number of points.	
+	spec_pts<-c(opaconf$blife.pts, 0.5, 1-exp(-exp(0)))	
+	len_out<-opaconf$num_dq-length(unique(spec_pts)) # in case any blife.points duplicate pivot points	
+	mini <- min(c(opaconf$ylim[1]/10,datarange$yrange[1]/10),0.001)	
+	maxi <- max(c((1-(1-opaconf$ylim[2])/10),(1-(1-datarange$yrange[2])/10),0.999))	
+	dp<-1-exp(-exp(seq(log(qweibull((mini),1,1)), log(qweibull((maxi),1,1)),length.out=len_out)))	
+	}	
+		
+	dp	
+}		
+		
+DP<-DescriptivePercentiles		
+		
+## prepare the descriptive percentiles -  0.5 and F0(0) are pivot points for pivotal corrections		
+	mini <- min(c(opaconf$ylim[1]/10,datarange$yrange[1]/10),0.001)	
+	maxi <- max(c((1-(1-opaconf$ylim[2])/10),(1-(1-datarange$yrange[2])/10),0.999))	
+		
+	lodp<-1-exp(-exp(log(qweibull((mini),1,1))))	
+	hidp<-1-exp(-exp(log(qweibull((maxi),1,1))))	
+	unrel <- c(DP(opaconf$dp),opaconf$blife.pts, 0.5, 1-exp(-exp(0)),lodp,hidp)	
+		
+	unrel <- unique(signif(unrel[order(unrel)]))	
 		# signif() has been used to eliminate any identical looking descriptive
-		# quantiles that differ only at place far from the decimal point
+		# percentiles that differ only at place far from the decimal point
 
 ## prepare the list objects
 	if(is.null(fit$conf)){

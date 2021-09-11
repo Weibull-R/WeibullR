@@ -59,11 +59,11 @@ options.wblr<- function(...){
 
 ## options specific to wblr.conf
             method.conf="pivotal-rr",           ## ("bbb","bbb-extra", "fm", "fmbounds","lrb", "likelihood-ratio")
-											## "mcpivotals" has been depreciated
-           num_dq=25,
-           dq="abrem",
-        ##   assigning dq="user" permits defined user_dq to be applied.  minitab dq exampled here:
-           user_dq=c(seq(.01,.09,by=.01),seq(.10,.90,by=.10),seq(.91,.99, by=.01)),
+			## "mcpivotals" has been depreciated
+           num_dp=25,
+           dp="abrem",			##("minitab", "supersmith", "user")
+        ##   assigning dp="user" permits defined user_dq to be applied.  minitab dp exampled here:
+           user_dp=c(seq(.01,.09,by=.01),seq(.10,.90,by=.10),seq(.91,.99, by=.01)),
         ## double-sided confidence interval, also chi sq conf level for likelihood ratio
            ci=0.9,
         ## probability points at which to report Blife on legend
