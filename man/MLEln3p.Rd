@@ -39,5 +39,3 @@ failures<-c(90,96,30,49,82)
 suspensions<-c(100,45,10)
 fit<-MLEln3p(failures, suspensions)
 }
-
-\keyword{ regression reliability }
