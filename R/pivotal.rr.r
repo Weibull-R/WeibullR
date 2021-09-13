@@ -70,8 +70,8 @@ pivotal.rr<-function(x, event=NULL, dist="weibull", reg_method="XonY", R2, CI, u
 callargs<-list(ppp=x$ppp, event=event, R2=R2, CI=CI, P1=P1, P2=P2, S=S, seed=seed, dp=dp, 
 				reg_order=reg_order, dist_num=dist_num, npar=npar, limit=limit,ProgRpt=ProgRpt)
 				
-	result<-.Call("pivotalMC", callargs, package="WeibullR")
-##	result<-.Call(pivotalMC, callargs)
+##	result<-.Call("pivotalMC", callargs, package="WeibullR")
+ 	result<-.Call(pivotalMC, callargs)
 
 return(result)				
 }				

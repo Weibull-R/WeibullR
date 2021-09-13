@@ -118,8 +118,8 @@ if(is.null(MLLx)){MLLx<-MLEfit[3]}
 	ptDensity<-ceiling(ptDensity)
 
 ## Call the C++ code to deliver a matrix of contour points
-	resultMat<- .Call("getContour", MLEclassList, par_hat, MLLx, ratioLL, RadLimit, ptDensity, package="WeibullR")
-##	resultMat<- .Call(getContour, MLEclassList, par_hat, MLLx, ratioLL, RadLimit, ptDensity)
+##	resultMat<- .Call("getContour", MLEclassList, par_hat, MLLx, ratioLL, RadLimit, ptDensity, package="WeibullR")
+ 	resultMat<- .Call(getContour, MLEclassList, par_hat, MLLx, ratioLL, RadLimit, ptDensity)
 	if(sum(resultMat[,3])>0) {
 		warning("instability detected")
 	}
