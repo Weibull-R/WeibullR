@@ -169,7 +169,7 @@ simplex<-function(x, dist="weibull", tz=0, debias="none", optcontrol=NULL)  {
 ## Test for successful log-likelihood calculation with given vstart
 ## tz is required for MLEloglike call now
 ##		LLtest<-.Call("MLEloglike",MLEclassList,vstart,default_sign, tz, package="WeibullR")
- 		LLtest<-.Call(MLEloglike,MLEclassList,vstart,dist_num, default_sign, default_tz)
+ 		LLtest<-.Call(MLEloglike,MLEclassList,vstart, default_sign, default_tz)
 ## This should have failed as left with abremDebias call.
 		if(!is.finite(LLtest))  {
 			stop("Cannot start mle optimization with given parameters")
