@@ -50,8 +50,8 @@ lslr<-function(x, dist="weibull", npar=2, reg_method="XonY", abpval=TRUE)  {
 	if(dist=="gumbel") dist_num=3
 
 	parlist<-list(fail=x$time, ppp=x$ppp, reg_order=reg_order, dist_num=dist_num, npar=npar, limit=limit)
-##resultVec<-.Call("LSLR", parlist, package="WeibullR")
-resultVec<-.Call(LSLR, parlist)					
+  resultVec<-.Call("LSLR", parlist, package="WeibullR")
+# resultVec<-.Call(LSLR, parlist)					
 				
 					
 casenum<-0					
