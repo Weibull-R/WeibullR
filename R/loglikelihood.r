@@ -10,7 +10,7 @@
  #  For data including intervals wblrLikelihoodmust be used.
  #
  # Author: Jacob T. Ormerod
- #   (c)2014 OpenReliability.org
+ #   (c)2014-2021 OpenReliability.org
 
 
 LLw<-function(x,s=NULL,Eta,Beta)  {

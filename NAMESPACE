@@ -1,4 +1,5 @@
 useDynLib(WeibullR)
+# useDynLib(WeibullR, .registration=TRUE)
 importFrom(Rcpp, evalCpp)
 importFrom("graphics", "abline", "axis", "curve", "legend", "lines",
 		 "par", "plot", "plot.default", "points", "segments",
@@ -45,8 +46,10 @@ export(
 	plot_contour,
 	plot.wblr,
 	contour.wblr,
+#	simplex,
 	weibayes,
 	weibayes.mle,
+	xbounds,
 	xfit
 )
 S3method(plot, wblr) 

@@ -725,14 +725,14 @@ SEXP MLEmodel::MLE3p(SEXP arg3, SEXP arg4, SEXP arg5) {
 	bool negative_runout = false;								
 	bool rebound = false;								
 	double rebound_value= 0.0;								
-									
+	double end_cap=maxtz;								
 
 	
 //	std::vector<Rcpp::NumericVector>DF(num_pts);								
 									
 //set up for first trial with items that will be accessed/updated inside the loop									
 	double start=0.0;								
-	double end = maxtz;								
+	double end = end_cap;								
 	bool t0_found = false;								
 	int trial = 1;								
 	int max_ind;								
@@ -788,6 +788,7 @@ Rcout<<"try "<<i<<" tz "<<try_list(i)<<"\n";
 */
 
 	max_ind = (int) arma::index_max(gof_vec);
+	if(max_ind<(num_pts-1)) {end_cap=end;}
 //	Rcout<<"next trial "<<trial+1<<"     max_ind  "<<max_ind<<"\n"; 
 	
 								
@@ -853,14 +854,15 @@ int rebound_ind = std::min_element(progression.begin(), progression.end())-progr
 						if(rebound_ind!=0)  {			
 						// if so, next trial is a rework of this trial with end set to rebound point			
 							// start is unchanged		
-							end = tzvec[rebound_ind];		
+							end_cap = tzvec[rebound_ind];
+							end = end_cap;
 							// decrement the trial so it will replace last and flag this unusual event (for further study?).		
 							trial = trial-1;		
 							rebound = true;		
 							rebound_value = tzvec[rebound_ind];		
 						}else{			
 							start = tzvec[num_pts-1];		
-							end = maxtz;		
+							end = end_cap;		
 						}			
 					}				
 				}else{					
@@ -904,6 +906,7 @@ Rcpp::List Lout = Rcpp::List::create(
 	Rcpp::Named("negative_runout")=Rcpp::wrap(negative_runout),
 	Rcpp::Named("rebound")=Rcpp::wrap(rebound),
 	Rcpp::Named("rebound_value")=Rcpp::wrap(rebound_value),
+	Rcpp::Named("end_cap")=Rcpp::wrap(end_cap),
 	Rcpp::Named("try_list")=Rcpp::wrap(try_list)
 );	
 

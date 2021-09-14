@@ -132,26 +132,44 @@ mlefit<-function(x, dist="weibull", npar=2, debias="none", optcontrol=NULL)  {
 		}
 	}
 
-## Optional optimization control list to be handled here
-		## vstart will be as estimated
-		limit<-1e-6
-		maxit<-100
-		listout<-FALSE
-
-	if(length(optcontrol)>0)  {
-		if(length(optcontrol$vstart>0))  {
+## Optional optimization control list to be handled here			
+		## vstart default as estimated	
+		limit <-1e-6	
+		maxit <-100	
+		listout <-FALSE	
+# default optimization controls for 3p seek			
+		num_points <-20	
+		err_t0_limit <- 1e-6	
+		err_gof_limit <- 1e-5	
+		try_limit <- 100	
+			
+	if(length(optcontrol)>0)  {		
+		if(length(optcontrol$vstart>0))  {	
 			vstart<-optcontrol$vstart
-		}
-		if(length(optcontrol$limit)>0)  {
+		}	
+		if(length(optcontrol$limit)>0)  {	
 			limit<-optcontrol$limit
-		}
-		if(length(optcontrol$maxit)>0)  {
+		}	
+		if(length(optcontrol$maxit)>0)  {	
 			maxit<-optcontrol$maxit
-		}
-		if(length(optcontrol$listout)>0)  {
+		}	
+		if(length(optcontrol$listout)>0)  {	
 			listout<-optcontrol$listout
-		}
-	}
+		}	
+		if(length(optcontrol$num_points>0))  {	
+			num_points<-optcontrol$num_points
+		}	
+		if(length(optcontrol$err_t0_limit>0))  {	
+			err_t0_limit<-optcontrol$err_t0_limit
+		}	
+		if(length(optcontrol$err_gof_limit>0))  {	
+			err_gof_limit<-optcontrol$err_gof_limit
+		}	
+		if(length(optcontrol$try_limit>0))  {	
+			try_limit<-optcontrol$try_limit
+		}	
+	}		
+
 
 	pos<-1
 	Q<-sum(q)
@@ -167,7 +185,7 @@ mlefit<-function(x, dist="weibull", npar=2, debias="none", optcontrol=NULL)  {
 
 	MLEclassList<-list(fsdi=fsdi,q=q,N=N,dist_num=dist_num)
 ## Test for successful log-likelihood calculation with given vstart
-		LLtest<-.Call("MLEloglike",MLEclassList,vstart,default_sign, default_tz, package="WeibullR")
+ 		LLtest<-.Call("MLEloglike",MLEclassList,vstart,default_sign, default_tz, package="WeibullR")
 ##		LLtest<-.Call(MLEloglike,MLEclassList,vstart, default_sign, default_tz)
 ## This should have failed as left with abremDebias call.
 		if(!is.finite(LLtest))  {
@@ -199,7 +217,7 @@ mlefit<-function(x, dist="weibull", npar=2, debias="none", optcontrol=NULL)  {
 				listout_int<-0
 			}
 ##  tz  inserted here with a default of zero
-		result_of_simplex_call<-.Call("MLEsimplex",MLEclassList, ControlList, vstart, default_tz, listout_int, package="WeibullR")
+ 		result_of_simplex_call<-.Call("MLEsimplex",MLEclassList, ControlList, vstart, default_tz, listout_int, package="WeibullR")
 ##		result_of_simplex_call<-.Call(MLEsimplex,MLEclassList, ControlList, vstart, default_tz, listout_int)
 ## extract fit vector from result of call to enable finishing treatment of the outvec
 		if(listout==FALSE)  {
@@ -228,8 +246,8 @@ mlefit<-function(x, dist="weibull", npar=2, debias="none", optcontrol=NULL)  {
 				if(debias=="hrbu")  {
 					outvec[2]<-outvec[2]*hrbu(Q[1]-Q[3], Q[3])
 				}
-			outvec[3]<-.Call("MLEloglike",MLEclassList,c(outvec[2],outvec[1]),dist_num, default_sign, default_tz, package="WeibullR")
-##			outvec[3]<-.Call(MLEloglike,MLEclassList,c(outvec[2],outvec[1]),dist_num, default_sign, default_tz)
+ 			outvec[3]<-.Call("MLEloglike",MLEclassList,c(outvec[2],outvec[1]), default_sign, default_tz, package="WeibullR")
+##			outvec[3]<-.Call(MLEloglike,MLEclassList,c(outvec[2],outvec[1]), default_sign, default_tz)
 			attr(outvec,"bias_adj")<-debias
 			}
 		}
@@ -242,8 +260,8 @@ mlefit<-function(x, dist="weibull", npar=2, debias="none", optcontrol=NULL)  {
 					warning("rba has been applied to adjust lognormal")
 					debias="rba"
 				}
-			outvec[3]<-.Call("MLEloglike",MLEclassList,c(outvec[1],outvec[2]),dist_num, default_sign, default_tz, package="WeibullR")
-##			outvec[3]<-.Call(MLEloglike,MLEclassList,c(outvec[1],outvec[2]),dist_num, default_sign, default_tz)
+ 			outvec[3]<-.Call("MLEloglike",MLEclassList,c(outvec[1],outvec[2]), default_sign, default_tz, package="WeibullR")
+##			outvec[3]<-.Call(MLEloglike,MLEclassList,c(outvec[1],outvec[2]), default_sign, default_tz)
 			attr(outvec,"bias_adj")<-debias
 			}
 		}
@@ -273,7 +291,7 @@ mlefit<-function(x, dist="weibull", npar=2, debias="none", optcontrol=NULL)  {
 		listout_int<-0
 
 ## for now enter a default tz=0
-			result_of_simplex_call<-.Call("MLEsimplex",MLEclassList, ControlList, vstart, default_tz, listout_int, package="WeibullR")
+ 			result_of_simplex_call<-.Call("MLEsimplex",MLEclassList, ControlList, vstart, default_tz, listout_int, package="WeibullR")
 ##			result_of_simplex_call<-.Call(MLEsimplex,MLEclassList, ControlList, vstart, default_tz, listout_int)
 			if(result_of_simplex_call[4]>0)  {
 				stop("2p model does not converge")
@@ -285,29 +303,21 @@ mlefit<-function(x, dist="weibull", npar=2, debias="none", optcontrol=NULL)  {
 				listout_int<-0
 			}
 
-			
-			
-	## n has been removed as an argument and placed in the control list						
-	seek_control<-list(						
-		num_points=10,					
-		err_t0_limit= 1e-6,					
-		err_gof_limit= 1e-5)
-	optcontrol4seek<-list(optcontrol$num_points, optcontrol$err_t0_limit, optcontrol$err_gof_limit)
-	if(length(optcontrol4seek)>0) seek_control<-modifyList(seek_control, optcontrol4seek)						
-	## restore meaning of n for rest of code						
-	n<-seek_control$num_points						
-	if(n<5) {						
-		n<-5					
-		warning("n specified too small, n=5 used")					
-	}						
+## set the 3p seek_control list
+	if(num_points<5) {	
+	num_points<-5
+	warning("num_points specified too small, num_points=5 used")
+	}				
+	seek_control<-list(num_points=num_points, err_t0_limit=err_t0_limit, err_gof_limit=err_gof_limit)						
 
 	# establish the maximum limit for t0						
 	## MLEmodel will treat convert any negative x$left-tz as zero						
 	## Note discoveries continue to be discoveries until x$right-tz = zero						
 	maxtz<-min(x$right[x$right != -1])
 
-## the simplex optcontrol is set to the defaults in mlefit							
-	simplex_control<-list(limit=1e-5, maxit=100)	
+## set simplex control based on mlefit defaults or optcontrol items						
+	#simplex_control<-list(limit=1e-5, maxit=100) # previously hard coded here
+		simplex_control<-list(limit=limit, maxit=maxit)
 							
 ## This is the point to go to C++						
 ## Will need to pass in MLEclassList, fit_dist and seek_control							
@@ -316,8 +326,12 @@ mlefit<-function(x, dist="weibull", npar=2, debias="none", optcontrol=NULL)  {
 
 ## Note: vstart was defined before separating processing based on npar
 
-ret3p<-.Call("callMLE3p", MLEclassList, simplex_control, vstart, maxtz, seek_control, package="WeibullR")
-#ret3p<-list(MLEclassList, simplex_control, vstart, maxtz, seek_control)
+ ret3p<-.Call("callMLE3p", MLEclassList, simplex_control, vstart, maxtz, seek_control, package="WeibullR")
+ 
+# Error in .Call("callMLE3p", MLEclassList, simplex_control, vstart, maxtz,  : 
+#  Incorrect number of arguments (6), expecting 5 for 'callMLE3p'
+
+#  ret3p<-list(callMLE3p, MLEclassList, simplex_control, vstart, maxtz, seek_control)
 
 outvec<-ret3p$outvec
 
@@ -328,7 +342,7 @@ outvec<-ret3p$outvec
 #   		##names(outvec)<-""			
 #   					
    		if(dist_num==1)  {			
-   			names(outvec)<-c("Eta","Beta", "t0", "LL")		
+   			#names(outvec)<-c("Eta","Beta", "t0", "LL")		
    			if(debias!="none")  {		
    				if(debias=="rba")  {	
    					outvec[2]<-outvec[2]*rba(Q[1]-Q[3], dist="weibull",basis="median")
@@ -339,21 +353,21 @@ outvec<-ret3p$outvec
    				if(debias=="hrbu")  {	
    					outvec[2]<-outvec[2]*hrbu(Q[1]-Q[3], Q[3])
    				}	
-   				outvec[4]<-.Call("MLEloglike",MLEclassList,c(outvec[2],outvec[1]),dist_num, default_sign, outvec[3], package="WeibullR")	
-## 				outvec[4]<-.Call(MLEloglike,MLEclassList,c(outvec[2],outvec[1]),dist_num, default_sign, outvec[3])	
+    				outvec[4]<-.Call("MLEloglike",MLEclassList,c(outvec[2],outvec[1]), default_sign, outvec[3], package="WeibullR")	
+##   				outvec[4]<-.Call(MLEloglike,MLEclassList,c(outvec[2],outvec[1]), default_sign, outvec[3])	
    				attr(outvec,"bias_adj")<-debias	
    			}		
    		}			
    		if(dist_num == 2)  {			
-   			names(outvec)<-c("Mulog","Sigmalog", "t0", "LL")		
+   			#names(outvec)<-c("Mulog","Sigmalog", "t0", "LL")		
    			if(debias!="none")  {		
    				outvec[2]<-outvec[2]*rba(Q[1]-Q[3], dist="lognormal")	
    				if(debias!="rba")  {	
    					warning("rba has been applied to adjust lognormal")
    					debias="rba"
    				}	
-   				outvec[4]<-.Call("MLEloglike",MLEclassList,c(outvec[1],outvec[2]),dist_num, default_sign, outvec[3],package="WeibullR")	
-## 				outvec[4]<-.Call(MLEloglike,MLEclassList,c(outvec[1],outvec[2]),dist_num, default_sign, outvec[3])	
+    				outvec[4]<-.Call("MLEloglike",MLEclassList,c(outvec[1],outvec[2]), default_sign, outvec[3],package="WeibullR")	
+## 				outvec[4]<-.Call(MLEloglike,MLEclassList,c(outvec[1],outvec[2]), default_sign, outvec[3])	
    				attr(outvec,"bias_adj")<-debias	
    			}		
    		}			
