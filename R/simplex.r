@@ -168,8 +168,8 @@ simplex<-function(x, dist="weibull", tz=0, debias="none", optcontrol=NULL)  {
 	MLEclassList<-list(fsdi=fsdi,q=q,N=N,dist_num=dist_num)
 ## Test for successful log-likelihood calculation with given vstart
 ## tz is required for MLEloglike call now
- 		LLtest<-.Call("MLEloglike",MLEclassList,vstart,default_sign, tz, package="WeibullR")
-## 		LLtest<-.Call(MLEloglike,MLEclassList,vstart, default_sign, default_tz)
+# 		LLtest<-.Call("MLEloglike",MLEclassList,vstart,default_sign, tz, package="WeibullR")
+  		LLtest<-.Call(MLEloglike,MLEclassList,vstart, default_sign, default_tz)
 ## This should have failed as left with abremDebias call.
 		if(!is.finite(LLtest))  {
 			stop("Cannot start mle optimization with given parameters")
@@ -192,8 +192,8 @@ simplex<-function(x, dist="weibull", tz=0, debias="none", optcontrol=NULL)  {
 		listout_int<-0
 
 ## for now enter a default tz=0
- 			result_of_simplex_call<-.Call("MLEsimplex",MLEclassList, ControlList, vstart, tz, listout_int, package="WeibullR")
-## 			result_of_simplex_call<-.Call(MLEsimplex,MLEclassList, ControlList, vstart, default_tz, listout_int)
+# 			result_of_simplex_call<-.Call("MLEsimplex",MLEclassList, ControlList, vstart, tz, listout_int, package="WeibullR")
+ 			result_of_simplex_call<-.Call(MLEsimplex,MLEclassList, ControlList, vstart, default_tz, listout_int)
 			if(result_of_simplex_call[4]>0)  {
 				warning("simplex does not converge")
 			}
