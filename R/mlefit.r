@@ -342,7 +342,7 @@ outvec<-ret3p$outvec
 #   		##names(outvec)<-""			
 #   					
    		if(dist_num==1)  {			
-   			#names(outvec)<-c("Eta","Beta", "t0", "LL")		
+   			names(outvec)<-c("Eta","Beta", "t0", "LL")		
    			if(debias!="none")  {		
    				if(debias=="rba")  {	
    					outvec[2]<-outvec[2]*rba(Q[1]-Q[3], dist="weibull",basis="median")
@@ -359,7 +359,7 @@ outvec<-ret3p$outvec
    			}		
    		}			
    		if(dist_num == 2)  {			
-   			#names(outvec)<-c("Mulog","Sigmalog", "t0", "LL")		
+   			names(outvec)<-c("Mulog","Sigmalog", "t0", "LL")		
    			if(debias!="none")  {		
    				outvec[2]<-outvec[2]*rba(Q[1]-Q[3], dist="lognormal")	
    				if(debias!="rba")  {	
