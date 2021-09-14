@@ -326,8 +326,12 @@ mlefit<-function(x, dist="weibull", npar=2, debias="none", optcontrol=NULL)  {
 
 ## Note: vstart was defined before separating processing based on npar
 
-##ret3p<-.Call("callMLE3p", MLEclassList, simplex_control, vstart, maxtz, seek_control, package="WeibullR")
-ret3p<-list(MLEclassList, simplex_control, vstart, maxtz, seek_control)
+ ret3p<-.Call("callMLE3p", MLEclassList, simplex_control, vstart, maxtz, seek_control, package="WeibullR")
+ 
+# Error in .Call("callMLE3p", MLEclassList, simplex_control, vstart, maxtz,  : 
+#  Incorrect number of arguments (6), expecting 5 for 'callMLE3p'
+
+#  ret3p<-list(callMLE3p, MLEclassList, simplex_control, vstart, maxtz, seek_control)
 
 outvec<-ret3p$outvec
 
@@ -368,24 +372,24 @@ outvec<-ret3p$outvec
    			}		
    		}			
    					
-		if(ret3p$positive_runout == TRUE) {	
-			attr(outvec, "message")<-"t0 cutoff at minimal change"
-		}	
+		#if(ret3p$positive_runout == TRUE) {	
+			#attr(outvec, "message")<-"t0 cutoff at minimal change"
+		#}	
 			
-		if(ret3p$negative_runout == TRUE) {	
-			attr(outvec, "message")<-"optimum not found, t0 cutoff at minimal gof change"
-		}	
+		#if(ret3p$negative_runout == TRUE) {	
+			#attr(outvec, "message")<-"optimum not found, t0 cutoff at minimal gof change"
+		#}	
 			
-		if(ret3p$rebound == TRUE) {	
-			attr(outvec, "rebound")<-ret3p$rebound_value
-		}	
+		#if(ret3p$rebound == TRUE) {	
+			#attr(outvec, "rebound")<-ret3p$rebound_value
+		#}	
 		
 		try_list<-ret3p$try_list
 
 ## end of 3p code
 }
 
-attr(outvec,"data_types")<-Q[-2]
+#attr(outvec,"data_types")<-Q[-2]
 
 ## For 3p testing purposes listout code is limited to 2p results
 if(npar==2) {
@@ -398,7 +402,8 @@ if(npar==2) {
 		out_object<-outvec
 	}else{
 		if(npar==2)  out_object<-list(fit=outvec, opt=optDF)
-		if(npar==3)  out_object<-list(fit=outvec, opt=try_list)
+		#if(npar==3)  out_object<-list(fit=outvec, opt=try_list)
+		out_object<-ret3p
 	}
 }else{
 	out_object<-outvec

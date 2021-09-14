@@ -11,7 +11,7 @@ library(tools)
 
 /* .Call calls */
 extern SEXP adjustedRank(SEXP);
-extern SEXP callMLE3p(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
+extern SEXP callMLE3p(SEXP, SEXP, SEXP, SEXP, SEXP);
 extern SEXP getContour(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
 extern SEXP LSLR(SEXP);
 extern SEXP MLEloglike(SEXP, SEXP, SEXP, SEXP);
@@ -21,7 +21,7 @@ extern SEXP plotData(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
 
 static const R_CallMethodDef CallEntries[] = {
     {"adjustedRank", (DL_FUNC) &adjustedRank, 1},
-    {"callMLE3p",    (DL_FUNC) &callMLE3p,    6},
+    {"callMLE3p",    (DL_FUNC) &callMLE3p,    5},
     {"getContour",   (DL_FUNC) &getContour,   6},
     {"LSLR",         (DL_FUNC) &LSLR,         1},
     {"MLEloglike",   (DL_FUNC) &MLEloglike,   4},
