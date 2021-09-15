@@ -195,9 +195,7 @@ if(npar==3) {
 	outList<-get2pbounds()						
 	# control then drops to end of else block						
 	# break would have not meaning here					
-	}else{						
-							
-							
+	}else{												
 			tzpoints_arg<-tzpoints[1]				
 			tzpoints_now<-tzpoints[1]				
 			valid_tz<-NULL				
