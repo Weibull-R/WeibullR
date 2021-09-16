@@ -31,12 +31,11 @@ LRbounds(x,  dist="weibull", CL=0.9, unrel=NULL,  contour=NULL, dof=1,
   }
   \item{control}{ A list having specifically named options for control of the bounds preparation. List item 'ptDensity' 
   an integer value for the number of points to be plotted around the circumference of the (each) 2p contour. List item
-  'tzpoints' is the number of t0 trials in a 3p iteration (similar to num_points in mlefit). List item RadLimit controlling
-  the acceptable change in radius length during optimization of the ratio fit. And 'maxit' a control for limiting non-closing
-  interations, such as when eta range is unchanging as beta rises.
+  'tzpoints' controls the number of t0 trials in a 3p iteration (see Details). List item RadLimit a convergence limit
+  for the contour radials based on specific units such as Eta/Eta_hat and Beta/Beta_hat.
   }
   \item{debias}{A place holder for an optional string argument indicating the adjustment to be applied to the shape or standard deviation
-  parameter of the fitted data. NOT YET IMPLEMEMENTED - see details.
+  parameter of the fitted data.
   }
    \item{show}{A vector of logicals determining whether and how a graphic of the bounds shall be displayed.
    For 2-parameter bounds only the first element is considered and a crude graphic is provided for the bounds.
@@ -50,13 +49,17 @@ LRbounds(x,  dist="weibull", CL=0.9, unrel=NULL,  contour=NULL, dof=1,
 }
 
 \details{  
-  The approach used for 3p bouns has been to vary the threshold value through a selection of increments from the optimized MLE.
-  Then 2-parameter contours based on a likelihood ratio determined from the final optimized MLE are plotted as if looking down
+  The approach used for 3p bounds has been to vary the threshold value through a selection of increments from the optimized MLE toward zero.
+  Then 2-parameter contours based on a likelihood ratio determined from the optimized MLE are plotted as if looking down
   on a 3 dimensional plot with threshold values in the z-direction. The bounds are then derived from the farthest extent of all the contours.
+  tzpoints is a control argument that can be used to alter the number of threshold values (tz's) to be sampled. The tzpoints
+  control argument is a vector having 3 elements. The first element controls the number of positive tz values to be sampled.
+  The second and third elements of the tzpoints vector control the sequence of negative tz values according to the relationship
+  tzpoints_neg<-seq(tzpoints[3],tzpoints[2], by=tzpoints[3]).
 
-  Some commercial softwares apply a modification of the LR bounds based on the application of a bias adjustment.
-  Abernethy's "Justified Likelihood Function" has not been demonstrated to be academically accepted. 
-  For this reason no attempt has been made to implement similar modification.
+  A bias adjustment, if specified, is applied to the shape parameter of generated contours. In this way such
+  adjustment is passed into the bounds preparation.Abernethy's "Justified Likelihood Function" has not been demonstrated 
+  to be academically accepted. For this reason no attempt has been made to implement similar modification related to bias adjustment.
   Contribution of evidence or a method contrary to this position will gladly be reviewed by the package maintainer.
 }
 

@@ -4,7 +4,7 @@
 #	interval input argument
 #	new [object]$data now as list containing objects lrq_frame, dpoints, and dlines
 #   the [object]$data$dpoints corresponds to previous [object]$data
-# copyright (c) OpenReliability.org 2011-2017
+# copyright (c) OpenReliability.org 2011-2021
 #-------------------------------------------------------------------------------
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -208,8 +208,8 @@ if( nrow(mod2x)==nrow(p) )  {
 	dpoints<-NULL
 	dlines<-NULL
 ## This is the complex loop implemented in C++ for un-handled duplicates
-	ret<-.Call("plotData", mod2x$left, mod2x$right, mod2x$qty, mod2x$tmean, p$time, p$ppp, p$adj_rank, package="WeibullR")
-##	ret<-.Call(plotData, mod2x$left, mod2x$right, mod2x$qty, mod2x$tmean, p$time, p$ppp, p$adj_rank)
+#	ret<-.Call("plotData", mod2x$left, mod2x$right, mod2x$qty, mod2x$tmean, p$time, p$ppp, p$adj_rank, package="WeibullR")
+ 	ret<-.Call(plotData, mod2x$left, mod2x$right, mod2x$qty, mod2x$tmean, p$time, p$ppp, p$adj_rank)
 	if(nrow(ret$dpoints)>0) dpoints<-ret$dpoints
 	if(nrow(ret$dlines)>0) dlines<-ret$dlines
 

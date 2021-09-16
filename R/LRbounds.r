@@ -31,12 +31,13 @@ LRbounds<-function(x,  dist="weibull", CL=0.9, unrel=NULL,  contour=NULL, dof=1,
 							
 get2pbounds<-function()  {							
 	ptDensity=120						
-	if(!is.null(control$ptDensity))  ptDensity<-control$ptDensity[1]						
-							
+	if(!is.null(control$ptDensity))  ptDensity<-control$ptDensity[1]
+	RadLimit<-1e-5
+	if(!is.null(control$RadLimit))	RadLimit<-control$RadLimit
 	# if(missing(contour))  {						
 	# Error in missing(contour) : 'missing' can only be used for arguments						
 	if(length(contour)==0) {						
-		contour<-MLEcontour(x, dist, CL, dof=dof, ptDensity=ptDensity, debias=debias)					
+		contour<-MLEcontour(x, dist, CL, dof=dof, ptDensity=ptDensity, RadLimit=RadLimit, debias=debias)					
 	}						
 							
 	if(dist=="weibull")  {						
@@ -195,9 +196,7 @@ if(npar==3) {
 	outList<-get2pbounds()						
 	# control then drops to end of else block						
 	# break would have not meaning here					
-	}else{						
-							
-							
+	}else{												
 			tzpoints_arg<-tzpoints[1]				
 			tzpoints_now<-tzpoints[1]				
 			valid_tz<-NULL				

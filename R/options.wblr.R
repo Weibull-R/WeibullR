@@ -1,6 +1,6 @@
 ## options.wblr.R
 ## Refactored from options.abrem.R originally authored by Jurgen Symynck
-## (c) 2014-2017 OpenReliability.org
+## (c) 2014-2021 OpenReliability.org
 ##-------------------------------------------------------------------------------
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -76,6 +76,8 @@ options.wblr<- function(...){
         ## specific control for likelihood ratio contour and bounds
             dof=1,            ## degrees of freedom, dof=1 for conf interval, dof=2 for comparison
             ptDensity=120, ##  number of points in likelihood ratio contour
+			RadLimit=1e-5,  ## a convergence limit for the contour radials based on specific units such as Eta/Eta_hat and Beta/Beta_hat.
+			tzpoints=c(10, 10, 1), ## control prospective threashold cases to consider for 3p bounds (see Details in LRbounds man page)
 
 ## General graphical options
         ## graphical control for fitted lines, confidence bounds, or contours can be set at

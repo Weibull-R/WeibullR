@@ -474,7 +474,7 @@ if(!is.null(debias)) fit$conf[[i]]$debias <- debias
 # this specific setting broke the code, just depend on default
 #			contour=NULL,
 			dof=fit$conf[[i]]$dof,
-			control=list(ptDensity=opaconf$ptDensity),
+			control=list(ptDensity=opaconf$ptDensity, RadLimit=opaconf$RadLimit, tzpoints=opaconf$tzpoints),
 			debias=debias
 		)
 

@@ -185,8 +185,8 @@ mlefit<-function(x, dist="weibull", npar=2, debias="none", optcontrol=NULL)  {
 
 	MLEclassList<-list(fsdi=fsdi,q=q,N=N,dist_num=dist_num)
 ## Test for successful log-likelihood calculation with given vstart
- 		LLtest<-.Call("MLEloglike",MLEclassList,vstart,default_sign, default_tz, package="WeibullR")
-##		LLtest<-.Call(MLEloglike,MLEclassList,vstart, default_sign, default_tz)
+# 		LLtest<-.Call("MLEloglike",MLEclassList,vstart,default_sign, default_tz, package="WeibullR")
+ 		LLtest<-.Call(MLEloglike,MLEclassList,vstart, default_sign, default_tz)
 ## This should have failed as left with abremDebias call.
 		if(!is.finite(LLtest))  {
 			stop("Cannot start mle optimization with given parameters")
@@ -217,8 +217,8 @@ mlefit<-function(x, dist="weibull", npar=2, debias="none", optcontrol=NULL)  {
 				listout_int<-0
 			}
 ##  tz  inserted here with a default of zero
- 		result_of_simplex_call<-.Call("MLEsimplex",MLEclassList, ControlList, vstart, default_tz, listout_int, package="WeibullR")
-##		result_of_simplex_call<-.Call(MLEsimplex,MLEclassList, ControlList, vstart, default_tz, listout_int)
+# 		result_of_simplex_call<-.Call("MLEsimplex",MLEclassList, ControlList, vstart, default_tz, listout_int, package="WeibullR")
+ 		result_of_simplex_call<-.Call(MLEsimplex,MLEclassList, ControlList, vstart, default_tz, listout_int)
 ## extract fit vector from result of call to enable finishing treatment of the outvec
 		if(listout==FALSE)  {
 			resultvec<-result_of_simplex_call
@@ -246,8 +246,8 @@ mlefit<-function(x, dist="weibull", npar=2, debias="none", optcontrol=NULL)  {
 				if(debias=="hrbu")  {
 					outvec[2]<-outvec[2]*hrbu(Q[1]-Q[3], Q[3])
 				}
- 			outvec[3]<-.Call("MLEloglike",MLEclassList,c(outvec[2],outvec[1]), default_sign, default_tz, package="WeibullR")
-##			outvec[3]<-.Call(MLEloglike,MLEclassList,c(outvec[2],outvec[1]), default_sign, default_tz)
+# 			outvec[3]<-.Call("MLEloglike",MLEclassList,c(outvec[2],outvec[1]), default_sign, default_tz, package="WeibullR")
+ 			outvec[3]<-.Call(MLEloglike,MLEclassList,c(outvec[2],outvec[1]), default_sign, default_tz)
 			attr(outvec,"bias_adj")<-debias
 			}
 		}
@@ -260,8 +260,8 @@ mlefit<-function(x, dist="weibull", npar=2, debias="none", optcontrol=NULL)  {
 					warning("rba has been applied to adjust lognormal")
 					debias="rba"
 				}
- 			outvec[3]<-.Call("MLEloglike",MLEclassList,c(outvec[1],outvec[2]), default_sign, default_tz, package="WeibullR")
-##			outvec[3]<-.Call(MLEloglike,MLEclassList,c(outvec[1],outvec[2]), default_sign, default_tz)
+# 			outvec[3]<-.Call("MLEloglike",MLEclassList,c(outvec[1],outvec[2]), default_sign, default_tz, package="WeibullR")
+ 			outvec[3]<-.Call(MLEloglike,MLEclassList,c(outvec[1],outvec[2]), default_sign, default_tz)
 			attr(outvec,"bias_adj")<-debias
 			}
 		}
@@ -291,8 +291,8 @@ mlefit<-function(x, dist="weibull", npar=2, debias="none", optcontrol=NULL)  {
 		listout_int<-0
 
 ## for now enter a default tz=0
- 			result_of_simplex_call<-.Call("MLEsimplex",MLEclassList, ControlList, vstart, default_tz, listout_int, package="WeibullR")
-##			result_of_simplex_call<-.Call(MLEsimplex,MLEclassList, ControlList, vstart, default_tz, listout_int)
+# 			result_of_simplex_call<-.Call("MLEsimplex",MLEclassList, ControlList, vstart, default_tz, listout_int, package="WeibullR")
+ 			result_of_simplex_call<-.Call(MLEsimplex,MLEclassList, ControlList, vstart, default_tz, listout_int)
 			if(result_of_simplex_call[4]>0)  {
 				stop("2p model does not converge")
 			}
@@ -326,12 +326,9 @@ mlefit<-function(x, dist="weibull", npar=2, debias="none", optcontrol=NULL)  {
 
 ## Note: vstart was defined before separating processing based on npar
 
- ret3p<-.Call("callMLE3p", MLEclassList, simplex_control, vstart, maxtz, seek_control, package="WeibullR")
- 
-# Error in .Call("callMLE3p", MLEclassList, simplex_control, vstart, maxtz,  : 
-#  Incorrect number of arguments (6), expecting 5 for 'callMLE3p'
+# ret3p<-.Call("callMLE3p", MLEclassList, simplex_control, vstart, maxtz, seek_control, package="WeibullR")
 
-#  ret3p<-list(callMLE3p, MLEclassList, simplex_control, vstart, maxtz, seek_control)
+  ret3p<-.Call(callMLE3p, MLEclassList, simplex_control, vstart, maxtz, seek_control)
 
 outvec<-ret3p$outvec
 
@@ -342,7 +339,7 @@ outvec<-ret3p$outvec
 #   		##names(outvec)<-""			
 #   					
    		if(dist_num==1)  {			
-   			#names(outvec)<-c("Eta","Beta", "t0", "LL")		
+   			names(outvec)<-c("Eta","Beta", "t0", "LL")		
    			if(debias!="none")  {		
    				if(debias=="rba")  {	
    					outvec[2]<-outvec[2]*rba(Q[1]-Q[3], dist="weibull",basis="median")
@@ -353,21 +350,21 @@ outvec<-ret3p$outvec
    				if(debias=="hrbu")  {	
    					outvec[2]<-outvec[2]*hrbu(Q[1]-Q[3], Q[3])
    				}	
-    				outvec[4]<-.Call("MLEloglike",MLEclassList,c(outvec[2],outvec[1]), default_sign, outvec[3], package="WeibullR")	
-##   				outvec[4]<-.Call(MLEloglike,MLEclassList,c(outvec[2],outvec[1]), default_sign, outvec[3])	
+#    				outvec[4]<-.Call("MLEloglike",MLEclassList,c(outvec[2],outvec[1]), default_sign, outvec[3], package="WeibullR")	
+    				outvec[4]<-.Call(MLEloglike,MLEclassList,c(outvec[2],outvec[1]), default_sign, outvec[3])	
    				attr(outvec,"bias_adj")<-debias	
    			}		
    		}			
    		if(dist_num == 2)  {			
-   			#names(outvec)<-c("Mulog","Sigmalog", "t0", "LL")		
+   			names(outvec)<-c("Mulog","Sigmalog", "t0", "LL")		
    			if(debias!="none")  {		
    				outvec[2]<-outvec[2]*rba(Q[1]-Q[3], dist="lognormal")	
    				if(debias!="rba")  {	
    					warning("rba has been applied to adjust lognormal")
    					debias="rba"
    				}	
-    				outvec[4]<-.Call("MLEloglike",MLEclassList,c(outvec[1],outvec[2]), default_sign, outvec[3],package="WeibullR")	
-## 				outvec[4]<-.Call(MLEloglike,MLEclassList,c(outvec[1],outvec[2]), default_sign, outvec[3])	
+#    				outvec[4]<-.Call("MLEloglike",MLEclassList,c(outvec[1],outvec[2]), default_sign, outvec[3],package="WeibullR")	
+  				outvec[4]<-.Call(MLEloglike,MLEclassList,c(outvec[1],outvec[2]), default_sign, outvec[3])	
    				attr(outvec,"bias_adj")<-debias	
    			}		
    		}			

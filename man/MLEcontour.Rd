@@ -32,7 +32,7 @@ MLEcontour(x,  dist="weibull", CL=0.9,dof=1,MLLx=NULL, MLEfit=NULL,
   entered and this fit. When provided, the MLEfit shall be a vector in the order of scale(or logmean), shape (or std dev) and Loglikelihood.
   }
   \item{ptDensity}{an integer value for the number of points to be plotted around the circumference of the contour.}
-  \item{RadLimit}{a convergence limit for the contour radials based on specific units of Eta/Eta_hat and Beta/Beta_hat.}
+  \item{RadLimit}{a convergence limit for the contour radials based on specific units such as Eta/Eta_hat and Beta/Beta_hat.}
   \item{debias}{An optional string argument indicating the adjustment to be applied to the shape or standard deviation
   parameter of the fitted data. Recognized values are "rba", "mean", or "hrbu".
   }

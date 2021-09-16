@@ -37,7 +37,7 @@ RcppExport SEXP getContour(SEXP arg1, SEXP arg2, SEXP arg4, SEXP arg5, SEXP arg6
 RcppExport SEXP callMLE3p(SEXP arg1, SEXP arg2, SEXP arg3, SEXP arg4, SEXP arg5);
 	     //SEXP callMLE3p(SEXP arg1, SEXP arg2, SEXP arg3, SEXP arg4, SEXP arg5) {		//implementation
 
-//extern "C" void R_init_WeibullR(DllInfo* info);
+extern "C" void R_init_WeibullR(DllInfo* info);
 
 #endif
 #endif
