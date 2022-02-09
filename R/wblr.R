@@ -173,7 +173,7 @@ getPlotData<-function(x,opa) {
 	suspDF<-NULL
 	if(length(x[x$right==-1,][,1])>0) {
 	sx<-x[x$right==-1,]
-	suspDF<-data.frame(time=sx$left*mult, event=0, qty=sx$qty)
+	suspDF<-data.frame(time=sx$left*mult+sx$left, event=0, qty=sx$qty)
 	}
 	p_argx<-rbind(dataDF,suspDF)
 
