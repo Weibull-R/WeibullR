@@ -168,6 +168,24 @@ getPlotData<-function(x,opa) {
 ## the original reason for forming the mod1x was to enable the transformed (mean) time calculation
 ## it now also removes suspensions ready for use in forming dataDF
 	mod1x<-cbind(x,mean=(x$left+x$right)/2)[x$right!=-1,]
+	
+## although getPPP will recompose the data by expanding qty and recombining					
+## the  nrow(mod2x)==nrow(p) test below will fail if raw data  includes					
+## multiple entries at same fail time while still carrying qty information
+## not sure why similar consolidation in mlefit did not resolve this need					
+	if(length(unique(mod1x$mean)) !=  nrow(mod1x)) {				
+		drop_rows<-NULL			
+		NDX<-order(mod1x[,4], decreasing=TRUE)			
+		mod1x_sorted<-mod1x[NDX,]			
+		for(frow in nrow(mod1x_sorted): 2)  {			
+			if(mod1x_sorted[frow,4] == mod1x_sorted[frow-1,4]) {		
+				drop_rows<-c(drop_rows, frow)	
+				mod1x_sorted[frow-1,3] <- mod1x_sorted[frow-1,3] + mod1x_sorted[frow,3]	
+			}		
+		}			
+		mod1x<-mod1x_sorted[-drop_rows,]			
+	}	
+#browser()	
 	trans_time<-mod1x$mean*mult+mod1x$left
 	dataDF<-data.frame(time=trans_time, event=1, qty=mod1x$qty)
 	suspDF<-NULL

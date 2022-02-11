@@ -164,11 +164,25 @@ mleframe<-function(x, s=NULL, interval=NULL)  {
 						fail_vec<-x$time[x$event==1]
 						# failures <- data.frame(left = f, right = f, qty = rep(1, length(f)))
 					}else{
-	## The assumption is that data input with a qty field is appropriately  consolidated
-	## But let's be sure the qty field is all integer, else future havoc could ensue
+	## Let's be sure the qty field is all integer, else future havoc could ensue
 						if(any(!is.integer(x$qty))) x$qty<-ceiling(x$qty)
 						f<-x$time[x$event==1]
 						failures <- data.frame(left = f, right = f, qty = x$qty[x$event==1])
+		# sort failure data wth order consistent with data entry						
+						if( f[1] < f[length(f)]) {NDX<-order(failures$left)			
+						}else{ NDX<-order(failures$left, decreasing=TRUE) }			
+						failures<-failures[NDX,]			
+	## Cannot assume that data input with a qty field is appropriately  consolidated								
+						if(length(unique(failures$left)) !=  nrow(failures)) {			
+							drop_rows<-NULL		
+							for(frow in nrow(failures): 2)  {		
+								if(failures[frow,3] == failures[frow-1,3]) {	
+									drop_rows<-c(drop_rows, frow)
+									failures[frow-1,3] <- failures[frow-1,3] + failures[frow,3]
+								}	
+							}		
+							failures<-failures[-drop_rows,]		
+						}			
 					}
 			}
 #			if(identical(ev_info, c("0","1"))) {
