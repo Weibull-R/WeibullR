@@ -172,7 +172,7 @@ getPlotData<-function(x,opa) {
 ## although getPPP will recompose the data by expanding qty and recombining					
 ## the  nrow(mod2x)==nrow(p) test below will fail if raw data  includes					
 ## multiple entries at same fail time while still carrying qty information
-## not sure why similar consolidation in mlefit did not resolve this need					
+## similar consolidation in mlefit shuold resolve this need					
 	if(length(unique(mod1x$mean)) !=  nrow(mod1x)) {				
 		drop_rows<-NULL			
 		NDX<-order(mod1x[,4], decreasing=TRUE)			
