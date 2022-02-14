@@ -176,7 +176,7 @@ mleframe<-function(x, s=NULL, interval=NULL)  {
 						if(length(unique(failures$left)) !=  nrow(failures)) {			
 							drop_rows<-NULL		
 							for(frow in nrow(failures): 2)  {		
-								if(failures[frow,3] == failures[frow-1,3]) {	
+								if(failures[frow,1] == failures[frow-1,1]) {	
 									drop_rows<-c(drop_rows, frow)
 									failures[frow-1,3] <- failures[frow-1,3] + failures[frow,3]
 								}	
