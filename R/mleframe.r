@@ -196,6 +196,21 @@ mleframe<-function(x, s=NULL, interval=NULL)  {
 					}else{
 	## The assumption is that data input with a qty field is appropriately  consolidated
 						suspensions <- data.frame(left = s, right = -1, qty = x$qty[x$event==0])
+		# sort failure data wth order consistent with data entry						
+						if( s[1] < s[length(s)]) {NDX<-order(suspensions$left)			
+						}else{ NDX<-order(suspensions$left, decreasing=TRUE) }			
+						suspensions<-suspensions[NDX,]
+	## Cannot assume that data input with a qty field is appropriately  consolidated								
+						if(length(unique(suspensions$left)) !=  nrow(suspensions)) {			
+							drop_rows<-NULL		
+							for(srow in nrow(suspensions): 2)  {		
+								if(suspensions[srow,1] == suspensions[srow-1,1]) {	
+									drop_rows<-c(drop_rows, srow)
+									suspensions[srow-1,3] <- suspensions[srow-1,3] + suspensions[srow,3]
+								}	
+							}		
+							suspensions<-suspensions[-drop_rows,]		
+						}	
 					}
 			}
 		}else {
