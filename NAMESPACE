@@ -11,6 +11,7 @@ importFrom("stats", "approxfun", "coef", "cor", "lm", "na.omit",
 		 "smooth.spline", "predict")
 importFrom("utils", "modifyList")
 importFrom("grDevices", "dev.new")
+importFrom("methods", "is")
 
 export(
 	AbPval,

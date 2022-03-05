@@ -25,7 +25,7 @@
 
 wblr.fit <- function(x, modify.by.t0=FALSE,...){
     # x is a single wblr
-	if(!class(x)=="wblr"){
+	if(!is(x,"wblr")){
 		stop("\"x\" argument is not of class \"wblr\".")
 	}
 
@@ -34,7 +34,7 @@ wblr.fit <- function(x, modify.by.t0=FALSE,...){
 ## It will probably be better to splitfitargs(...) for more comprehensive validations
 	arg <- list(...)
 	if(length(arg) > 0) {
-	if(class(arg[[1]])=="list")  {
+	if(is(arg[[1]], "list"))  {
 	arg<-arg[[1]]
 	}
 	}

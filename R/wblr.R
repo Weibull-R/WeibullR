@@ -73,7 +73,7 @@ opa <- modifyList(options.wblr(), arg$opa)
 if(!missing(x)){
 	ti <- c(arg$rem$time,arg$rem$fail)
 	if(!is.null(ti)) warning("fail times are taken from first argument, time or fail arguments are ignored")
-	if (class(x) == "data.frame") {
+	if (is(x, "data.frame")) {
 		su<-c(s,arg$rem$susp)
 		if(!is.null(su)) warning("suspension times are taken from first argument dataframe, s or susp arguments are ignored")
 	}
@@ -89,7 +89,7 @@ if(!missing(x)){
 		}
 	}
 }
-if (!class(x) == "data.frame") {
+if (!is(x, "data.frame")) {
 if(!missing(s)){
 	if(!is.null(arg$rem$susp)) warning("suspension times are taken from second argument s, argument susp is ignored")
 }else{
@@ -271,7 +271,7 @@ outlist
 splitargs <- function(...){
     arg         <- list(...)
 	if(length(arg) > 0) {
-	if(class(arg[[1]])=="list")  {
+	if(is(arg[[1]], "list"))  {
 	arg<-arg[[1]]
 	}
 	}

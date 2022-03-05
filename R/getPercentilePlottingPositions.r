@@ -26,7 +26,7 @@ if(is.vector(x)) {
 		    prep_df<-data.frame(time=data,event=event)
 	  }
 }else{
-	if(class(x)=="data.frame") {
+	if(is(x, "data.frame")) {
 		## this test is drawn from Abrem.R
 			if(is.null(x$time) || is.null(x$event)){
                 stop(': Argument \"x\" is missing $time and/or ",

@@ -11,7 +11,7 @@
 
 plot_contour <- function(x ,CL=NULL, AL=TRUE,...){
 if(!is.null(CL)) {
-if(class(CL)=="wblr") stop("multiple wblr objects must be entered as a list")
+if(is(CL, "wblr")) stop("multiple wblr objects must be entered as a list")
 }
 	    if(identical(class(x),"wblr")) x <- list(x)
 	    if(!all(sapply(x,function(x)identical(class(x),"wblr")))){

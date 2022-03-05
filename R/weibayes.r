@@ -66,7 +66,7 @@ weibayes<-function(x, s=NULL, beta) {
 	}else{
 ## here a time-event dataframe can be evaluated, if provided as x
 ## This is the support for a time-event dataframe
-		if (class(x) == "data.frame") {
+		if (is(x, "data.frame")) {
 
 		## this test is drawn from Abrem.R
 			if(is.null(x$time) || is.null(x$event)){

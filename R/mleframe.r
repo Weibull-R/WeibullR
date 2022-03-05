@@ -19,7 +19,7 @@
 mleframe<-function(x, s=NULL, interval=NULL)  {
 ## interval dataframe validation
 	colname_error<-FALSE
-	if(class(interval)=="data.frame")  {
+	if(is(interval, "data.frame"))  {
 ## test names in first two columns
 		test_names<-names(interval)
 			if(test_names[1] !="left") {
@@ -120,7 +120,7 @@ mleframe<-function(x, s=NULL, interval=NULL)  {
 	}else{
 	## here a time-event dataframe can be evaluated, if provided as x
 	## This is the support for a time-event dataframe
-		if (class(x) == "data.frame") {
+		if (is(x, "data.frame")) {
 
 		## this test is drawn from Abrem.R
 			if(is.null(x$time) || is.null(x$event)){
