@@ -240,8 +240,8 @@ mleframe<-function(x, s=NULL, interval=NULL)  {
 	if(!exists("failures"))  {
 		failures<-NULL
 		if(!is.null("interval"))  {
-			if(nrow(interval)<3) {
-				stop("insufficient failure data in intervals")
+			if(nrow(interval)<3) && sum(interval$qty)<3) {
+				warning("insufficient failure data in intervals")
 			}
 		}
 	}
