@@ -22,6 +22,7 @@
 #include "WeibullR.h"
 #include "LSLRmodel.h"
 #include <math.h>
+#include <memory>
 
 SEXP LSLR(SEXP arg1) {
 // Construct an LSLRmodel with this input argument
