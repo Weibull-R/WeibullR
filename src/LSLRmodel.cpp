@@ -21,6 +21,7 @@
 #include "WeibullR.h"
 #include "LSLRmodel.h"
 #include <math.h>
+#include <memory>
 
     using namespace Rcpp ;
 
