@@ -21,6 +21,7 @@
  
 #include "WeibullR.h"	
 #include "Pivotal.h"
+#include <memory>
 			
     using namespace Rcpp ;
 	

@@ -4,6 +4,7 @@
 #include "MLEmodel.h"
 #include "MLEcontour.h"
 #include <math.h>
+#include <memory>
 
     using namespace Rcpp ;
 

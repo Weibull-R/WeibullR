@@ -24,6 +24,7 @@
 #include "LSLRmodel.h"
 #include <math.h>
 #include <limits>
+#include <memory>
 
     using namespace Rcpp ;
 

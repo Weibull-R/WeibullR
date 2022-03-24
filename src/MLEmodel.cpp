@@ -2,6 +2,7 @@
 #include "WeibullR.h"
 #include "MLEmodel.h"
 #include <math.h>
+#include <memory>
 //#include <cmath.h> // for abs (cmath.h may need linker option -lstdc++ for GCC)
 
     using namespace Rcpp ;
