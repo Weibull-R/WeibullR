@@ -1,6 +1,8 @@
 #ifndef _MLEcontour_H
 #define _MLEcontour_H
 
+#include <memory>
+
 class MLEcontour {
 //MLEmodel model;
 std::unique_ptr<MLEmodel> model;
