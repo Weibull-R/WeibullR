@@ -34,7 +34,7 @@
             A character string with the target distribution for fitting.
             Possible values are \code{"weibull"}, \code{"weibull2p"},
             \code{"weibull3p"} (three parameter Weibull), \code{"lognormal"}
-            , \code{"lognormal"}or \code{"lognormal3p"}.
+            , \code{"lognormal2p"}or \code{"lognormal3p"}.
            
             Defaults to \code{"weibull"}.
         }

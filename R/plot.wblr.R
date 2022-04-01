@@ -141,9 +141,10 @@ plot.wblr <- function(x,...){
         if(!is.null(wblr$fit)){
 ##            ret <- lapply(wblr$fit,plotConfsInFit,opadata=wblr$options,...)
             ret <- lapply(wblr$fit,plotConfsInFit,opadata=wblr$options,dotargs)
-        }else{
-            message("plotConfs: This wblr object contains no fits" )
-        }
+		}
+        #}else{
+        #    message("plotConfs: This wblr object contains no fits" )
+        #}
     }
     lapply(x,plotConfs)
 
