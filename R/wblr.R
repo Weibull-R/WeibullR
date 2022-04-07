@@ -4,7 +4,7 @@
 #	interval input argument
 #	new [object]$data now as list containing objects lrq_frame, dpoints, and dlines
 #   the [object]$data$dpoints corresponds to previous [object]$data
-# copyright (c) OpenReliability.org 2011-2021
+# copyright (c) OpenReliability.org 2011-2022
 #-------------------------------------------------------------------------------
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
