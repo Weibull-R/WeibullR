@@ -172,7 +172,7 @@ if(is.null(nknots))  {
 	upper.hv<-upper.hv[order(upper.hv$p),]					
 						
 	lo.spline<-smooth.spline(lower.hv)					
-	up.spline<-smooth.spline(upper.h)					
+	up.spline<-smooth.spline(upper.hv)					
 	}					
 }else{
 	if(type=="horizontal")  {					
@@ -194,7 +194,7 @@ if(is.null(nknots))  {
 	upper.hv<-upper.hv[order(upper.hv$p),]					
 						
 	lo.spline<-smooth.spline(lower.hv, nknots=nknots)					
-	up.spline<-smooth.spline(upper.h, nknots=nknots)
+	up.spline<-smooth.spline(upper.hv, nknots=nknots)
 	}
 }						
 	lo.list<- predict(lo.spline,dp)					
