@@ -90,34 +90,7 @@ mleframe<-function(x, s=NULL, interval=NULL)  {
 
 ## now build dataframes for failures and suspensions
 ## could x be a dataframe with time and event columns??
-	suspensions<-NULL
-	if(is.vector(x))  {
-		if(anyNA(x))  {
-		stop("NA in failure data")
-		}
-		if(any(x<=0))  {
-		stop("non-positive values in failure/occurrence data")
-		}
 
-		#x<-sort(x)
-## I'm not convinced this needs to be sorted here, but it doesn't hurt
-		fail_vec<-sort(x)
-
-		# failures<-data.frame(left=x,right=x,qty=rep(1,length(x)))
-
-		if(length(s)>0)  {
-		if(anyNA(s))  {
-		stop("NA  in suspension data")
-		}
-		if(any(s<=0))  {
-		stop("non-positive values in suspension data")
-		}
-		susp_vec<-sort(s)
-
-		# suspensions<-data.frame(left=s,right=-1,qty=rep(1,length(s)))
-		}
-## end pure vector argument processing
-	}else{
 	## here a time-event dataframe can be evaluated, if provided as x
 	## This is the support for a time-event dataframe
 		if (is(x, "data.frame")) {
@@ -213,13 +186,33 @@ mleframe<-function(x, s=NULL, interval=NULL)  {
 						}	
 					}
 			}
-		}else {
-			if (length(x) > 0) {
-				stop("error in x argument type")
-			}
-		}
-## end the time_event dataframe  evaluation and close argument processing
-	}
+
+## end the time_event dataframe evaluation
+	}else{
+		if(is.vector(x))  {				
+			if(anyNA(x))  {			
+			stop("NA in failure data")			
+			}			
+			if(any(x<=0))  {			
+			stop("non-positive values in failure/occurrence data")			
+			}			
+						
+			#x<-sort(x)			
+	## I'm not convinced this needs to be sorted here, but it doesn't hurt					
+			fail_vec<-sort(x)			
+		}				
+						
+		if(is.vector(s))  {				
+			if(anyNA(s))  {			
+			stop("NA  in suspension data")			
+			}			
+			if(any(s<=0))  {			
+			stop("non-positive values in suspension data")			
+			}			
+			susp_vec<-sort(s)			
+		}				
+	}					
+	## end pure vector argument processing					
 
 ## consolidate duplicates in any pure failure or suspension vectors
 
@@ -229,7 +222,7 @@ mleframe<-function(x, s=NULL, interval=NULL)  {
 		fq<-fdf[,2]
 		failures<-data.frame(left=ft, right=ft, qty=fq)
 	}
-
+	suspensions<-NULL
 	if(exists("susp_vec")) {
 		sdf<-as.data.frame(table(susp_vec))
 		st<-as.numeric(levels(sdf[,1]))
