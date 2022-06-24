@@ -24,9 +24,8 @@
 #
 wblr.conf <- function(x,...){
     # x is a single wblr object
-	if(!(class(x)=="wblr")){
-		stop('Argument \"x\" is not of class \"wblr\" ')
-	}
+	if(!is(x, "wblr")) stop('Argument \"x\" is not of class \"wblr\" ')
+
 ## using findMaxDataRange from plot.wblr, which takes a list of wblr objects
 ## so simply convert this x to a single item list
 	#dr <- findMaxDataRange(list(x))

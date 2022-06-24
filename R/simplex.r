@@ -5,8 +5,9 @@ simplex<-function(x, dist="weibull", tz=0, debias="none", optcontrol=NULL)  {
 		default_sign=1
 
 ## check basic parameters of x
-	if(class(x)!="data.frame") {stop("mlefit takes a structured dataframe input, use mleframe")}
-	if(ncol(x)!=3)  {stop("mlefit takes a structured dataframe input, use mleframe")}
+	#if(class(x)!="data.frame") stop("FMbounds takes a structured dataframe input, use mleframe")	
+	if(!is(x, "data.frame")) stop("simplex takes a structured dataframe input, use mleframe")
+	if(ncol(x)!=3)  {stop("simplex takes a structured dataframe input, use mleframe")}
 	#if(x$right[1] != min(x$right[x$right != -1])) {stop("use mleframe to sort data")
 	xnames<-names(x)
 	if(xnames[1]!="left" || xnames[2]!="right"||xnames[3]!="qty")  {

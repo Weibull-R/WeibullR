@@ -1,7 +1,7 @@
 wblrLoglike<-function(par, x, dist="weibull", sign=1, tz=0 )  {				
 ## check basic format of x				
-				
-	if(class(x)!="data.frame") {stop("wblrLoglike takes a structured dataframe input, use mleframe")}			
+	#if(class(x)!="data.frame") {stop("wblrLoglike takes a structured dataframe input, use mleframe")}	
+	if(!is(x, "data.frame")) stop("wblrLoglike takes a structured dataframe input, use mleframe")
 	if(ncol(x)!=3)  {stop("wblrLoglike takes a structured dataframe input, use mleframe")}			
 	xnames<-names(x)			
 	if(xnames[1]!="left" || xnames[2]!="right"||xnames[3]!="qty")  {			

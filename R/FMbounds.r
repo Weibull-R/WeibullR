@@ -1,7 +1,8 @@
 FMbounds<-function(x, dist="weibull", CI=.90, unrel=NULL, debias="none", show=FALSE)  {					
 					
 ##  x must be an lrq dataframe such as returned by mleframe					
-	if(class(x)!="data.frame") {stop("FMbounds takes a structured dataframe input, use mleframe")}				
+	#if(class(x)!="data.frame") stop("FMbounds takes a structured dataframe input, use mleframe")	
+	if(!is(x, "data.frame")) stop("FMbounds takes a structured dataframe input, use mleframe")	
 	if(ncol(x)!=3)  {stop("FMbounds takes a structured dataframe input, use mleframe")}				
 	xnames<-names(x)				
 	if(xnames[1]!="left" || xnames[2]!="right"||xnames[3]!="qty")  {				

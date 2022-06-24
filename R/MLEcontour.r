@@ -2,7 +2,8 @@ MLEcontour<-function(x,  dist="weibull", CL=0.9,dof=1,MLLx=NULL,MLEfit=NULL, Rad
 		ptDensity=120, debias="none", show=FALSE)  {
 
 ## check basic parameters of x
-	if(class(x)!="data.frame") {stop("mlefit takes a structured dataframe input, use mleframe")}
+	#if(class(x)!="data.frame") stop("FMbounds takes a structured dataframe input, use mleframe")	
+	if(!is(x, "data.frame")) stop("MLEcontour takes a structured dataframe input, use mleframe")
 	if(ncol(x)!=3)  {stop("mlefit takes a structured dataframe input, use mleframe")}
 	xnames<-names(x)
 	if(xnames[1]!="left" || xnames[2]!="right"||xnames[3]!="qty")  {

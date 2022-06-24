@@ -1,9 +1,7 @@
 # Extract a Fit Summary from a 'wblr' Object
 
 xfit<-function(obj, fit_num=1)  {			
-	if(!class(obj)=="wblr")  {		
-		stop("must provide a wblr object")		
-	}
+	if(!is(x, "wblr")) stop('Argument \"x\" is not of class \"wblr\" ')
 	if(is.null(obj$fit)) {
 		stop("no fit found in wblr object")
 	}else{
