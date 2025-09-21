@@ -55,3 +55,5 @@ export(
 )
 S3method(plot, wblr) 
 S3method(contour, wblr) 
+S3method(seq, wb)
+S3method(seq, log)
