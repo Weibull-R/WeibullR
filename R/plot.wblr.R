@@ -106,23 +106,23 @@ plot.wblr <- function(x,...){
     do.call(plot.default,plotargs)
     if(opa$is.plot.grid){
         abline(
-            h=p2y(seq.wb(opa$ylim[1]/10,1-(1-opa$ylim[2])/10),opa$canvas),
-            v=seq.log(opa$xlim[1]/10,opa$xlim[2]*10,seq(0,10,1)),
+            h=p2y(seq_wb(opa$ylim[1]/10,1-(1-opa$ylim[2])/10),opa$canvas),
+            v=seq_log(opa$xlim[1]/10,opa$xlim[2]*10,seq(0,10,1)),
             col = opa$col.grid)
     }
-    r <- seq.log(opa$xlim[1]/10,opa$xlim[2]*10,c(1,5))
+    r <- seq_log(opa$xlim[1]/10,opa$xlim[2]*10,c(1,5))
     #lin <- 0.0
     for(t in c(1,3)){
-        axis(t,at=seq.log(opa$xlim[1]/10,opa$xlim[2]*10,seq(0,10,0.2)),
+        axis(t,at=seq_log(opa$xlim[1]/10,opa$xlim[2]*10,seq(0,10,0.2)),
             labels=NA,tcl=-0.25)#,line=0.0
             # plot top and bottom axis tickmarks
         axis(t,at=r,labels=r,tcl=-0.75)#,line=0.0
             # plot top and bottom axis labels
     }
-    r <- c(seq.wb(opa$ylim[1]/10,1-(1-opa$ylim[2])/10,c(1,2,5)),0.9)
+    r <- c(seq_wb(opa$ylim[1]/10,1-(1-opa$ylim[2])/10,c(1,2,5)),0.9)
     for(t in c(2,4)){
         # TODO: rewrite as do.call() or apply()
-        axis(t,at=p2y(seq.wb(opa$ylim[1]/10,1-(1-opa$ylim[2])/10),
+        axis(t,at=p2y(seq_wb(opa$ylim[1]/10,1-(1-opa$ylim[2])/10),
             opa$canvas),labels=NA,tcl=-0.25)#,line=0.0
             # plot left and right axis tickmarks
         axis(t,at=p2y(r,opa$canvas),
@@ -356,12 +356,12 @@ findMaxDataRange <- function(x,log=""){
 }
 
 
-seq.wb <- function(from,to,base=seq(1,9,1)){
+seq_wb <- function(from,to,base=seq(1,9,1)){
    # define gridline positions for 'Median Rank' axis (= y axis)
-   r <- c(seq.log(from,.9,base),rev(1-seq.log(1-to,0.1,base))[-1])
+   r <- c(seq_log(from,.9,base),rev(1-seq_log(1-to,0.1,base))[-1])
    r[r >= from & r<=to]}
 
-seq.log <- function(from,to,base=c(1,2,5)){
+seq_log <- function(from,to,base=c(1,2,5)){
    r <- NULL
    for(i in floor(log10(from)):floor(log10(to)))r <- c(r,base*10^i)
    r[r >= from & r<=to]}
