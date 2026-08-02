@@ -22,7 +22,7 @@ ret<-list(fit,bnds)
 stitle<-"MRR fit with 90% double-sided pivotal bounds"
 }else{
 ret<-fit
-stitle<-"Lognormal RR fit"
+stitle<-"Weibull RR fit"
 }
 
 if(show==TRUE) {
